@@ -6,7 +6,7 @@ export default function Page(): JSX.Element {
   return (
     <>
       <nav className={styles.navigation}>
-        <a href="/api/auth/logout">Logout</a>
+        <p>Tu powstanie nawigacja.. kiedyś</p>
       </nav>
       <div className={styles.pageWrapper}>
         <Suspense fallback={<p>Questions are loading... </p>}>

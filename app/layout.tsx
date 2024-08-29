@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { UserProvider } from "@auth0/nextjs-auth0/client";
-import UserWrapper from "@/app/ui/home/home";
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,14 +16,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <UserProvider>
-        <body className={inter.className}>
-          <UserWrapper>{children}</UserWrapper>
-          <footer>
-            Inspired by <a href="https://nebula.tv/jetlag/">Jet Lag: The Game</a>
-          </footer>
-        </body>
-      </UserProvider>
+      <body className={inter.className}>
+        {children}
+        <footer>
+          Inspired by <a href="https://nebula.tv/jetlag/">Jet Lag: The Game</a>
+        </footer>
+      </body>
     </html>
   );
 }
