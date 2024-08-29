@@ -1,0 +1,9 @@
+.tag {
+  background-color: hsl(var(--hue), 97%, 88%);
+  color: hsl(var(--hue), 69%, 39%);
+  border: 2px solid hsl(var(--hue), 71%, 80%);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 2px 6px;
+}
