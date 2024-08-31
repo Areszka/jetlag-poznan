@@ -1,5 +1,7 @@
 import { getBaseUrl } from "../../helpers";
-import Tag from "../tag/tag";
+import Card from "../components/card/card";
+import { Text } from "../components/text/text";
+import Tag from "../components/tag/tag";
 import styles from "./questions.module.css";
 
 export async function Questions(): Promise<JSX.Element> {
@@ -11,21 +13,21 @@ export async function Questions(): Promise<JSX.Element> {
 
   const data = await response.json();
   return (
-    <ul className={styles.wrapper}>
-      <h2>Questions</h2>
-      {data.questions.map((question: any) => {
-        return (
-          <li key={question.id} className={styles.question}>
-            <div className={styles.questionWrapper}>
-              <p className={styles.content}>{question.content} </p>
-              <Tag>{question.cost}</Tag> <Tag hue={HUES[question.type]}>{question.type}</Tag>
-            </div>
-
-            {question.details && <p className={styles.details}>{question.details}</p>}
-          </li>
-        );
-      })}
-    </ul>
+    <Card title="Questions">
+      <ul>
+        {data.questions.map((question: any) => {
+          return (
+            <li key={question.id} className={styles.questionWrapper}>
+              <div className={styles.question}>
+                <Text type="title">{question.content}</Text>
+                <Tag>{question.cost}</Tag> <Tag hue={HUES[question.type]}>{question.type}</Tag>
+              </div>
+              {question.details && <Text type="description">{question.details}</Text>}
+            </li>
+          );
+        })}
+      </ul>
+    </Card>
   );
 }
 
