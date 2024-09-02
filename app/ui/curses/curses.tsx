@@ -6,7 +6,14 @@ import React from "react";
 import styles from "./curses.module.css";
 import { Text } from "../components/text/text";
 import { LuDices } from "react-icons/lu";
-import { CgDice1, CgDice2, CgDice3, CgDice4, CgDice5, CgDice6 } from "react-icons/cg";
+import {
+  CgDice1,
+  CgDice2,
+  CgDice3,
+  CgDice4,
+  CgDice5,
+  CgDice6,
+} from "react-icons/cg";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 const diceComponents = {
@@ -29,13 +36,15 @@ type Dots = 1 | 2 | 3 | 4 | 5 | 6;
 export default function Curses() {
   const [data, setData] = React.useState<CurseType | null>(null);
   const [isLoading, setIsLoading] = React.useState<Boolean>(false);
-  const [dices, setDices] = React.useState<Array<Dots>>([1, 4]);
+  const [dice, setDice] = React.useState<Array<Dots>>([1, 4]);
 
   return (
     <Card title="Cube">
       <div className={styles.wrapper}>
         <div className={styles.textWrapper}>
-          {data === null && !isLoading && <Text type="title">No curse yet. Roll the dice!</Text>}
+          {data === null && !isLoading && (
+            <Text type="title">No curse yet. Roll the dice!</Text>
+          )}
           {isLoading && "Loading Curse.."}
           {data && !isLoading && (
             <>
@@ -46,7 +55,7 @@ export default function Curses() {
         </div>
         <div className={styles.buttonsWrapper}>
           <div className={styles.diceWrapper}>
-            {dices.map((value, index) => {
+            {dice.map((value, index) => {
               const DiceIcon = diceComponents[value];
               if (isLoading) {
                 return <span>?</span>;
@@ -58,19 +67,20 @@ export default function Curses() {
           <div className={styles.diceButtons}>
             <button
               onClick={() => {
-                const nextDices = [...dices];
+                const nextDices = [...dice];
                 nextDices.pop();
 
-                setDices(nextDices);
+                setDice(nextDices);
               }}
             >
               <IoIosArrowDown />
             </button>
-            <p>{dices.length}</p>
+            <p>{dice.length}</p>
             <button
               onClick={() => {
-                const numberOnDice = (Math.floor(Math.random() * 6) + 1) as Dots;
-                setDices([...dices, numberOnDice]);
+                const numberOnDice = (Math.floor(Math.random() * 6) +
+                  1) as Dots;
+                setDice([...dice, numberOnDice]);
               }}
             >
               <IoIosArrowUp />
@@ -78,16 +88,18 @@ export default function Curses() {
           </div>
 
           <button
-            disabled={dices.length <= 0}
+            disabled={dice.length <= 0}
             onClick={async () => {
               setIsLoading(true);
-              if (dices.length > 0) {
-                const response = await fetch(`${getBaseUrl()}/api/curses/${dices.length}`);
+              if (dice.length > 0) {
+                const response = await fetch(
+                  `${getBaseUrl()}/api/curses/${dice.length}`,
+                );
 
                 if (response.ok) {
                   const parsedResponse = await response.json();
                   setData(parsedResponse.curse);
-                  setDices(parsedResponse.dices);
+                  setDice(parsedResponse.dice);
                   setIsLoading(false);
                 }
               }
