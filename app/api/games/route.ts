@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       {
         error: `Required at least 2 teams, got ${body.teams.length}. Add more teams to create a game`,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       {
         error: `Some teams have no members`,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
