@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
 import { db } from "../../db";
 
-export async function GET(
-  _: Request,
-  { params }: { params: { numberOfDice: string } },
-) {
+export async function GET(_: Request, { params }: { params: { numberOfDice: string } }) {
   const numberOfDice = Number(params.numberOfDice);
   const dice = [];
 
-  const maxCurseId = await db.curses.count();
+  const maxCurseId = await db.curse.count();
 
   for (let i = 0; i < numberOfDice; i++) {
     dice.push(Math.floor(Math.random() * 6) + 1);
@@ -20,9 +17,9 @@ export async function GET(
     nextCurseId = Math.min(1, nextCurseId - maxCurseId);
   }
 
-  const curse = await db.curses.findFirst({
+  const curse = await db.curse.findFirst({
     where: {
-      id: nextCurseId,
+      difficulty: nextCurseId,
     },
   });
 

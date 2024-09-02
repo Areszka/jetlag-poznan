@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { getBaseUrl } from "../helpers";
 import useSWR from "swr";
 
@@ -7,6 +8,7 @@ const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then((res)
 
 export default function Game() {
   const { data, isLoading, error } = useSWR(`${getBaseUrl()}/api/games`, fetcher);
+  const router = useRouter();
 
   return (
     <>
@@ -14,22 +16,13 @@ export default function Game() {
       {data &&
         data.map((row) => {
           return (
-            <p>
+            <p key={row.id}>
               {row.id} - {row.name} - {row.time_start}
             </p>
           );
         })}
 
-      <button
-        onClick={async () => {
-          const response = await fetch(`${getBaseUrl()}/api/games`, {
-            method: "POST",
-            body: JSON.stringify({ name: "Nowa gra Filipa" }),
-          });
-        }}
-      >
-        Create new Game
-      </button>
+      <button onClick={() => router.push("/game/create")}>Create new Game</button>
     </>
   );
 }
