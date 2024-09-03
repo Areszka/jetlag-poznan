@@ -16,18 +16,13 @@ export async function POST(request: Request) {
       {
         error: `User not found`,
       },
-      { status: 404 },
+      { status: 404 }
     );
   }
 
   const isCorrectPassword = await bcrypt.compare(password, user.password);
   if (!isCorrectPassword) {
-    return NextResponse.json(
-      {
-        error: `Incorrect password`,
-      },
-      { status: 401 },
-    );
+    return NextResponse.json(null, { status: 401, statusText: `Incorrect password` });
   }
 
   return NextResponse.json(user, {

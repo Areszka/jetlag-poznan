@@ -4,19 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "@/app/page.module.css";
 
-export function Navigation() {
+export function Navigation({ userId }: { userId: string }) {
   const router = useRouter();
   return (
     <nav className={styles.navigation}>
+      {userId}
       <ul>
         <li>
           <Link href="/">Home</Link>
-        </li>
-        <li>
-          <Link href="/login">Login</Link>
-        </li>
-        <li>
-          <Link href="/register">Register</Link>
         </li>
         <button
           type="button"
@@ -25,7 +20,7 @@ export function Navigation() {
               method: "POST",
             }).then((res) => {
               if (res.ok) {
-                router.push("/");
+                router.push("/login");
               }
             });
           }}

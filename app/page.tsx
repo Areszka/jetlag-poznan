@@ -4,11 +4,17 @@ import styles from "./page.module.css";
 import Curses from "./ui/curses/curses";
 import Game from "./ui/game";
 import { Navigation } from "./ui/navigation";
+import { cookies } from "next/headers";
+import { validateSession } from "./api/auth";
 
-export default function Page(): JSX.Element {
+export default async function Page(): Promise<JSX.Element> {
+  const jetlagSession = cookies().get("jetlag_session")?.value;
+
+  const userId = await validateSession(jetlagSession);
+
   return (
     <>
-      <Navigation />
+      <Navigation userId={userId} />
       <div className={styles.pageWrapper}>
         <Game />
         <Curses />

@@ -1,22 +1,17 @@
 import { NextResponse } from "next/server";
 import { db } from "../../db";
-import { validateSession } from "../../auth";
+import { getSessionCookie, validateSession } from "../../auth";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { numberOfDice: string } },
-) {
-  const userId = await validateSession(request);
+export async function GET(request: Request, { params }: { params: { numberOfDice: string } }) {
+  const sessionCookie = getSessionCookie(request);
+  const userId = await validateSession(sessionCookie);
   if (!userId) {
-    return NextResponse.json(
-      {
-        error: "Not authenticated",
-      },
-      {
-        status: 403,
-      },
-    );
+    return NextResponse.json(null, {
+      status: 403,
+      statusText: "Not authenticated",
+    });
   }
+
   const numberOfDice = Number(params.numberOfDice);
   const dice = [];
 
