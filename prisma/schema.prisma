@@ -8,54 +8,54 @@ datasource db {
 }
 
 model User {
-  id                String           @id @default(uuid())
-  username          String           @unique
-  password          String
-  teams Team[]
+  id       String @id @default(uuid())
+  username String @unique
+  password String
+  teams    Team[]
 }
 
 model Game {
-  id         String    @id @default(uuid())
-  name       String    @db.VarChar(255)
-  start_time DateTime? @db.Timestamp(6)
-  end_time   DateTime? @db.Timestamp(6)
-  teams Team[]
-  questions Question[]
-  curses Curse[]
+  id         String     @id @default(uuid())
+  name       String     @db.VarChar(255)
+  start_time DateTime?  @db.Timestamp(6)
+  end_time   DateTime?  @db.Timestamp(6)
+  teams      Team[]
+  questions  Question[]
+  curses     Curse[]
 }
 
 model Team {
-  id         String    @id @default(uuid())
-  name String
-  coins Int @default(0)
-  role Role 
-  members User[]
-  game Game @relation(fields: [gameId], references: [id])
-  gameId String
+  id        String     @id @default(uuid())
+  name      String
+  coins     Int        @default(0)
+  role      Role
+  members   User[]
+  game      Game       @relation(fields: [gameId], references: [id])
+  gameId    String
   questions Question[]
-  curses Curse[]
+  curses    Curse[]
 }
 
 model Question {
-  id      String @id @default(uuid())
-  content String
-  type    String @db.VarChar(50)
-  cost    Int
-  details String?
+  id       String    @id @default(uuid())
+  content  String
+  type     String    @db.VarChar(50)
+  cost     Int
+  details  String?
   asked_at DateTime?
-  answer String?
-  teams Team[]
-  games Game[]
+  answer   String?
+  teams    Team[]
+  games    Game[]
 }
 
 model Curse {
-  id         String    @id @default(uuid())
-  difficulty Int 
-  name       String    @db.VarChar(50)
-  effect     String    @db.VarChar(255)
-  teams Team[]
-  games Game[]
-} 
+  id         String @id @default(uuid())
+  difficulty Int
+  name       String @db.VarChar(50)
+  effect     String @db.VarChar(255)
+  teams      Team[]
+  games      Game[]
+}
 
 enum Role {
   HIDER
