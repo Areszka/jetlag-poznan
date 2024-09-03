@@ -1,11 +1,11 @@
-import { getBaseUrl } from "../../helpers";
+import { fetchWithBaseUrl } from "../../helpers";
 import Card from "../components/card/card";
 import { Text } from "../components/text/text";
 import Tag from "../components/tag/tag";
 import styles from "./questions.module.css";
 
 export async function Questions(): Promise<JSX.Element> {
-  const response = await fetch(`${getBaseUrl()}/api/questions`);
+  const response = await fetchWithBaseUrl(`/api/questions`);
 
   if (!response.ok) {
     return <p>Error questions</p>;

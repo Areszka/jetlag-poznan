@@ -1,0 +1,113 @@
+.layout {
+  display: grid;
+  max-width: 700px;
+  width: 100%;
+  margin: auto;
+  margin-block-start: 32px;
+}
+
+.form {
+  padding: 16px;
+}
+
+.form label {
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  gap: 4px;
+}
+
+.form input {
+  border: 1px solid rgb(213, 213, 213);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.addInputWrapper input {
+  flex: 1 1 auto;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+}
+.addInputWrapper button {
+  height: unset;
+  width: 40px;
+  border-radius: 0 4px 4px 0;
+  border: 1px solid rgb(213, 213, 213);
+  border-left: none;
+  display: grid;
+  place-content: center;
+}
+
+.addInputWrapper button:hover {
+  background-color: rgb(229, 229, 229);
+}
+
+.addInputWrapper {
+  display: flex;
+}
+
+.teamCard {
+  background-color: white;
+  border: 1px solid rgb(213, 213, 213);
+  border-radius: 4px;
+  padding: 16px;
+  margin-block-end: 16px;
+}
+
+.removeButton {
+  background-color: transparent;
+  border: none;
+  color: red;
+  font-size: 1.5rem;
+  display: flex;
+  margin-inline-start: auto;
+  cursor: pointer;
+  transition: transform 400ms;
+  will-change: transform;
+}
+
+.removeButton:hover {
+  transition: transform 200ms;
+  transform: rotate(8deg) scale(1.1);
+}
+
+.teamHeaderWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgb(226, 226, 226);
+  margin-bottom: 16px;
+}
+
+.players li {
+  display: flex;
+  padding-block: 8px;
+}
+
+.players li:not(:last-child) {
+  border-bottom: 1px dotted rgb(226, 226, 226);
+}
+
+.createButton {
+  width: 100%;
+  padding: 8px;
+  font-size: 1.125rem;
+  border: rgb(226, 226, 226) 1px solid;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.createButton:hover {
+  background-color: rgb(229, 229, 229);
+}
+
+.error {
+  color: red;
+  background-color: rgb(245, 196, 196);
+  padding: 16px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}

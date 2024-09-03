@@ -24,13 +24,17 @@ export default async function Page({ params }: { params: { id: string } }) {
         Teams:{" "}
         {data.teams.map((team) => {
           return (
-            <p key={team.id}>
-              {team.name} - {team.coins} - {team.role}
-              Members:
-              {team.members.map((member) => {
-                return <p key={member.id}>{member.username}</p>;
-              })}
-            </p>
+            <div key={team.id}>
+              <p>
+                {team.name} - {team.coins} - {team.role}
+              </p>
+              <div>
+                Members:
+                {team.members.map((member) => {
+                  return <p key={member.id}>{member.username}</p>;
+                })}
+              </div>
+            </div>
           );
         })}
       </div>

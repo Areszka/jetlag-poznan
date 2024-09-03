@@ -1,7 +1,7 @@
-import { getBaseUrl } from "../helpers";
+import { fetchWithBaseUrl } from "../helpers";
 
 export default async function Page() {
-  const response = await fetch(`${getBaseUrl()}/api/games`);
+  const response = await fetchWithBaseUrl(`/api/games`);
 
   if (!response.ok) {
     return <p>Error game</p>;

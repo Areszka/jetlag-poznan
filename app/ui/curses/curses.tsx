@@ -1,6 +1,6 @@
 "use client";
 
-import { getBaseUrl } from "@/app/helpers";
+import { fetchWithBaseUrl } from "@/app/helpers";
 import Card from "../components/card/card";
 import React from "react";
 import styles from "./curses.module.css";
@@ -83,7 +83,7 @@ export default function Curses() {
             onClick={async () => {
               setIsLoading(true);
               if (dice.length > 0) {
-                const response = await fetch(`${getBaseUrl()}/api/curses/${dice.length}`);
+                const response = await fetchWithBaseUrl(`/api/curses/${dice.length}`);
 
                 if (response.ok) {
                   const parsedResponse = await response.json();

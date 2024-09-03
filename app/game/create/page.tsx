@@ -1,207 +1,105 @@
 "use client";
-import { getBaseUrl } from "@/app/helpers";
+
+import { fetchWithBaseUrl } from "@/app/helpers";
+import Card from "@/app/ui/components/card/card";
 import { Game, Role } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import React, { ReactNode } from "react";
+import React, { FormEvent, Reducer } from "react";
+import styles from "./page.module.css";
+import { MdOutlineErrorOutline } from "react-icons/md";
+import reducer, { GameAction, GameState } from "./reducer";
+import Teams, { InputWithAddButton, NameInput } from "./components";
 
-export type GameSettings = {
-  name: string;
-  teams: { name: string; role: Role; playersUsernames: string[] }[];
-};
-
-const INITIAL_SETTINGS = {
-  name: "",
-  teams: [],
-};
+const INITIAL_SETTINGS: GameState = { name: "", teams: [] };
 
 export default function CreateGamePage() {
-  const [game, setGame] = React.useState<GameSettings>(INITIAL_SETTINGS);
-  const [error, setError] = React.useState<string>("");
+  const [errorMessage, setErrorMessage] = React.useState<string>("");
+  const [game, dispatch] = React.useReducer<Reducer<GameState, GameAction>>(
+    reducer,
+    INITIAL_SETTINGS
+  );
+
+  React.useEffect(() => {
+    setErrorMessage("");
+  }, [game]);
 
   const router = useRouter();
 
   async function createGame() {
-    const response = await fetch(`${getBaseUrl()}/api/games`, {
+    const response = await fetchWithBaseUrl(`/api/games`, {
       method: "POST",
       body: JSON.stringify(game),
     });
 
     if (!response.ok) {
-      if (response.status === 500) {
-        setError(response.statusText);
-      } else {
-        const data = await response.json();
-        setError(data.error);
-      }
+      setErrorMessage(response.statusText);
     } else {
       const data: Game = await response.json();
       router.push(`/game/${data.id}`);
     }
   }
 
+  function handleSubmitForm(event: FormEvent) {
+    event.preventDefault();
+    createGame();
+  }
+
+  function handleAddTeam(teamName: string) {
+    if (game.teams.some((team) => team.name === teamName)) {
+      setErrorMessage(`There already is team named ${teamName}`);
+      return false;
+    } else {
+      dispatch({ type: "team_added", teamName });
+      return true;
+    }
+  }
+
+  async function handleAddMember(teamName: string, username: string) {
+    const response = await fetchWithBaseUrl(`/api/users/${username}`);
+
+    if (response.ok) {
+      dispatch({ type: "member_added", member: username, teamName });
+      return true;
+    } else {
+      setErrorMessage(response.statusText);
+      return false;
+    }
+  }
+
+  function handleRemoveTeam(teamName: string) {
+    dispatch({ type: "team_removed", teamName: teamName });
+  }
+
+  function handleChangeRole(teamName: string, role: Role) {
+    dispatch({ type: "role_set", teamName, role });
+  }
+
+  function handleRemoveMember(teamName: string, username: string) {
+    dispatch({ type: "member_removed", teamName, member: username });
+  }
+
   return (
-    <>
-      <form
-        onSubmit={async (event) => {
-          event.preventDefault();
-          createGame();
-        }}
-      >
-        <label>
-          Game name
-          <input
-            required
-            value={game.name}
-            onChange={(event) => setGame({ ...game, name: event.target.value })}
-          />
-        </label>
-        <AddTeamInput
-          label="Teams"
-          buttonLabel="Add"
-          onClick={(teamName) => {
-            if (game.teams.some((team) => team.name === teamName)) {
-              setError(`There already is team named ${teamName}`);
-            } else {
-              const newTeam = { name: teamName, role: Role.SEEKER, playersUsernames: [] };
-              setGame({ ...game, teams: [...game.teams, newTeam] });
-            }
-          }}
+    <Card title="Create New Game">
+      <form onSubmit={handleSubmitForm} className={styles.form}>
+        <NameInput
+          value={game.name}
+          onChange={(name) => dispatch({ type: "name_changed", name })}
         />
-
-        <ul>
-          {game.teams.map((team) => {
-            return (
-              <Team
-                key={team.name}
-                name={team.name}
-                onRemoveClick={() => {
-                  const nextTeams = [...game.teams].filter((val) => val.name !== team.name);
-                  setGame({ ...game, teams: nextTeams });
-                }}
-                onChangeRole={(newRole: Role) => {
-                  const nextTeams = [...game.teams].map((oldTeam) =>
-                    oldTeam.name === team.name ? { ...team, role: newRole } : oldTeam
-                  );
-                  setGame({ ...game, teams: nextTeams });
-                }}
-              >
-                <AddTeamInput
-                  label="Players"
-                  buttonLabel="Add"
-                  onClick={(username) => {
-                    const nextTeams = [...game.teams].map((t) => {
-                      if (t.name === team.name) {
-                        return { ...t, playersUsernames: [...t.playersUsernames, username] };
-                      }
-
-                      return t;
-                    });
-                    setGame({ ...game, teams: nextTeams });
-                  }}
-                />
-                <ul>
-                  {team.playersUsernames.map((username) => {
-                    return (
-                      <li key={username}>
-                        {username}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const nextTeams = [...game.teams].map((t) => {
-                              if (t.name === team.name) {
-                                const nextUserNames = [...t.playersUsernames].filter(
-                                  (val) => val !== username
-                                );
-                                return { ...t, playersUsernames: nextUserNames };
-                              }
-
-                              return t;
-                            });
-                            setGame({ ...game, teams: nextTeams });
-                          }}
-                        >
-                          Remove
-                        </button>{" "}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </Team>
-            );
-          })}
-        </ul>
-
-        <button>Create</button>
+        <InputWithAddButton label="Teams" onClick={handleAddTeam} />
+        <Teams
+          teams={game.teams}
+          removeTeam={handleRemoveTeam}
+          changeRole={handleChangeRole}
+          addMember={handleAddMember}
+          removeMember={handleRemoveMember}
+        ></Teams>
+        <button className={styles.createButton}>Create</button>
       </form>
-      {error && <h1>{error}</h1>}
-    </>
-  );
-}
-
-function AddTeamInput({
-  label,
-  buttonLabel,
-  onClick,
-}: {
-  onClick?: (value: string) => void;
-  label: string;
-  buttonLabel: string;
-}) {
-  const [input, setInput] = React.useState("");
-
-  return (
-    <>
-      <label>
-        {label}
-        <input value={input} onChange={(event) => setInput(event.target.value)} />
-      </label>
-
-      {onClick && (
-        <button
-          type="button"
-          onClick={() => {
-            if (input) {
-              onClick(input);
-              setInput("");
-            } else {
-            }
-          }}
-        >
-          {buttonLabel}
-        </button>
+      {errorMessage && (
+        <div className={styles.error}>
+          <MdOutlineErrorOutline /> {errorMessage}
+        </div>
       )}
-    </>
-  );
-}
-
-function Team({
-  name,
-  onRemoveClick,
-  onChangeRole,
-  children,
-}: {
-  name: string;
-  children: ReactNode;
-  onRemoveClick: (name: string) => void;
-  onChangeRole: (role: Role) => void;
-}) {
-  return (
-    <li>
-      {name}
-      <select onChange={(event) => onChangeRole(event.target.value as Role)}>
-        {Object.keys(Role).map((role) => {
-          return (
-            <option key={role} value={role}>
-              {role}
-            </option>
-          );
-        })}
-      </select>
-      <button type="button" onClick={() => onRemoveClick(name)}>
-        Remove
-      </button>
-      <br></br>
-      {children}
-    </li>
+    </Card>
   );
 }
