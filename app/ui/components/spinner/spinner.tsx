@@ -1,7 +1,7 @@
 import React from "react";
 import { ImSpinner8 } from "react-icons/im";
 
-import styles from "./Spinner.module.css";
+import styles from "./spinner.module.css";
 
 const Spinner = ({ color, size }: { color?: string; size?: string }) => {
   return (

@@ -3,11 +3,12 @@
 import { useRouter } from "next/navigation";
 import { getBaseUrl } from "../helpers";
 import useSWR from "swr";
+import { Game as GameType } from "@prisma/client";
 
 const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then((res) => res.json());
 
 export default function Game() {
-  const { data, isLoading, error } = useSWR(`${getBaseUrl()}/api/games`, fetcher);
+  const { data, isLoading, error } = useSWR<GameType[]>(`${getBaseUrl()}/api/games`, fetcher);
   const router = useRouter();
 
   return (
@@ -17,7 +18,7 @@ export default function Game() {
         data.map((row) => {
           return (
             <p key={row.id}>
-              {row.id} - {row.name} - {row.time_start}
+              {row.id} - {row.name}
             </p>
           );
         })}
