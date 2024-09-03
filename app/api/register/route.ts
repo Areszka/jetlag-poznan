@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import process from "process";
-import * as bcrypt from "bcrypt";
+import { hash } from "argon2";
 import { db } from "../db";
 import { createAuthCookie } from "@/app/api/auth";
 
 export async function POST(request: Request) {
   const { username, password } = await request.json();
-  const passwordHash = await bcrypt.hash(password, 10);
+  const passwordHash = await hash(password);
   if (await db.user.findFirst({ where: { username } })) {
     return NextResponse.json(
       {
