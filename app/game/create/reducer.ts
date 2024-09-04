@@ -44,6 +44,11 @@ export type GameAction =
 export interface GameState {
   name: string;
   teams: Team[];
+  questionIds: string[];
+  /**
+   * Order of the curses matters as difficulty increases from 1 to n
+   */
+  curseIds: string[];
 }
 
 export type Team = {
@@ -60,7 +65,10 @@ export default function reducer(game: GameState, action: GameAction) {
     case "member_added": {
       const nextTeams = [...game.teams].map((team) => {
         if (team.name === action.teamName) {
-          return { ...team, membersUsernames: [...team.membersUsernames, action.member] };
+          return {
+            ...team,
+            membersUsernames: [...team.membersUsernames, action.member],
+          };
         }
         return team;
       });
@@ -71,7 +79,7 @@ export default function reducer(game: GameState, action: GameAction) {
       const nextTeams = [...game.teams].map((team) => {
         if (team.name === action.teamName) {
           const nextTeamMembers = [...team.membersUsernames].filter(
-            (username) => username !== action.member
+            (username) => username !== action.member,
           );
           return { ...team, membersUsernames: nextTeamMembers };
         }
@@ -81,11 +89,17 @@ export default function reducer(game: GameState, action: GameAction) {
       return { ...game, teams: nextTeams };
     }
     case "team_added": {
-      const newTeam = { name: action.teamName, role: Role.HIDER, membersUsernames: [] };
+      const newTeam = {
+        name: action.teamName,
+        role: Role.HIDER,
+        membersUsernames: [],
+      };
       return { ...game, teams: [...game.teams, newTeam] };
     }
     case "team_removed": {
-      const nextTeams = [...game.teams].filter((team) => team.name !== action.teamName);
+      const nextTeams = [...game.teams].filter(
+        (team) => team.name !== action.teamName,
+      );
       return { ...game, teams: nextTeams };
     }
     case "role_set": {

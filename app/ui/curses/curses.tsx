@@ -6,7 +6,14 @@ import React from "react";
 import styles from "./curses.module.css";
 import { Text } from "../components/text/text";
 import { LuDices } from "react-icons/lu";
-import { CgDice1, CgDice2, CgDice3, CgDice4, CgDice5, CgDice6 } from "react-icons/cg";
+import {
+  CgDice1,
+  CgDice2,
+  CgDice3,
+  CgDice4,
+  CgDice5,
+  CgDice6,
+} from "react-icons/cg";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 const diceComponents = {
@@ -35,7 +42,9 @@ export default function Curses() {
     <Card title="Cube">
       <div className={styles.wrapper}>
         <div className={styles.textWrapper}>
-          {data === null && !isLoading && <Text type="title">No curse yet. Roll the dice!</Text>}
+          {data === null && !isLoading && (
+            <Text type="title">No curse yet. Roll the dice!</Text>
+          )}
           {isLoading && "Loading Curse.."}
           {data && !isLoading && (
             <>
@@ -51,7 +60,11 @@ export default function Curses() {
             ) : (
               dice.map((value, index) => {
                 const DiceIcon = diceComponents[value];
-                return isLoading ? <p key={index}>?</p> : <DiceIcon key={index} />;
+                return isLoading ? (
+                  <p key={index}>?</p>
+                ) : (
+                  <DiceIcon key={index} />
+                );
               })
             )}
           </div>
@@ -70,7 +83,8 @@ export default function Curses() {
             <p>{dice.length}</p>
             <button
               onClick={() => {
-                const numberOnDice = (Math.floor(Math.random() * 6) + 1) as Dots;
+                const numberOnDice = (Math.floor(Math.random() * 6) +
+                  1) as Dots;
                 setDice([...dice, numberOnDice]);
               }}
             >
@@ -83,7 +97,10 @@ export default function Curses() {
             onClick={async () => {
               setIsLoading(true);
               if (dice.length > 0) {
-                const response = await fetchWithBaseUrl(`/api/curses/${dice.length}`);
+                const teamId = ""; //TODO: add teamId
+                const response = await fetchWithBaseUrl(
+                  `/api/curses/throw/${teamId}/${dice.length}`,
+                );
 
                 if (response.ok) {
                   const parsedResponse = await response.json();

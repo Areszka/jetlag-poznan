@@ -1,14 +1,7 @@
-import { NextResponse } from "next/server";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 export async function POST() {
-  return NextResponse.json(
-    {
-      message: "Logged out",
-    },
-    {
-      headers: {
-        "Set-Cookie": `jetlag_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;`,
-      },
-    },
-  );
+  cookies().delete("jetlag_session");
+  return redirect("/login");
 }

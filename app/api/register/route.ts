@@ -18,12 +18,6 @@ export async function POST(request: Request) {
     data: { password: passwordHash, username },
   });
 
-  return NextResponse.json(
-    { username },
-    {
-      headers: {
-        "Set-Cookie": await createAuthCookie(id),
-      },
-    },
-  );
+  await createAuthCookie(id);
+  return NextResponse.json({ username });
 }

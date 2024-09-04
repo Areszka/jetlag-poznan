@@ -16,18 +16,17 @@ export async function POST(request: Request) {
       {
         error: `User not found`,
       },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
   const isCorrectPassword = await verify(user.password, password);
   if (!isCorrectPassword) {
-    return NextResponse.json(null, { status: 401, statusText: `Incorrect password` });
+    return NextResponse.json(null, {
+      status: 401,
+      statusText: `Incorrect password`,
+    });
   }
-
-  return NextResponse.json(user, {
-    headers: {
-      "Set-Cookie": await createAuthCookie(user.id),
-    },
-  });
+  await createAuthCookie(user.id);
+  return NextResponse.json(user);
 }

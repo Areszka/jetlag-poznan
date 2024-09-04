@@ -1,16 +1,48 @@
-import { db } from "../db";
-
 import { NextResponse } from "next/server";
-import { Role } from "@prisma/client";
-import { GameState } from "@/app/game/create/reducer";
+import { Game, Role } from "@prisma/client";
+import { validateSession } from "@/app/api/auth";
+import { db } from "@/app/api/db";
+
+export type GetGamesResponse = { games: Array<Game> };
 
 export async function GET() {
-  const games = await db.game.findMany();
-  return NextResponse.json(games);
+  const userId = await validateSession();
+  const games = await db.game.findMany({
+    where: {
+      rounds: {
+        some: {
+          teams: {
+            some: {
+              team: {
+                members: {
+                  some: {
+                    id: userId,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return NextResponse.json<GetGamesResponse>({ games });
 }
 
+export type PostGamesRequest = {
+  name: string;
+  teams: Array<{ name: string; role: Role; membersIds: Array<string> }>;
+  questionIds: Array<string>;
+  /**
+   * Order of the curses matters as difficulty increases from 1 to n
+   */
+  curseIds: Array<string>;
+};
+export type PostGamesResponse = { game: Game };
 export async function POST(request: Request) {
-  const body: GameState = await request.json();
+  const userId = await validateSession();
+  const body: PostGamesRequest = await request.json();
 
   if (body.teams.length < 2) {
     return NextResponse.json(null, {
@@ -22,7 +54,7 @@ export async function POST(request: Request) {
   const teamsWithNoMembers: string[] = [];
 
   body.teams.forEach((team) => {
-    if (team.membersUsernames.length < 1) {
+    if (team.membersIds.length < 1) {
       teamsWithNoMembers.push(team.name);
     }
   });
@@ -43,30 +75,51 @@ export async function POST(request: Request) {
     });
   }
 
-  const gameHasHider = body.teams.some((team) => team.role === Role.HIDER);
+  const gameHasOneHider =
+    body.teams.filter((team) => team.role === Role.HIDER).length === 1;
 
-  if (!gameHasHider) {
-    return NextResponse.json(null, { status: 400, statusText: `There must be one hider` });
+  if (!gameHasOneHider) {
+    return NextResponse.json(null, {
+      status: 400,
+      statusText: `There must be one hider`,
+    });
   }
 
   const game = await db.game.create({
     data: {
       name: body.name,
-      teams: {
-        create: body.teams.map((team) => {
-          return {
-            name: team.name,
-            role: team.role,
-            members: {
-              connect: team.membersUsernames.map((username) => {
-                return { username };
+      ownerId: userId,
+      questions: {
+        connect: body.questionIds.map((id) => {
+          return { id };
+        }),
+      },
+      curses: {
+        create: body.curseIds.map((id, index) => {
+          return { difficulty: index + 1, curse: { connect: { id } } };
+        }),
+      },
+      rounds: {
+        create: [
+          {
+            teams: {
+              create: body.teams.map((team) => {
+                return {
+                  name: team.name,
+                  role: team.role,
+                  members: {
+                    connect: team.membersIds.map((id) => {
+                      return { id };
+                    }),
+                  },
+                };
               }),
             },
-          };
-        }),
+          },
+        ],
       },
     },
   });
 
-  return NextResponse.json(game);
+  return NextResponse.json<PostGamesResponse>({ game });
 }

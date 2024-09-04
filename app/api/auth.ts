@@ -1,15 +1,24 @@
 import { redirect } from "next/navigation";
 import { decrypt, encrypt } from "./session";
+import { cookies } from "next/headers";
 
 const WEEK_IN_SECONDS = 7 * 24 * 60 * 60;
 
 export async function createAuthCookie(userId: string) {
   const session = await encrypt({ userId });
-
-  return `jetlag_session=${session}; Max-Age=${WEEK_IN_SECONDS}; Path=/; HttpOnly; SameSite=Strict; ${process.env.NODE_ENV === "production" ? "Secure" : ""}`;
+  cookies().set({
+    name: "jetlag_session",
+    value: session,
+    maxAge: WEEK_IN_SECONDS,
+    path: "/",
+    sameSite: "strict",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+  });
 }
 
-export async function validateSession(session: string | undefined) {
+export async function validateSession() {
+  const session = cookies().get("jetlag_session")?.value;
   const sessionPayload = await decrypt(session);
 
   const userId = sessionPayload?.userId;
@@ -19,20 +28,4 @@ export async function validateSession(session: string | undefined) {
   } else {
     return userId;
   }
-
-  // return userId;
-}
-
-export function getSessionCookie(request: Request) {
-  const cookieHeader = request.headers.get("Cookie");
-  if (!cookieHeader) {
-    return undefined;
-  }
-  const cookies = cookieHeader.split(";").map((cookie) => cookie.trim());
-  const sessionCookie = cookies.find((cookie) => cookie.startsWith("jetlag_session="));
-  if (!sessionCookie) {
-    return undefined;
-  }
-  const session = sessionCookie.replace("jetlag_session=", "");
-  return session;
 }

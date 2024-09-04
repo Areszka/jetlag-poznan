@@ -4,17 +4,20 @@ import styles from "./page.module.css";
 import Curses from "./ui/curses/curses";
 import Game from "./ui/game";
 import { Navigation } from "./ui/navigation";
-import { cookies } from "next/headers";
 import { validateSession } from "./api/auth";
+import { db } from "@/app/api/db";
 
 export default async function Page(): Promise<JSX.Element> {
-  const jetlagSession = cookies().get("jetlag_session")?.value;
-
-  const userId = await validateSession(jetlagSession);
+  const userId = await validateSession();
+  const user = await db.user.findFirstOrThrow({
+    where: {
+      id: userId,
+    },
+  });
 
   return (
     <>
-      <Navigation userId={userId} />
+      <Navigation username={user.username} />
       <div className={styles.pageWrapper}>
         <Game />
         <Curses />

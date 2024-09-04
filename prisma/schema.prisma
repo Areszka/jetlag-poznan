@@ -8,56 +8,117 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
-  username String @unique
-  password String
-  teams    Team[]
+  id        String     @id @default(uuid())
+  username  String     @unique
+  password  String
+  teams     Team[]
+  curses    Curse[]
+  questions Question[]
+  Game      Game[]
 }
 
 model Game {
-  id         String     @id @default(uuid())
-  name       String     @db.VarChar(255)
-  start_time DateTime?  @db.Timestamp(6)
-  end_time   DateTime?  @db.Timestamp(6)
-  teams      Team[]
-  questions  Question[]
-  curses     Curse[]
+  id        String      @id @default(uuid())
+  name      String
+  questions Question[]
+  curses    GameCurse[]
+  rounds    Round[]
+  ownerId   String
+  owner     User        @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+}
+
+model Round {
+  id         String              @id @default(uuid())
+  game       Game                @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId     String
+  start_time DateTime?
+  end_time   DateTime?
+  curses     TeamRoundCurse[]
+  questions  TeamRoundQuestion[]
+  teams      TeamRound[]
 }
 
 model Team {
-  id        String     @id @default(uuid())
+  id        String              @id @default(uuid())
   name      String
-  coins     Int        @default(0)
-  role      Role
+  coins     Int                 @default(0)
   members   User[]
-  game      Game       @relation(fields: [gameId], references: [id])
-  gameId    String
-  questions Question[]
-  curses    Curse[]
+  curses    TeamRoundCurse[]
+  questions TeamRoundQuestion[]
+  rounds    TeamRound[]
+}
+
+model TeamRound {
+  teamId  String
+  roundId String
+  team    Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  round   Round  @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  role    Role
+
+  @@id([teamId, roundId])
 }
 
 model Question {
-  id       String    @id @default(uuid())
-  content  String
-  type     String    @db.VarChar(50)
-  cost     Int
-  details  String?
-  asked_at DateTime?
-  answer   String?
-  teams    Team[]
-  games    Game[]
+  id      String              @id @default(uuid())
+  content String
+  type    String
+  cost    Int
+  details String?
+  teams   TeamRoundQuestion[]
+  games   Game[]
+  ownerId String
+  owner   User                @relation(fields: [ownerId], references: [id], onDelete: Restrict)
 }
 
 model Curse {
-  id         String @id @default(uuid())
-  difficulty Int
-  name       String @db.VarChar(50)
-  effect     String @db.VarChar(255)
-  teams      Team[]
-  games      Game[]
+  id                String           @id @default(uuid())
+  defaultDifficulty Int?
+  name              String
+  effect            String
+  rounds            TeamRoundCurse[]
+  ownerId           String
+  owner             User             @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  games             GameCurse[]
 }
 
 enum Role {
   HIDER
   SEEKER
+}
+
+model GameCurse {
+  gameId     String
+  curseId    String
+  game       Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  curse      Curse  @relation(fields: [curseId], references: [id], onDelete: Cascade)
+  difficulty Int
+
+  @@id([gameId, curseId])
+}
+
+model TeamRoundCurse {
+  teamId     String
+  curseId    String
+  roundId    String
+  team       Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  curse      Curse     @relation(fields: [curseId], references: [id], onDelete: Cascade)
+  round      Round     @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  vetoed_at  DateTime?
+  created_at DateTime  @default(now())
+
+  @@id([roundId, curseId, teamId])
+}
+
+model TeamRoundQuestion {
+  teamId      String
+  questionId  String
+  roundId     String
+  team        Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  round       Round     @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  answered_at DateTime?
+  answer      String?
+  created_at  DateTime  @default(now())
+
+  @@id([teamId, questionId, roundId])
 }

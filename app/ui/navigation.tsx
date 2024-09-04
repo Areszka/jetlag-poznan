@@ -1,33 +1,21 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import styles from "@/app/page.module.css";
+import styles from "./navigation.module.css";
+import { Button } from "@/app/ui/components/button/button";
 
-export function Navigation({ userId }: { userId: string }) {
-  const router = useRouter();
+export function Navigation({ username }: { username: string }) {
   return (
-    <nav className={styles.navigation}>
-      {userId}
-      <ul>
-        <li>
-          <Link href="/">Home</Link>
-        </li>
-        <button
-          type="button"
-          onClick={async () => {
-            await fetch("/api/logout", {
-              method: "POST",
-            }).then((res) => {
-              if (res.ok) {
-                router.push("/login");
-              }
-            });
-          }}
-        >
-          Logout
-        </button>
-      </ul>
-    </nav>
+    <div className={styles.navigation}>
+      <nav>
+        <ul>
+          <li>
+            <Link href="/">Home</Link>
+          </li>
+        </ul>
+      </nav>
+      <form method="post" action="/api/logout" className={styles.loggedInUser}>
+        <p>Logged in as: {username}</p>
+        <Button>Logout</Button>
+      </form>
+    </div>
   );
 }
