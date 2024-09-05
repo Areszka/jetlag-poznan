@@ -1,3 +1,5 @@
+import { JSX } from "react";
+import { headers } from "next/headers";
 import { fetchWithBaseUrl } from "../../helpers";
 import Card from "../components/card/card";
 import { Text } from "../components/text/text";
@@ -5,7 +7,14 @@ import Tag from "../components/tag/tag";
 import styles from "./questions.module.css";
 
 export async function Questions(): Promise<JSX.Element> {
-  const response = await fetchWithBaseUrl(`/api/questions`);
+  const headersList = headers();
+  const cookieHeader = headersList.get("cookie") || "";
+
+  const response = await fetchWithBaseUrl(`/api/questions`, {
+    headers: {
+      Cookie: cookieHeader, // Forward cookies here
+    },
+  });
 
   if (!response.ok) {
     return <p>Error questions</p>;
@@ -20,9 +29,12 @@ export async function Questions(): Promise<JSX.Element> {
             <li key={question.id} className={styles.questionWrapper}>
               <div className={styles.question}>
                 <Text type="title">{question.content}</Text>
-                <Tag>{question.cost}</Tag> <Tag hue={HUES[question.type]}>{question.type}</Tag>
+                <Tag>{question.cost}</Tag>{" "}
+                <Tag hue={HUES[question.type]}>{question.type}</Tag>
               </div>
-              {question.details && <Text type="description">{question.details}</Text>}
+              {question.details && (
+                <Text type="description">{question.details}</Text>
+              )}
             </li>
           );
         })}
