@@ -1,5 +1,6 @@
 import { JSX } from "react";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { fetchWithBaseUrl } from "../../helpers";
 import Card from "../components/card/card";
 import { Text } from "../components/text/text";
@@ -23,6 +24,7 @@ export async function Questions(): Promise<JSX.Element> {
   const data = await response.json();
   return (
     <Card title="Questions">
+      <Link href="/questions/new">Add new question</Link>
       <ul>
         {data.questions.map((question: any) => {
           return (

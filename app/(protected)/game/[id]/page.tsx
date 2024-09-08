@@ -1,5 +1,5 @@
 import { Game, Team, User } from "@prisma/client";
-import { fetchWithBaseUrl } from "../../helpers";
+import { fetchWithBaseUrl } from "../../../helpers";
 
 type GameResponse = Game & {
   teams: Array<
