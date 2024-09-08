@@ -9,8 +9,9 @@ import styles from "./page.module.css";
 import { MdOutlineErrorOutline } from "react-icons/md";
 import reducer, { GameAction, GameState } from "./reducer";
 import Teams, { InputWithAddButton, NameInput } from "./components";
+import { PostGamesRequest } from "@/app/api/games/route";
 
-const INITIAL_SETTINGS: GameState = { name: "", teams: [], questionIds: [], curseIds: [] };
+const INITIAL_SETTINGS: GameState = { name: "", teams: [], questionIds: [], curses: [] };
 
 export default function CreateGamePage() {
   const [errorMessage, setErrorMessage] = React.useState<string>("");
@@ -19,18 +20,23 @@ export default function CreateGamePage() {
     INITIAL_SETTINGS
   );
   const [questions, setQuestions] = React.useState<Question[] | null>(null);
-
   React.useEffect(() => {
     setErrorMessage("");
   }, [game]);
 
   React.useEffect(() => {
     const getData = async () => {
-      const response = await fetchWithBaseUrl(`/api/questions`);
+      const questionsResponse = await fetchWithBaseUrl(`/api/questions`);
+      const cursesResponse = await fetchWithBaseUrl(`/api/curses`);
 
-      if (response.ok) {
-        const data = await response.json();
+      if (questionsResponse.ok) {
+        const data = await questionsResponse.json();
         setQuestions(data.questions);
+      }
+
+      if (cursesResponse.ok) {
+        const data = await cursesResponse.json();
+        dispatch({ type: "curses_initialized", curses: data.curses });
       }
     };
     getData();
@@ -39,9 +45,16 @@ export default function CreateGamePage() {
   const router = useRouter();
 
   async function createGame() {
+    const requestData: PostGamesRequest = {
+      name: game.name,
+      questionIds: game.questionIds,
+      teams: game.teams,
+      curseIds: game.curses.map((curse) => curse.id),
+    };
+
     const response = await fetchWithBaseUrl(`/api/games`, {
       method: "POST",
-      body: JSON.stringify(game),
+      body: JSON.stringify(requestData),
     });
 
     if (!response.ok) {
@@ -92,6 +105,14 @@ export default function CreateGamePage() {
     dispatch({ type: "member_removed", teamName, userId });
   }
 
+  function moveCurseUp(curseId: string) {
+    dispatch({ type: "curse_difficulty_decreased", curseId });
+  }
+
+  function moveCurseDown(curseId: string) {
+    dispatch({ type: "curse_difficulty_increased", curseId });
+  }
+
   return (
     <Card title="Create New Game">
       <form onSubmit={handleSubmitForm} className={styles.form}>
@@ -132,6 +153,18 @@ export default function CreateGamePage() {
               );
             })}
         </fieldset>
+
+        <ol>
+          {game.curses.map((curse) => {
+            return (
+              <li key={curse.id}>
+                <button onClick={() => moveCurseUp(curse.id)}>up</button>
+                <button onClick={() => moveCurseDown(curse.id)}>down</button>
+                {curse.name}
+              </li>
+            );
+          })}
+        </ol>
         <button className={styles.createButton}>Create</button>
       </form>
       {errorMessage && (

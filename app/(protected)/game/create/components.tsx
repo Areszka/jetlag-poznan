@@ -48,7 +48,7 @@ export default function Teams({
               onClick={async (username: string) => await addMember(team.name, username)}
             />
             <Members
-              members={team.users}
+              members={team.members}
               deleteMember={(userId) => removeMember(team.name, userId)}
             />
           </TeamItem>

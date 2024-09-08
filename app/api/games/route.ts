@@ -85,6 +85,7 @@ export async function POST(request: Request) {
     });
   }
 
+  console.log("BEFORE");
   const game = await db.game.create({
     data: {
       name: body.name,
@@ -120,6 +121,9 @@ export async function POST(request: Request) {
       },
     },
   });
+
+  console.log("AFTER");
+  console.log(game);
 
   return NextResponse.json<PostGamesResponse>({ game });
 }

@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { Curse, Role } from "@prisma/client";
 
 type ChangeNameAction = {
   type: "name_changed";
@@ -43,6 +43,21 @@ type AddQuestionAction = {
   questionId: string;
 };
 
+type InitializeCursesAction = {
+  type: "curses_initialized";
+  curses: Curse[];
+};
+
+type IncreaseDifficultyAction = {
+  type: "curse_difficulty_increased";
+  curseId: string;
+};
+
+type DecreaseDifficultyAction = {
+  type: "curse_difficulty_decreased";
+  curseId: string;
+};
+
 export type GameAction =
   | ChangeNameAction
   | AddTeamAction
@@ -51,7 +66,10 @@ export type GameAction =
   | RemoveMemberAction
   | SetRoleAction
   | AddQuestionAction
-  | RemoveQuestionAction;
+  | RemoveQuestionAction
+  | InitializeCursesAction
+  | IncreaseDifficultyAction
+  | DecreaseDifficultyAction;
 
 export interface GameState {
   name: string;
@@ -60,13 +78,13 @@ export interface GameState {
   /**
    * Order of the throw-curse matters as difficulty increases from 1 to n
    */
-  curseIds: string[];
+  curses: Curse[];
 }
 
 export type Team = {
   name: string;
   role: Role;
-  users: User[];
+  members: User[];
 };
 
 export type User = { id: string; username: string };
@@ -80,7 +98,7 @@ export default function reducer(game: GameState, action: GameAction) {
         if (team.name === action.teamName) {
           return {
             ...team,
-            users: [...team.users, action.user],
+            members: [...team.members, action.user],
           };
         }
         return team;
@@ -91,8 +109,8 @@ export default function reducer(game: GameState, action: GameAction) {
     case "member_removed": {
       const nextTeams = [...game.teams].map((team) => {
         if (team.name === action.teamName) {
-          const nextTeamMembers = [...team.users].filter(({ id }) => id !== action.userId);
-          return { ...team, users: nextTeamMembers };
+          const nextTeamMembers = [...team.members].filter(({ id }) => id !== action.userId);
+          return { ...team, members: nextTeamMembers };
         }
         return team;
       });
@@ -103,7 +121,7 @@ export default function reducer(game: GameState, action: GameAction) {
       const newTeam: Team = {
         name: action.teamName,
         role: Role.HIDER,
-        users: [],
+        members: [],
       };
       return { ...game, teams: [...game.teams, newTeam] };
     }
@@ -129,6 +147,35 @@ export default function reducer(game: GameState, action: GameAction) {
       );
 
       return { ...game, questionIds: nextQuestionIds };
+    }
+    case "curses_initialized": {
+      return { ...game, curses: action.curses };
+    }
+    case "curse_difficulty_decreased": {
+      let nextCurses = [...game.curses];
+      const curseIndex = nextCurses.findIndex((curse) => curse.id === action.curseId);
+
+      if (curseIndex < 1) {
+        return game;
+      }
+
+      nextCurses[curseIndex] = game.curses[curseIndex - 1];
+      nextCurses[curseIndex - 1] = game.curses[curseIndex];
+
+      return { ...game, curses: nextCurses };
+    }
+    case "curse_difficulty_increased": {
+      let nextCurses = [...game.curses];
+      const curseIndex = nextCurses.findIndex((curse) => curse.id === action.curseId);
+
+      if (curseIndex === game.curses.length - 1) {
+        return game;
+      }
+
+      nextCurses[curseIndex] = game.curses[curseIndex + 1];
+      nextCurses[curseIndex + 1] = game.curses[curseIndex];
+
+      return { ...game, curses: nextCurses };
     }
   }
 }
