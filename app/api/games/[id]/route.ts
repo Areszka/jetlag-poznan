@@ -1,15 +1,47 @@
 import { db } from "../../db";
 import { NextResponse } from "next/server";
-import { Game } from "@prisma/client";
+import { Game, Round, Team, TeamRound, User } from "@prisma/client";
 import { validateSession } from "@/app/api/auth";
 
-export type GetGameResponse = { game: Game };
+export type GetGameResponse = {
+  game: Game & {
+    rounds: Array<
+      Round & {
+        teams: Array<
+          TeamRound & {
+            team: Team & { members: Array<Pick<User, "username" | "id">> };
+          }
+        >;
+      }
+    >;
+  };
+};
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const userId = await validateSession();
   const game = await db.game.findFirstOrThrow({
     where: {
       id: params.id,
       ownerId: userId,
+    },
+    include: {
+      rounds: {
+        include: {
+          teams: {
+            include: {
+              team: {
+                include: {
+                  members: {
+                    select: {
+                      username: true,
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
 

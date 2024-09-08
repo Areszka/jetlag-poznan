@@ -46,9 +46,12 @@ export async function POST(
   const costPerDice = 50;
   const cost = costPerDice * numberOfDice;
 
-  const team = await db.team.update({
+  const team = await db.teamRound.update({
     where: {
-      id: params.targetTeamId,
+      teamId_roundId: {
+        roundId: lastRound.roundId,
+        teamId: params.targetTeamId,
+      },
       coins: {
         gte: cost,
       },

@@ -1,37 +1,52 @@
-import { Game, Team, User } from "@prisma/client";
 import { fetchWithBaseUrl } from "../../../helpers";
-
-type GameResponse = Game & {
-  teams: Array<
-    Team & {
-      members: User[];
-    }
-  >;
-};
+import { GetGameResponse } from "@/app/api/games/[id]/route";
+import { headers } from "next/headers";
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const response = await fetchWithBaseUrl(`/api/games/${params.id}`);
+  const headersList = headers();
+  const cookieHeader = headersList.get("cookie") || "";
+
+  const response = await fetchWithBaseUrl(`/api/games/${params.id}`, {
+    headers: {
+      Cookie: cookieHeader, // Forward cookies here
+    },
+  });
 
   if (!response.ok) {
     return <p>Error</p>;
   }
 
-  const data: GameResponse = await response.json();
+  const data: GetGameResponse = await response.json();
   return (
     <>
-      <h1>Game name: {data.name}</h1>
+      <h1>Game name: {data.game.name}</h1>
       <div>
-        Teams:{" "}
-        {data.teams.map((team) => {
+        Rounds:
+        {data.game.rounds.map((round, index) => {
+          const startTime = round.start_time
+            ? new Date(round.start_time)
+            : undefined;
+          const endTime = round.end_time ? new Date(round.end_time) : undefined;
           return (
-            <div key={team.id}>
+            <div key={round.id}>
               <p>
-                {team.name} - {team.coins} - {team.role}
+                Round {index + 1}
+                {startTime && <span>{startTime.toLocaleString()}</span>}
+                {endTime && <span> - {endTime.toLocaleString()}</span>}
               </p>
               <div>
-                Members:
-                {team.members.map((member) => {
-                  return <p key={member.id}>{member.username}</p>;
+                Teams:
+                {round.teams.map((team) => {
+                  return (
+                    <div key={team.team.id}>
+                      {team.team.name} - {team.coins} - {team.role}
+                      <ul>
+                        {team.team.members.map((member) => {
+                          return <li key={member.id}>{member.username}</li>;
+                        })}
+                      </ul>
+                    </div>
+                  );
                 })}
               </div>
             </div>

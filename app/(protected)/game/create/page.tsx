@@ -9,15 +9,20 @@ import styles from "./page.module.css";
 import { MdOutlineErrorOutline } from "react-icons/md";
 import reducer, { GameAction, GameState } from "./reducer";
 import Teams, { InputWithAddButton, NameInput } from "./components";
-import { PostGamesRequest } from "@/app/api/games/route";
+import { PostGamesRequest, PostGamesResponse } from "@/app/api/games/route";
 
-const INITIAL_SETTINGS: GameState = { name: "", teams: [], questionIds: [], curses: [] };
+const INITIAL_SETTINGS: GameState = {
+  name: "",
+  teams: [],
+  questionIds: [],
+  curses: [],
+};
 
 export default function CreateGamePage() {
   const [errorMessage, setErrorMessage] = React.useState<string>("");
   const [game, dispatch] = React.useReducer<Reducer<GameState, GameAction>>(
     reducer,
-    INITIAL_SETTINGS
+    INITIAL_SETTINGS,
   );
   const [questions, setQuestions] = React.useState<Question[] | null>(null);
   React.useEffect(() => {
@@ -60,8 +65,8 @@ export default function CreateGamePage() {
     if (!response.ok) {
       setErrorMessage(response.statusText);
     } else {
-      const data: Game = await response.json();
-      router.push(`/game/${data.id}`);
+      const data: PostGamesResponse = await response.json();
+      router.push(`/game/${data.game.id}`);
     }
   }
 
@@ -140,9 +145,15 @@ export default function CreateGamePage() {
                     checked={game.questionIds.includes(question.id)}
                     onChange={() => {
                       if (game.questionIds.includes(question.id)) {
-                        dispatch({ type: "question_removed", questionId: question.id });
+                        dispatch({
+                          type: "question_removed",
+                          questionId: question.id,
+                        });
                       } else {
-                        dispatch({ type: "question_added", questionId: question.id });
+                        dispatch({
+                          type: "question_added",
+                          questionId: question.id,
+                        });
                       }
                     }}
                   />

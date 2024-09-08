@@ -41,7 +41,6 @@ model Round {
 model Team {
   id        String              @id @default(uuid())
   name      String
-  coins     Int                 @default(0)
   members   User[]
   curses    TeamRoundCurse[]
   questions TeamRoundQuestion[]
@@ -53,6 +52,7 @@ model TeamRound {
   roundId String
   team    Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
   round   Round  @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  coins   Int    @default(0)
   role    Role
 
   @@id([teamId, roundId])

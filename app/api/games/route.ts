@@ -76,7 +76,8 @@ export async function POST(request: Request) {
     });
   }
 
-  const gameHasOneHider = body.teams.filter((team) => team.role === Role.HIDER).length === 1;
+  const gameHasOneHider =
+    body.teams.filter((team) => team.role === Role.HIDER).length === 1;
 
   if (!gameHasOneHider) {
     return NextResponse.json(null, {
@@ -85,7 +86,6 @@ export async function POST(request: Request) {
     });
   }
 
-  console.log("BEFORE");
   const game = await db.game.create({
     data: {
       name: body.name,
@@ -106,12 +106,16 @@ export async function POST(request: Request) {
             teams: {
               create: body.teams.map((team) => {
                 return {
-                  name: team.name,
                   role: team.role,
-                  members: {
-                    connect: team.members.map(({ id }) => {
-                      return { id };
-                    }),
+                  team: {
+                    create: {
+                      name: team.name,
+                      members: {
+                        connect: team.members.map(({ id }) => {
+                          return { id };
+                        }),
+                      },
+                    },
                   },
                 };
               }),
@@ -121,9 +125,6 @@ export async function POST(request: Request) {
       },
     },
   });
-
-  console.log("AFTER");
-  console.log(game);
 
   return NextResponse.json<PostGamesResponse>({ game });
 }
