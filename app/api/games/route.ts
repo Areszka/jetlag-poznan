@@ -36,7 +36,7 @@ export type PostGamesRequest = {
   teams: Array<{ name: string; role: Role; members: Array<User> }>;
   questionIds: Array<string>;
   /**
-   * Order of the curses matters as difficulty increases from 1 to n
+   * Order of the throw-curse matters as difficulty increases from 1 to n
    */
   curseIds: Array<string>;
 };

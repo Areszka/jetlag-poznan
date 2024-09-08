@@ -1,121 +1,45 @@
-"use client";
-
-import { fetchWithBaseUrl } from "@/app/helpers";
+import { JSX } from "react";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { fetchWithBaseUrl } from "../../helpers";
 import Card from "../components/card/card";
-import React from "react";
-import styles from "./curses.module.css";
 import { Text } from "../components/text/text";
-import { LuDices } from "react-icons/lu";
-import {
-  CgDice1,
-  CgDice2,
-  CgDice3,
-  CgDice4,
-  CgDice5,
-  CgDice6,
-} from "react-icons/cg";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import styles from "./curses.module.css";
+import { GetCursesResponse } from "@/app/api/curses/route";
 
-const diceComponents = {
-  1: CgDice1,
-  2: CgDice2,
-  3: CgDice3,
-  4: CgDice4,
-  5: CgDice5,
-  6: CgDice6,
-};
+export async function Curses(): Promise<JSX.Element> {
+  const headersList = headers();
+  const cookieHeader = headersList.get("cookie") || "";
 
-type CurseType = {
-  id: number;
-  name: string;
-  effect: string;
-};
+  const response = await fetchWithBaseUrl(`/api/curses`, {
+    headers: {
+      Cookie: cookieHeader, // Forward cookies here
+    },
+  });
 
-type Dots = 1 | 2 | 3 | 4 | 5 | 6;
+  if (!response.ok) {
+    return <p>Error questions</p>;
+  }
 
-export default function Curses() {
-  const [data, setData] = React.useState<CurseType | null>(null);
-  const [isLoading, setIsLoading] = React.useState<Boolean>(false);
-  const [dice, setDice] = React.useState<Array<Dots>>([1, 4]);
-
+  const data = (await response.json()) as GetCursesResponse;
   return (
-    <Card title="Cube">
-      <div className={styles.wrapper}>
-        <div className={styles.textWrapper}>
-          {data === null && !isLoading && (
-            <Text type="title">No curse yet. Roll the dice!</Text>
-          )}
-          {isLoading && "Loading Curse.."}
-          {data && !isLoading && (
-            <>
-              <Text type="title">{data.name}</Text>
-              <Text type="description">{data.effect}</Text>
-            </>
-          )}
-        </div>
-        <div className={styles.buttonsWrapper}>
-          <div className={styles.diceWrapper}>
-            {isLoading ? (
-              <p>?</p>
-            ) : (
-              dice.map((value, index) => {
-                const DiceIcon = diceComponents[value];
-                return isLoading ? (
-                  <p key={index}>?</p>
-                ) : (
-                  <DiceIcon key={index} />
-                );
-              })
-            )}
-          </div>
-
-          <div className={styles.diceButtons}>
-            <button
-              onClick={() => {
-                const nextDices = [...dice];
-                nextDices.pop();
-
-                setDice(nextDices);
-              }}
-            >
-              <IoIosArrowDown />
-            </button>
-            <p>{dice.length}</p>
-            <button
-              onClick={() => {
-                const numberOnDice = (Math.floor(Math.random() * 6) +
-                  1) as Dots;
-                setDice([...dice, numberOnDice]);
-              }}
-            >
-              <IoIosArrowUp />
-            </button>
-          </div>
-
-          <button
-            disabled={dice.length <= 0}
-            onClick={async () => {
-              setIsLoading(true);
-              if (dice.length > 0) {
-                const teamId = ""; //TODO: add teamId
-                const response = await fetchWithBaseUrl(
-                  `/api/curses/throw/${teamId}/${dice.length}`,
-                );
-
-                if (response.ok) {
-                  const parsedResponse = await response.json();
-                  setData(parsedResponse.curse);
-                  setDice(parsedResponse.dice);
-                  setIsLoading(false);
-                }
-              }
-            }}
-          >
-            <LuDices />
-            Roll the dice
-          </button>
-        </div>
-      </div>
+    <Card title="Curses">
+      <Link href="/curses/new">Add new curse</Link>
+      <ul>
+        {data.curses.map((curse) => {
+          return (
+            <li key={curse.id} className={styles.curseWrapper}>
+              <Link href={`/curses/${curse.id}`}>
+                <div className={styles.curse}>
+                  <Text type="title">{curse.name}</Text>
+                  <span>{curse.defaultDifficulty}</span>
+                </div>
+                <Text type="description">{curse.effect}</Text>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
     </Card>
   );
 }

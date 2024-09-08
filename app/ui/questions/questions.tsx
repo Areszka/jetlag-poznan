@@ -23,20 +23,22 @@ export async function Questions(): Promise<JSX.Element> {
 
   const data = await response.json();
   return (
-    <Card title="Questions">
+    <Card title="Curses">
       <Link href="/questions/new">Add new question</Link>
       <ul>
         {data.questions.map((question: any) => {
           return (
             <li key={question.id} className={styles.questionWrapper}>
-              <div className={styles.question}>
-                <Text type="title">{question.content}</Text>
-                <Tag>{question.cost}</Tag>{" "}
-                <Tag hue={HUES[question.type]}>{question.type}</Tag>
-              </div>
-              {question.details && (
-                <Text type="description">{question.details}</Text>
-              )}
+              <Link href={`/questions/${question.id}`}>
+                <div className={styles.question}>
+                  <Text type="title">{question.content}</Text>
+                  <Tag>{question.cost}</Tag>{" "}
+                  <Tag hue={HUES[question.type]}>{question.type}</Tag>
+                </div>
+                {question.details && (
+                  <Text type="description">{question.details}</Text>
+                )}
+              </Link>
             </li>
           );
         })}

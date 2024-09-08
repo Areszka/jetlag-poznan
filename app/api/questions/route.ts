@@ -18,7 +18,7 @@ export async function GET() {
 
 export type PostQuestionsRequest = {
   content: string;
-  details: string;
+  details?: string | null;
   cost: number;
   type: string;
 };

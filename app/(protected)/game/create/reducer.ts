@@ -58,7 +58,7 @@ export interface GameState {
   teams: Team[];
   questionIds: string[];
   /**
-   * Order of the curses matters as difficulty increases from 1 to n
+   * Order of the throw-curse matters as difficulty increases from 1 to n
    */
   curseIds: string[];
 }
