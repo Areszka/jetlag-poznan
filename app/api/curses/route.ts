@@ -19,7 +19,7 @@ export async function GET() {
 export type PostCursesRequest = {
   name: string;
   effect: string;
-  defaultDifficulty: number;
+  defaultDifficulty?: number | null;
 };
 export type PostCursesResponse = { curse: Curse };
 export async function POST(request: Request) {

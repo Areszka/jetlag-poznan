@@ -2,6 +2,7 @@ import { Question } from "@prisma/client";
 import { validateSession } from "@/app/api/auth";
 import { db } from "@/app/api/db";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export type PutQuestionsRequest = {
   content: string;
