@@ -7,7 +7,8 @@ export type ThrowCurseResponse = {
   curse: TeamRoundCurse;
   dice: number[];
 };
-export async function GET(
+
+export async function POST(
   _request: Request,
   { params }: { params: { numberOfDice: string; targetTeamId: string } },
 ) {
@@ -82,10 +83,31 @@ export async function GET(
     );
   }
 
+  const alreadyPlayedCurses = await db.teamRoundCurse.findMany({
+    where: {
+      roundId: lastRound.roundId,
+      teamId: params.targetTeamId,
+    },
+  });
+
+  const alreadyPlayedCurseDifficulties = await db.gameCurse.findMany({
+    where: {
+      curseId: {
+        in: alreadyPlayedCurses.map((curse) => curse.curseId),
+      },
+    },
+  });
+
+  const computedNextCurseDifficulty = getNextCurseDifficulty(
+    nextCurseDifficulty,
+    alreadyPlayedCurseDifficulties.map((curse) => curse.difficulty),
+    maxCurseDifficulty,
+  );
+
   const gameCurse = await db.gameCurse.findFirstOrThrow({
     where: {
       gameId: game.id,
-      difficulty: nextCurseDifficulty,
+      difficulty: computedNextCurseDifficulty,
     },
     include: {
       curse: true,
@@ -115,4 +137,42 @@ function parseNumberOfDice(input: string) {
     throw new Error(`Number of dice must be greater than 0`);
   }
   return inputNumber;
+}
+
+/**
+ * Returns the next curse difficulty based on the target curse difficulty and the previous curse difficulties.
+ * @example
+ * getNextCurseDifficulty(1, [1, 2, 3],10); // 4
+ * getNextCurseDifficulty(2, [2], 10); // 1
+ * getNextCurseDifficulty(3, [2, 3], 10); // 4
+ * getNextCurseDifficulty(10, [], 10); // 10
+ * getNextCurseDifficulty(10, [9, 10], 10); // 8
+ */
+function getNextCurseDifficulty(
+  targetCurseDifficulty: number,
+  previousCurseDifficulties: number[],
+  maxCurseDifficulty: number,
+) {
+  const cursesToTry = [targetCurseDifficulty];
+
+  for (let i = 1; i <= maxCurseDifficulty; i++) {
+    if (targetCurseDifficulty - i > 0) {
+      cursesToTry.push(targetCurseDifficulty - i);
+    }
+    if (targetCurseDifficulty + i <= maxCurseDifficulty) {
+      cursesToTry.push(targetCurseDifficulty + i);
+    }
+  }
+
+  const nextCurseDifficulty = cursesToTry.find(
+    (curse) => !previousCurseDifficulties.includes(curse),
+  );
+
+  if (!nextCurseDifficulty) {
+    throw new Error(
+      `Could not find a curse difficulty that has not been played yet`,
+    );
+  }
+
+  return nextCurseDifficulty;
 }

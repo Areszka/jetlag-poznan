@@ -104,6 +104,7 @@ model TeamRoundCurse {
   curse      Curse     @relation(fields: [curseId], references: [id], onDelete: Cascade)
   round      Round     @relation(fields: [roundId], references: [id], onDelete: Cascade)
   vetoed_at  DateTime?
+  lifted_at  DateTime?
   created_at DateTime  @default(now())
 
   @@id([roundId, curseId, teamId])

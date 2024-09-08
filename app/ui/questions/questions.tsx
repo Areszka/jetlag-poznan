@@ -23,7 +23,7 @@ export async function Questions(): Promise<JSX.Element> {
 
   const data = await response.json();
   return (
-    <Card title="Curses">
+    <Card title="Questions">
       <Link href="/questions/new">Add new question</Link>
       <ul>
         {data.questions.map((question: any) => {

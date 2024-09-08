@@ -100,6 +100,7 @@ export default function ThrowCurse() {
                 const teamId = ""; //TODO: add teamId
                 const response = await fetchWithBaseUrl(
                   `/api/curses/throw/${teamId}/${dice.length}`,
+                  { method: "POST" },
                 );
 
                 if (response.ok) {
