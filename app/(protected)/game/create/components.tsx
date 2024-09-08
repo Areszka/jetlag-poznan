@@ -1,6 +1,6 @@
 import { MdDeleteOutline } from "react-icons/md";
 import styles from "./page.module.css";
-import { Team } from "./reducer";
+import { Team, User } from "./reducer";
 import { Role } from "@prisma/client";
 import React, { ReactNode } from "react";
 import Spinner from "@/app/ui/components/spinner/spinner";
@@ -31,7 +31,7 @@ export default function Teams({
   removeTeam: (name: string) => void;
   changeRole: (teamName: string, role: Role) => void;
   addMember: (teamName: string, username: string) => boolean | Promise<boolean>;
-  removeMember: (teamName: string, username: string) => void;
+  removeMember: (teamName: string, userId: string) => void;
 }) {
   return (
     <ul>
@@ -48,8 +48,8 @@ export default function Teams({
               onClick={async (username: string) => await addMember(team.name, username)}
             />
             <Members
-              members={team.membersUsernames}
-              deleteMember={(username) => removeMember(team.name, username)}
+              members={team.users}
+              deleteMember={(userId) => removeMember(team.name, userId)}
             />
           </TeamItem>
         );
@@ -134,16 +134,16 @@ function Members({
   members,
   deleteMember,
 }: {
-  members: string[];
-  deleteMember: (username: string) => void;
+  members: User[];
+  deleteMember: (userId: string) => void;
 }) {
   return (
     <ul className={styles.players}>
-      {members.map((username) => {
+      {members.map(({ username, id }) => {
         return (
-          <li key={username}>
+          <li key={id}>
             {username}
-            <DeleteButton onClick={() => deleteMember(username)} />
+            <DeleteButton onClick={() => deleteMember(id)} />
           </li>
         );
       })}

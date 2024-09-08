@@ -4,10 +4,7 @@ import { validateSession } from "@/app/api/auth";
 import { User } from "@prisma/client";
 
 export type UserResponse = { user: Omit<User, "password"> };
-export async function GET(
-  _: Request,
-  { params }: { params: { username: string } },
-) {
+export async function GET(_: Request, { params }: { params: { username: string } }) {
   await validateSession();
   const user = await db.user.findFirst({
     where: {
@@ -18,7 +15,7 @@ export async function GET(
   if (user === null) {
     return NextResponse.json(
       {},
-      { status: 400, statusText: `User "${params.username}" does not exist` },
+      { status: 400, statusText: `User "${params.username}" does not exist` }
     );
   }
 

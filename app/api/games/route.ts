@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Game, Role } from "@prisma/client";
 import { validateSession } from "@/app/api/auth";
 import { db } from "@/app/api/db";
+import { User } from "@/app/(protected)/game/create/reducer";
 
 export type GetGamesResponse = { games: Array<Game> };
 
@@ -32,7 +33,7 @@ export async function GET() {
 
 export type PostGamesRequest = {
   name: string;
-  teams: Array<{ name: string; role: Role; membersIds: Array<string> }>;
+  teams: Array<{ name: string; role: Role; members: Array<User> }>;
   questionIds: Array<string>;
   /**
    * Order of the curses matters as difficulty increases from 1 to n
@@ -54,7 +55,7 @@ export async function POST(request: Request) {
   const teamsWithNoMembers: string[] = [];
 
   body.teams.forEach((team) => {
-    if (team.membersIds.length < 1) {
+    if (team.members.length < 1) {
       teamsWithNoMembers.push(team.name);
     }
   });
@@ -75,8 +76,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const gameHasOneHider =
-    body.teams.filter((team) => team.role === Role.HIDER).length === 1;
+  const gameHasOneHider = body.teams.filter((team) => team.role === Role.HIDER).length === 1;
 
   if (!gameHasOneHider) {
     return NextResponse.json(null, {
@@ -108,7 +108,7 @@ export async function POST(request: Request) {
                   name: team.name,
                   role: team.role,
                   members: {
-                    connect: team.membersIds.map((id) => {
+                    connect: team.members.map(({ id }) => {
                       return { id };
                     }),
                   },

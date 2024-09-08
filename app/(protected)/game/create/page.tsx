@@ -2,7 +2,7 @@
 
 import { fetchWithBaseUrl } from "@/app/helpers";
 import Card from "@/app/ui/components/card/card";
-import { Game, Role } from "@prisma/client";
+import { Game, Question, Role } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, Reducer } from "react";
 import styles from "./page.module.css";
@@ -10,7 +10,7 @@ import { MdOutlineErrorOutline } from "react-icons/md";
 import reducer, { GameAction, GameState } from "./reducer";
 import Teams, { InputWithAddButton, NameInput } from "./components";
 
-const INITIAL_SETTINGS: GameState = { name: "", teams: [] };
+const INITIAL_SETTINGS: GameState = { name: "", teams: [], questionIds: [], curseIds: [] };
 
 export default function CreateGamePage() {
   const [errorMessage, setErrorMessage] = React.useState<string>("");
@@ -18,10 +18,23 @@ export default function CreateGamePage() {
     reducer,
     INITIAL_SETTINGS
   );
+  const [questions, setQuestions] = React.useState<Question[] | null>(null);
 
   React.useEffect(() => {
     setErrorMessage("");
   }, [game]);
+
+  React.useEffect(() => {
+    const getData = async () => {
+      const response = await fetchWithBaseUrl(`/api/questions`);
+
+      if (response.ok) {
+        const data = await response.json();
+        setQuestions(data.questions);
+      }
+    };
+    getData();
+  }, []);
 
   const router = useRouter();
 
@@ -58,7 +71,8 @@ export default function CreateGamePage() {
     const response = await fetchWithBaseUrl(`/api/users/${username}`);
 
     if (response.ok) {
-      dispatch({ type: "member_added", member: username, teamName });
+      const { user } = await response.json();
+      dispatch({ type: "member_added", user, teamName });
       return true;
     } else {
       setErrorMessage(response.statusText);
@@ -74,8 +88,8 @@ export default function CreateGamePage() {
     dispatch({ type: "role_set", teamName, role });
   }
 
-  function handleRemoveMember(teamName: string, username: string) {
-    dispatch({ type: "member_removed", teamName, member: username });
+  function handleRemoveMember(teamName: string, userId: string) {
+    dispatch({ type: "member_removed", teamName, userId });
   }
 
   return (
@@ -93,6 +107,31 @@ export default function CreateGamePage() {
           addMember={handleAddMember}
           removeMember={handleRemoveMember}
         ></Teams>
+        <fieldset>
+          <legend>Choose questions</legend>
+          {questions &&
+            questions.map((question) => {
+              return (
+                <label key={question.id}>
+                  <input
+                    type="checkbox"
+                    name="question"
+                    checked={game.questionIds.includes(question.id)}
+                    onChange={() => {
+                      if (game.questionIds.includes(question.id)) {
+                        dispatch({ type: "question_removed", questionId: question.id });
+                      } else {
+                        dispatch({ type: "question_added", questionId: question.id });
+                      }
+                    }}
+                  />
+                  {question.content}
+                  <br />
+                  Details: {question.details}
+                </label>
+              );
+            })}
+        </fieldset>
         <button className={styles.createButton}>Create</button>
       </form>
       {errorMessage && (
