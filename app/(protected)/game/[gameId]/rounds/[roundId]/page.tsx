@@ -1,17 +1,9 @@
-import { fetchWithBaseUrl } from "../../../../../helpers";
 import { GetGameResponse } from "@/app/api/games/[gameId]/route";
-import { headers } from "next/headers";
 import Timer from "./timer";
+import { serverFetch } from "@/app/server-fetch";
 
 export default async function Page({ params }: { params: { gameId: string; roundId: string } }) {
-  const headersList = headers();
-  const cookieHeader = headersList.get("cookie") || "";
-
-  const response = await fetchWithBaseUrl(`/api/games/${params.gameId}`, {
-    headers: {
-      Cookie: cookieHeader, // Forward cookies here
-    },
-  });
+  const response = await serverFetch(`/api/games/${params.gameId}`);
 
   if (!response.ok) {
     return <p>Error</p>;
