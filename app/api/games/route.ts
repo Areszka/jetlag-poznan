@@ -40,7 +40,11 @@ export type PostGamesRequest = {
    */
   curseIds: Array<string>;
 };
-export type PostGamesResponse = { game: Game };
+export type PostGamesResponse = {
+  game: Game & {
+    rounds: Array<{ id: string }>;
+  };
+};
 export async function POST(request: Request) {
   const userId = await validateSession();
   const body: PostGamesRequest = await request.json();
@@ -76,8 +80,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const gameHasOneHider =
-    body.teams.filter((team) => team.role === Role.HIDER).length === 1;
+  const gameHasOneHider = body.teams.filter((team) => team.role === Role.HIDER).length === 1;
 
   if (!gameHasOneHider) {
     return NextResponse.json(null, {
@@ -122,6 +125,13 @@ export async function POST(request: Request) {
             },
           },
         ],
+      },
+    },
+    include: {
+      rounds: {
+        select: {
+          id: true,
+        },
       },
     },
   });

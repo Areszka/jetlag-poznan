@@ -22,7 +22,7 @@ export default function CreateGamePage() {
   const [errorMessage, setErrorMessage] = React.useState<string>("");
   const [game, dispatch] = React.useReducer<Reducer<GameState, GameAction>>(
     reducer,
-    INITIAL_SETTINGS,
+    INITIAL_SETTINGS
   );
   const [questions, setQuestions] = React.useState<Question[] | null>(null);
   React.useEffect(() => {
@@ -66,7 +66,7 @@ export default function CreateGamePage() {
       setErrorMessage(response.statusText);
     } else {
       const data: PostGamesResponse = await response.json();
-      router.push(`/game/${data.game.id}`);
+      router.push(`/game/${data.game.id}/rounds/${data.game.rounds[0].id}`);
     }
   }
 
@@ -169,8 +169,12 @@ export default function CreateGamePage() {
           {game.curses.map((curse) => {
             return (
               <li key={curse.id}>
-                <button onClick={() => moveCurseUp(curse.id)}>up</button>
-                <button onClick={() => moveCurseDown(curse.id)}>down</button>
+                <button type="button" onClick={() => moveCurseUp(curse.id)}>
+                  up
+                </button>
+                <button type="button" onClick={() => moveCurseDown(curse.id)}>
+                  down
+                </button>
                 {curse.name}
               </li>
             );
