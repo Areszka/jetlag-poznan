@@ -2,6 +2,7 @@
 import { PatchRoundResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/start/route";
 import { fetchWithBaseUrl } from "@/app/helpers";
 import React from "react";
+import NewRoundButton from "./newRoundButton";
 
 export default function Timer({
   params,
@@ -77,6 +78,7 @@ export default function Timer({
       <h1>Ended at: {endedAt ? new Date(endedAt).toLocaleString() : ""}</h1>
       {!startedAt && <button onClick={startTimer}>Start timer</button>}
       {startedAt && !endedAt && <button onClick={stopTimer}>Stop timer</button>}
+      {endedAt && <NewRoundButton />}
     </div>
   );
 }

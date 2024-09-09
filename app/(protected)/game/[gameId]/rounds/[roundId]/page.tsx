@@ -1,6 +1,7 @@
 import { GetGameResponse } from "@/app/api/games/[gameId]/route";
 import Timer from "./timer";
 import { serverFetch } from "@/app/server-fetch";
+import NewRoundButton from "./newRoundButton";
 
 export default async function Page({ params }: { params: { gameId: string; roundId: string } }) {
   const response = await serverFetch(`/api/games/${params.gameId}`);
@@ -11,21 +12,24 @@ export default async function Page({ params }: { params: { gameId: string; round
 
   const data: GetGameResponse = await response.json();
 
+  const round = data.game.rounds.find((round) => round.id === params.roundId);
+
   return (
     <>
       <h1>Game name: {data.game.name}</h1>
       <Timer
         params={params}
-        initialStartTime={data.game.rounds.find((round) => round.id === params.roundId)?.start_time}
-        initialEndTime={data.game.rounds.find((round) => round.id === params.roundId)?.end_time}
+        initialStartTime={round?.start_time}
+        initialEndTime={round?.end_time}
       />
+
       <div>
         Rounds:
         {data.game.rounds.map((round, index) => {
           const startTime = round.start_time ? new Date(round.start_time) : undefined;
           const endTime = round.end_time ? new Date(round.end_time) : undefined;
           return (
-            <div key={round.id}>
+            <div key={round.id} style={{ background: "red", margin: "10px" }}>
               <p>
                 Round {index + 1}
                 {startTime && <span>{startTime.toLocaleString()}</span>}
