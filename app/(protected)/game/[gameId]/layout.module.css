@@ -4,6 +4,8 @@
   align-items: center;
   justify-content: center;
   list-style: none;
+  display: flex;
+  gap: 16px;
 }
 
 .rounds li {

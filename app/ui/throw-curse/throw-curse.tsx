@@ -1,20 +1,13 @@
 "use client";
 
 import { fetchWithBaseUrl } from "@/app/helpers";
-import Card from "../components/card/card";
 import React from "react";
 import styles from "./throw-curse.module.css";
-import { Text } from "../components/text/text";
-import { LuDices } from "react-icons/lu";
-import {
-  CgDice1,
-  CgDice2,
-  CgDice3,
-  CgDice4,
-  CgDice5,
-  CgDice6,
-} from "react-icons/cg";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { CgDice1, CgDice2, CgDice3, CgDice4, CgDice5, CgDice6 } from "react-icons/cg";
+
+import DiceControls from "./dice-controls";
+import { COST_PER_DICE } from "@/app/consts";
+import { useRouter } from "next/navigation";
 
 const diceComponents = {
   1: CgDice1,
@@ -25,98 +18,73 @@ const diceComponents = {
   6: CgDice6,
 };
 
-type CurseType = {
-  id: number;
-  name: string;
-  effect: string;
-};
-
 type Dots = 1 | 2 | 3 | 4 | 5 | 6;
 
-export default function ThrowCurse() {
-  const [data, setData] = React.useState<CurseType | null>(null);
+export default function ThrowCurse({ teamId, coins }: { teamId: string; coins: number }) {
   const [isLoading, setIsLoading] = React.useState<Boolean>(false);
-  const [dice, setDice] = React.useState<Array<Dots>>([1, 4]);
+  const [dice, setDice] = React.useState<Array<Dots>>([3]);
+  const router = useRouter();
+
+  const MaxNumberOfDiceTeamCanAfford = Math.floor(coins / COST_PER_DICE);
+
+  function increaseNumberOfDice() {
+    if (dice.length < MaxNumberOfDiceTeamCanAfford) {
+      const numberOnDice = (Math.floor(Math.random() * 6) + 1) as Dots;
+      setDice([...dice, numberOnDice]);
+    } else {
+      alert("Not enough money to increase number of dice");
+    }
+  }
+
+  function decreaseNumberOfDice() {
+    if (dice.length === 1) return;
+    const nextDices = [...dice];
+    nextDices.pop();
+
+    setDice(nextDices);
+  }
 
   return (
-    <Card title="Cube">
-      <div className={styles.wrapper}>
-        <div className={styles.textWrapper}>
-          {data === null && !isLoading && (
-            <Text type="title">No curse yet. Roll the dice!</Text>
-          )}
-          {isLoading && "Loading Curse.."}
-          {data && !isLoading && (
-            <>
-              <Text type="title">{data.name}</Text>
-              <Text type="description">{data.effect}</Text>
-            </>
-          )}
+    <>
+      <div className={styles.buttonsWrapper}>
+        <div className={styles.diceWrapper}>
+          {dice.map((value, index) => {
+            const DiceIcon = diceComponents[value];
+            return <DiceIcon key={index} />;
+          })}
         </div>
-        <div className={styles.buttonsWrapper}>
-          <div className={styles.diceWrapper}>
-            {isLoading ? (
-              <p>?</p>
-            ) : (
-              dice.map((value, index) => {
-                const DiceIcon = diceComponents[value];
-                return isLoading ? (
-                  <p key={index}>?</p>
-                ) : (
-                  <DiceIcon key={index} />
-                );
-              })
-            )}
-          </div>
+        <DiceControls addDice={increaseNumberOfDice} removeDice={decreaseNumberOfDice} />
 
-          <div className={styles.diceButtons}>
-            <button
-              onClick={() => {
-                const nextDices = [...dice];
-                nextDices.pop();
+        <button
+          disabled={dice.length <= 0}
+          onClick={async () => {
+            if (dice.length < 1) {
+              alert("You need to roll at least one dice");
+              return;
+            }
+            if (dice.length > MaxNumberOfDiceTeamCanAfford) {
+              alert(`You can't afford to roll ${dice.length} dice`);
+              return;
+            }
 
-                setDice(nextDices);
-              }}
-            >
-              <IoIosArrowDown />
-            </button>
-            <p>{dice.length}</p>
-            <button
-              onClick={() => {
-                const numberOnDice = (Math.floor(Math.random() * 6) +
-                  1) as Dots;
-                setDice([...dice, numberOnDice]);
-              }}
-            >
-              <IoIosArrowUp />
-            </button>
-          </div>
+            setIsLoading(true);
 
-          <button
-            disabled={dice.length <= 0}
-            onClick={async () => {
-              setIsLoading(true);
-              if (dice.length > 0) {
-                const teamId = ""; //TODO: add teamId
-                const response = await fetchWithBaseUrl(
-                  `/api/curses/throw/${teamId}/${dice.length}`,
-                  { method: "POST" },
-                );
+            const response = await fetchWithBaseUrl(`/api/curses/throw/${teamId}/${dice.length}`, {
+              method: "POST",
+            });
 
-                if (response.ok) {
-                  const parsedResponse = await response.json();
-                  setData(parsedResponse.curse);
-                  setDice(parsedResponse.dice);
-                  setIsLoading(false);
-                }
-              }
-            }}
-          >
-            <LuDices />
-            Roll the dice
-          </button>
-        </div>
+            if (response.ok) {
+              const { dice } = await response.json();
+              router.refresh();
+              //refresh??
+              setDice(dice);
+              setIsLoading(false);
+            }
+          }}
+        >
+          Roll next curse
+        </button>
       </div>
-    </Card>
+    </>
   );
 }

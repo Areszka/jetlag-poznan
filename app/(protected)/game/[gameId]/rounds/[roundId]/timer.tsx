@@ -1,15 +1,14 @@
 "use client";
 import { PatchRoundResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/start/route";
-import { fetchWithBaseUrl } from "@/app/helpers";
+import { fetchWithBaseUrl, getTime } from "@/app/helpers";
 import React from "react";
-import NewRoundButton from "./newRoundButton";
+import { useParams, useRouter } from "next/navigation";
+import styles from "./round.module.css";
 
 export default function Timer({
-  params,
   initialStartTime,
   initialEndTime,
 }: {
-  params: { gameId: string; roundId: string };
   initialStartTime: Date | undefined | null;
   initialEndTime: Date | undefined | null;
 }) {
@@ -22,6 +21,8 @@ export default function Timer({
 
     return new Date(endTime).getTime() - new Date(startTime).getTime();
   });
+  const router = useRouter();
+  const params = useParams<{ gameId: string; roundId: string }>();
 
   React.useEffect(() => {
     setIsLoading(false);
@@ -48,6 +49,7 @@ export default function Timer({
 
     if (response.ok) {
       const data: PatchRoundResponse = await response.json();
+      router.refresh();
       setStartedAt(data.round.start_time);
     } else {
       console.info("ERROR WITH START TIME");
@@ -61,6 +63,7 @@ export default function Timer({
     );
 
     if (response.ok) {
+      router.refresh();
       const data: PatchRoundResponse = await response.json();
       setEndedAt(data.round.end_time);
     } else {
@@ -72,21 +75,18 @@ export default function Timer({
     return <p>Loading...</p>;
   }
   return (
-    <div>
-      <h1>{getTime(time)}</h1>
-      <h1>Started at: {startedAt ? new Date(startedAt).toLocaleString() : "Start Game!"}</h1>
-      <h1>Ended at: {endedAt ? new Date(endedAt).toLocaleString() : ""}</h1>
-      {!startedAt && <button onClick={startTimer}>Start timer</button>}
-      {startedAt && !endedAt && <button onClick={stopTimer}>Stop timer</button>}
-      {endedAt && <NewRoundButton />}
+    <div className={styles.timerWrapepr}>
+      <h1 className={styles.time}>{getTime(time)}</h1>
+      {!startedAt && (
+        <button className={styles.timerButton} onClick={startTimer}>
+          Start timer
+        </button>
+      )}
+      {startedAt && !endedAt && (
+        <button className={styles.timerButton} onClick={stopTimer}>
+          Stop timer
+        </button>
+      )}
     </div>
   );
-}
-
-function getTime(diff: number) {
-  let ss = Math.floor(diff / 1000) % 60;
-  let mm = Math.floor(diff / 1000 / 60) % 60;
-  let hh = Math.floor(diff / 1000 / 60 / 60);
-
-  return `${hh < 10 ? "0" : ""}${hh}h ${mm < 10 ? "0" : ""}${mm}m ${ss < 10 ? "0" : ""}${ss}s`;
 }

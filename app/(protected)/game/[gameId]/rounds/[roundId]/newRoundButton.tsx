@@ -17,10 +17,11 @@ export default function NewRoundButton() {
         });
 
         if (!response.ok) {
-          throw new Error("Error when creating new round");
+          throw new Error(response.statusText);
         } else {
           const data: PostRoundResponse = await response.json();
           router.push(`/game/${params.gameId}/rounds/${data.round.id}`);
+          router.refresh();
         }
       }}
     >

@@ -10,3 +10,11 @@ export function getBaseUrl(): string {
 export async function fetchWithBaseUrl(url: string, requestInit?: RequestInit) {
   return fetch(`${getBaseUrl()}${url}`, { ...requestInit });
 }
+
+export function getTime(diff: number) {
+  let ss = Math.floor(diff / 1000) % 60;
+  let mm = Math.floor(diff / 1000 / 60) % 60;
+  let hh = Math.floor(diff / 1000 / 60 / 60);
+
+  return `${hh < 10 ? "0" : ""}${hh}h ${mm < 10 ? "0" : ""}${mm}m ${ss < 10 ? "0" : ""}${ss}s`;
+}

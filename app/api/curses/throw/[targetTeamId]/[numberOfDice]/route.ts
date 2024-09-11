@@ -10,7 +10,7 @@ export type ThrowCurseResponse = {
 
 export async function POST(
   _request: Request,
-  { params }: { params: { numberOfDice: string; targetTeamId: string } },
+  { params }: { params: { numberOfDice: string; targetTeamId: string } }
 ) {
   const userId = await validateSession();
 
@@ -19,7 +19,6 @@ export async function POST(
     where: {
       role: "HIDER",
       team: {
-        id: params.targetTeamId,
         members: {
           some: {
             id: userId,
@@ -81,9 +80,7 @@ export async function POST(
   let nextCurseDifficulty = dice.reduce((p, c) => p + c, 0);
 
   while (nextCurseDifficulty > maxCurseDifficulty) {
-    nextCurseDifficulty = Math.abs(
-      2 * maxCurseDifficulty - nextCurseDifficulty,
-    );
+    nextCurseDifficulty = Math.abs(2 * maxCurseDifficulty - nextCurseDifficulty);
   }
 
   const alreadyPlayedCurses = await db.teamRoundCurse.findMany({
@@ -95,6 +92,7 @@ export async function POST(
 
   const alreadyPlayedCurseDifficulties = await db.gameCurse.findMany({
     where: {
+      gameId: game.id,
       curseId: {
         in: alreadyPlayedCurses.map((curse) => curse.curseId),
       },
@@ -104,7 +102,7 @@ export async function POST(
   const computedNextCurseDifficulty = getNextCurseDifficulty(
     nextCurseDifficulty,
     alreadyPlayedCurseDifficulties.map((curse) => curse.difficulty),
-    maxCurseDifficulty,
+    maxCurseDifficulty
   );
 
   const gameCurse = await db.gameCurse.findFirstOrThrow({
@@ -154,7 +152,7 @@ function parseNumberOfDice(input: string) {
 function getNextCurseDifficulty(
   targetCurseDifficulty: number,
   previousCurseDifficulties: number[],
-  maxCurseDifficulty: number,
+  maxCurseDifficulty: number
 ) {
   const cursesToTry = [targetCurseDifficulty];
 
@@ -168,13 +166,11 @@ function getNextCurseDifficulty(
   }
 
   const nextCurseDifficulty = cursesToTry.find(
-    (curse) => !previousCurseDifficulties.includes(curse),
+    (curse) => !previousCurseDifficulties.includes(curse)
   );
 
   if (!nextCurseDifficulty) {
-    throw new Error(
-      `Could not find a curse difficulty that has not been played yet`,
-    );
+    throw new Error(`Could not find a curse difficulty that has not been played yet`);
   }
 
   return nextCurseDifficulty;

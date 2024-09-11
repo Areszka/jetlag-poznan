@@ -8,6 +8,9 @@ export async function GET() {
   const userId = await validateSession();
 
   const curses = await db.curse.findMany({
+    orderBy: {
+      defaultDifficulty: "asc",
+    },
     where: {
       ownerId: userId,
     },
@@ -23,8 +26,7 @@ export type PostCursesRequest = {
 };
 export type PostCursesResponse = { curse: Curse };
 export async function POST(request: Request) {
-  const { name, effect, defaultDifficulty } =
-    (await request.json()) as PostCursesRequest;
+  const { name, effect, defaultDifficulty } = (await request.json()) as PostCursesRequest;
 
   const userId = await validateSession();
 

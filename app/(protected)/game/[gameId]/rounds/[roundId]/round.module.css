@@ -1,0 +1,87 @@
+.rounds {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
+  display: flex;
+  gap: 16px;
+}
+
+.rounds li {
+  color: darkblue;
+}
+
+.active {
+  font-weight: 700;
+}
+
+.button {
+  padding: 8px;
+}
+
+.pageWrapper {
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
+.timerWrapepr {
+  display: flex;
+  flex-direction: column;
+}
+.time {
+  text-align: center;
+}
+
+.timerButton {
+  padding: 8px;
+}
+
+.teamHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.teamsWrapper {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.teamWrapper {
+  flex: 1 1 50%;
+  border: 1px solid gray;
+  border-radius: 8px;
+}
+
+.teamCurseWrapper {
+  border: 2px solid black;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px;
+}
+
+.name {
+  font-weight: 700;
+}
+
+.effect {
+  color: lightslategray;
+  font-size: 0.875rem;
+}
+
+.liftCurseButton {
+  background-color: rgb(169, 210, 153);
+  color: rgb(23, 119, 23);
+  border: rgb(23, 119, 23) 2px solid;
+  padding: 8px 16px;
+  border-radius: 8px;
+  width: 100%;
+  margin-top: 16px;
+}
+.nameWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}

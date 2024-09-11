@@ -1,9 +1,20 @@
 import { NextResponse } from "next/server";
-import { Round } from "@prisma/client";
+import { Curse, Round, Team, TeamRound, TeamRoundCurse, User } from "@prisma/client";
 import { validateSession } from "@/app/api/auth";
 import { db } from "@/app/api/db";
 
-export type GetRoundResponse = { round: Round };
+export type GetRoundResponse = {
+  round: Round & {
+    teams: Array<
+      TeamRound & {
+        team: Team & {
+          members: Array<{ id: string }>;
+        };
+      }
+    >;
+    curses: Array<TeamRoundCurse & { curse: Curse }>;
+  };
+};
 
 export async function GET(
   _request: Request,
@@ -23,6 +34,32 @@ export async function GET(
               },
             },
           },
+        },
+      },
+    },
+    include: {
+      teams: {
+        orderBy: {
+          team: {
+            name: "asc",
+          },
+        },
+
+        include: {
+          team: {
+            include: {
+              members: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      curses: {
+        include: {
+          curse: true,
         },
       },
     },

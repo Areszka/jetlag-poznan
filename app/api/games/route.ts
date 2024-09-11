@@ -56,6 +56,45 @@ export async function POST(request: Request) {
     });
   }
 
+  const playersIds: string[] = [];
+  body.teams.forEach((team) => team.members.forEach((member) => playersIds.push(member.id)));
+
+  const usersAlreadyPlaying = await db.user.findMany({
+    where: {
+      id: {
+        in: playersIds,
+      },
+      teams: {
+        some: {
+          rounds: {
+            some: {
+              round: {
+                end_time: null,
+              },
+            },
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      username: true,
+    },
+  });
+
+  if (usersAlreadyPlaying.length > 0) {
+    let statusText;
+    if (usersAlreadyPlaying.length === 1) {
+      statusText = `Player ${usersAlreadyPlaying[0].username} is currenlty playing another game`;
+    } else {
+      statusText = `Players ${usersAlreadyPlaying.map((p) => p.username).join(", ")} are currenlty playing another game`;
+    }
+    return NextResponse.json(null, {
+      status: 400,
+      statusText,
+    });
+  }
+
   const teamsWithNoMembers: string[] = [];
 
   body.teams.forEach((team) => {

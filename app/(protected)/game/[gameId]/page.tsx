@@ -3,12 +3,12 @@ import { serverFetch } from "@/app/server-fetch";
 import styles from "./layout.module.css";
 import Link from "next/link";
 
-export default async function Layout({
+export default async function Page({
   children,
   params,
 }: {
   children: JSX.Element;
-  params: { gameId: string };
+  params: { gameId: string; roundId: string };
 }) {
   const response = await serverFetch(`/api/games/${params.gameId}/rounds`);
 
