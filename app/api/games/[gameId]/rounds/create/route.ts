@@ -13,6 +13,29 @@ export async function POST(
 ) {
   const userId = await validateSession();
 
+  // It's possible to start another game if all rounds of a game are finished
+  // Fail if there is an unfinished round in any game
+  const unfinishedRound = await db.teamRound.findFirst({
+    where: {
+      team: {
+        members: {
+          some: {
+            id: userId,
+          },
+        },
+      },
+      round: {
+        end_time: null,
+      },
+    },
+  });
+  if (unfinishedRound) {
+    return NextResponse.json(null, {
+      statusText: "There is an unfinished round!",
+      status: 400,
+    });
+  }
+
   const previousRounds = await db.round.findMany({
     where: {
       gameId: params.gameId,
@@ -55,15 +78,6 @@ export async function POST(
     }
     return { ...team, role: teams[index + 1].role };
   });
-
-  const unfinishedRoundExists = previousRounds.some((round) => !round.end_time);
-
-  if (unfinishedRoundExists) {
-    return NextResponse.json(null, {
-      statusText: "There is an unfinished round!",
-      status: 400,
-    });
-  }
 
   const round = await db.round.create({
     data: {
