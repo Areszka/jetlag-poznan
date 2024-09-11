@@ -5,9 +5,15 @@ import { db } from "@/app/api/db";
 
 export type GetRoundsResponse = { rounds: Array<Round> };
 
-export async function GET(_request: Request, { params }: { params: { gameId: string } }) {
+export async function GET(
+  _request: Request,
+  { params }: { params: { gameId: string } },
+) {
   const userId = await validateSession();
   const rounds = await db.round.findMany({
+    orderBy: {
+      start_time: "asc",
+    },
     where: {
       gameId: params.gameId,
       teams: {

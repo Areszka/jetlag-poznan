@@ -7,7 +7,10 @@ export type PostRoundResponse = {
   round: Round;
 };
 
-export async function POST(_request: Request, { params }: { params: { gameId: string } }) {
+export async function POST(
+  _request: Request,
+  { params }: { params: { gameId: string } },
+) {
   const userId = await validateSession();
 
   const previousRounds = await db.round.findMany({
@@ -31,6 +34,7 @@ export async function POST(_request: Request, { params }: { params: { gameId: st
         include: {
           team: {
             select: {
+              id: true,
               name: true,
               members: {
                 select: {
@@ -55,7 +59,10 @@ export async function POST(_request: Request, { params }: { params: { gameId: st
   const unfinishedRoundExists = previousRounds.some((round) => !round.end_time);
 
   if (unfinishedRoundExists) {
-    return NextResponse.json(null, { statusText: "There is unfinished round!", status: 400 });
+    return NextResponse.json(null, {
+      statusText: "There is an unfinished round!",
+      status: 400,
+    });
   }
 
   const round = await db.round.create({
@@ -66,15 +73,8 @@ export async function POST(_request: Request, { params }: { params: { gameId: st
           return {
             role: team.role,
             team: {
-              create: {
-                name: team.team.name,
-                members: {
-                  connect: team.team.members.map((member) => {
-                    return {
-                      id: member.id,
-                    };
-                  }),
-                },
+              connect: {
+                id: team.teamId,
               },
             },
           };

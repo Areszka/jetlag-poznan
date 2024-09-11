@@ -17,7 +17,10 @@ export type GetGameResponse = {
     questions: Array<Question>;
   };
 };
-export async function GET(_: Request, { params }: { params: { gameId: string } }) {
+export async function GET(
+  _: Request,
+  { params }: { params: { gameId: string } },
+) {
   const userId = await validateSession();
   const game = await db.game.findFirstOrThrow({
     where: {
@@ -71,7 +74,10 @@ export async function GET(_: Request, { params }: { params: { gameId: string } }
 }
 
 export type DeleteGamesResponse = { game: Game };
-export async function DELETE(_request: Request, { params }: { params: { gameId: string } }) {
+export async function DELETE(
+  _request: Request,
+  { params }: { params: { gameId: string } },
+) {
   const userId = await validateSession();
   const game = await db.game.delete({
     where: { id: params.gameId, ownerId: userId },
