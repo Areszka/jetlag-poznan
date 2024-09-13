@@ -8,14 +8,14 @@ export type LiftCurseResponse = {
 };
 export async function POST(
   _request: Request,
-  { params }: { params: { curseId: string } },
+  { params }: { params: { curseId: string; targetTeamId: string } }
 ) {
   const userId = await validateSession();
 
   // Throw if the user is not in the target team or not a hider
   const lastRound = await db.teamRound.findFirstOrThrow({
     where: {
-      role: "SEEKER",
+      role: "HIDER",
       team: {
         members: {
           some: {
@@ -33,7 +33,7 @@ export async function POST(
     where: {
       roundId_curseId_teamId: {
         curseId: params.curseId,
-        teamId: lastRound.teamId,
+        teamId: params.targetTeamId,
         roundId: lastRound.roundId,
       },
     },
@@ -47,7 +47,7 @@ export async function POST(
       {
         error: `No curse with id ${params.curseId} on team ${lastRound.teamId} found for active round`,
       },
-      { status: 400 },
+      { status: 400 }
     );
   }
 

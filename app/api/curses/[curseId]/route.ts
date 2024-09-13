@@ -9,18 +9,14 @@ export type PutCursesRequest = {
   defaultDifficulty: number;
 };
 export type PutCursesResponse = { curse: Curse };
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } },
-) {
-  const { name, effect, defaultDifficulty } =
-    (await request.json()) as PutCursesRequest;
+export async function PUT(request: Request, { params }: { params: { curseId: string } }) {
+  const { name, effect, defaultDifficulty } = (await request.json()) as PutCursesRequest;
 
   const userId = await validateSession();
 
   const updatedCurse = await db.curse.update({
     where: {
-      id: params.id,
+      id: params.curseId,
       ownerId: userId,
     },
     data: {
@@ -34,15 +30,12 @@ export async function PUT(
 }
 
 export type DeleteCursesResponse = { curse: Curse };
-export async function DELETE(
-  _request: Request,
-  { params }: { params: { id: string } },
-) {
+export async function DELETE(_request: Request, { params }: { params: { curseId: string } }) {
   const userId = await validateSession();
 
   const deletedCurse = await db.curse.delete({
     where: {
-      id: params.id,
+      id: params.curseId,
       ownerId: userId,
     },
   });

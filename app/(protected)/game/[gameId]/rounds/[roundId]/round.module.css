@@ -27,18 +27,6 @@
   margin: auto;
 }
 
-.timerWrapepr {
-  display: flex;
-  flex-direction: column;
-}
-.time {
-  text-align: center;
-}
-
-.timerButton {
-  padding: 8px;
-}
-
 .teamHeader {
   display: flex;
   justify-content: space-between;
@@ -79,6 +67,11 @@
   border-radius: 8px;
   width: 100%;
   margin-top: 16px;
+  cursor: pointer;
+}
+
+.liftCurseButton:hover {
+  background-color: rgb(136, 167, 123);
 }
 .nameWrapper {
   display: flex;

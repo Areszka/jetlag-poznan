@@ -36,6 +36,8 @@ model Round {
   curses     TeamRoundCurse[]
   questions  TeamRoundQuestion[]
   teams      TeamRound[]
+  winner_id  String?
+  winner     Team?             @relation(fields: [winner_id], references: [id], onDelete: Cascade)
 }
 
 model Team {
@@ -45,6 +47,7 @@ model Team {
   curses    TeamRoundCurse[]
   questions TeamRoundQuestion[]
   rounds    TeamRound[]
+  won_rounds Round[]
 }
 
 model TeamRound {

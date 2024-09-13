@@ -1,4 +1,5 @@
 "use client";
+import { useServerLoading } from "@/app/hooks/use-server-loading";
 import React from "react";
 
 export default function TimeSpan({
@@ -8,6 +9,7 @@ export default function TimeSpan({
   startDate: Date;
   endDate: Date | undefined;
 }) {
+  const loading = useServerLoading();
   const [diff, setDiff] = React.useState(() => {
     const startTime = new Date(startDate).getTime();
     const endTime = endDate ? new Date(endDate).getTime() : new Date().getTime();
@@ -20,12 +22,19 @@ export default function TimeSpan({
 
     if (!endDate) {
       intervalId = setInterval(() => {
-        setDiff((diff) => diff + 1000);
+        const startTime = new Date(startDate).getTime();
+        const endTime = new Date().getTime();
+        const nextDiff = endTime - startTime;
+
+        setDiff(nextDiff);
       }, 1000);
     }
     return () => clearInterval(intervalId);
   }, [endDate]);
 
+  if (loading) {
+    return "(...)";
+  }
   return <span>{getGameDuration(diff)}</span>;
 }
 

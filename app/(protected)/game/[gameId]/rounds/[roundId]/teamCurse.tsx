@@ -2,6 +2,8 @@
 import { Curse, TeamRoundCurse } from "@prisma/client";
 
 import styles from "./round.module.css";
+import { fetchWithBaseUrl } from "@/app/helpers";
+import { useRouter } from "next/navigation";
 
 export default function TeamCurse({
   curse,
@@ -11,12 +13,22 @@ export default function TeamCurse({
   roundCurse: TeamRoundCurse;
 }) {
   const curseIsActive = !roundCurse.lifted_at && !roundCurse.vetoed_at;
+  const router = useRouter();
 
-  function liftCurse() {
-    //todo
+  async function liftCurse() {
+    const response = await fetchWithBaseUrl(`/api/curses/${curse.id}/${roundCurse.teamId}/lift`, {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    router.refresh();
   }
   return (
     <div className={styles.teamCurseWrapper}>
+      <p>{curse.id}</p>
       <div className={styles.nameWrapper}>
         <p className={styles.name}>{curse.name}</p>
         {!curseIsActive && <p>{roundCurse.lifted_at ? "✅" : "❌"}</p>}
