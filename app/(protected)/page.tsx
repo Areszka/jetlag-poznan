@@ -4,7 +4,7 @@ import { Curses } from "../ui/curses/curses";
 import styles from "./page.module.css";
 import Game from "../ui/game";
 
-export default async function Page(): Promise<JSX.Element> {
+export default function Page(): JSX.Element {
   return (
     <div className={styles.pageWrapper}>
       <Game />

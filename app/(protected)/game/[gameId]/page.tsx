@@ -3,13 +3,7 @@ import { serverFetch } from "@/app/server-fetch";
 import styles from "./layout.module.css";
 import Link from "next/link";
 
-export default async function Page({
-  children,
-  params,
-}: {
-  children: JSX.Element;
-  params: { gameId: string; roundId: string };
-}) {
+export default async function Page({ params }: { params: { gameId: string } }) {
   const response = await serverFetch(`/api/games/${params.gameId}/rounds`, { cache: "no-cache" });
 
   if (!response.ok) {
@@ -27,7 +21,6 @@ export default async function Page({
           </li>
         ))}
       </ol>
-      {children}
     </div>
   );
 }
