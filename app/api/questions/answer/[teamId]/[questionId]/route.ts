@@ -61,6 +61,38 @@ export async function POST(
     );
   }
 
+  const question = await db.question.findFirstOrThrow({
+    where: {
+      id: params.questionId,
+    },
+    select: {
+      cost: true,
+    },
+  });
+
+  const updatedTeamRound = await db.teamRound.update({
+    where: {
+      teamId_roundId: {
+        teamId: params.teamId,
+        roundId: lastRound.roundId,
+      },
+    },
+    data: {
+      coins: {
+        increment: question.cost,
+      },
+    },
+  });
+
+  if (!updatedTeamRound) {
+    return NextResponse.json(
+      {
+        error: `Couldn't update number of coins`,
+      },
+      { status: 400 }
+    );
+  }
+
   return NextResponse.json<AnswerQuestionResponse>({
     question: answerResponse,
   });
