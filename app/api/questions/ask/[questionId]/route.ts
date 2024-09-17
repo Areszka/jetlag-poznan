@@ -6,10 +6,7 @@ import { Question, TeamRoundQuestion } from "@prisma/client";
 export type AskQuestionResponse = {
   question: TeamRoundQuestion & { question: Question };
 };
-export async function POST(
-  _request: Request,
-  { params }: { params: { questionId: string } },
-) {
+export async function POST(_request: Request, { params }: { params: { questionId: string } }) {
   const userId = await validateSession();
 
   // Throw if the user is not in the target team or not a seeker

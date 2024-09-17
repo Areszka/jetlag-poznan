@@ -124,7 +124,7 @@ export async function POST(request: Request) {
   if (!gameHasOneHider) {
     return NextResponse.json(null, {
       status: 400,
-      statusText: `There must be one hider`,
+      statusText: `Too many hiders, only one is allowed`,
     });
   }
 

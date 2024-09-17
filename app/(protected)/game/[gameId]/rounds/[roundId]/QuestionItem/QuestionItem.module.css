@@ -1,0 +1,16 @@
+.questionWrapper {
+  padding: 16px;
+  margin-inline: 24px;
+  list-style: none;
+}
+
+.questionWrapper:not(:last-child) {
+  border-bottom: 1px dotted rgb(206, 206, 206);
+}
+
+.question {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding-block-end: 4px;
+}

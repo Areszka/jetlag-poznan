@@ -12,7 +12,7 @@ export type AnswerQuestionResponse = {
 };
 export async function POST(
   request: Request,
-  { params }: { params: { questionId: string; teamId: string } },
+  { params }: { params: { questionId: string; teamId: string } }
 ) {
   const userId = await validateSession();
 
@@ -47,6 +47,9 @@ export async function POST(
       answered_at: new Date(),
       answer,
     },
+    include: {
+      question: true,
+    },
   });
 
   if (!answerResponse) {
@@ -54,22 +57,11 @@ export async function POST(
       {
         error: `Couldn't find a question ${params.questionId} for team ${params.teamId} in active round`,
       },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
-  const question = await db.teamRoundQuestion.create({
-    data: {
-      teamId: lastRound.teamId,
-      roundId: lastRound.roundId,
-      questionId: params.questionId,
-    },
-    include: {
-      question: true,
-    },
-  });
-
   return NextResponse.json<AnswerQuestionResponse>({
-    question,
+    question: answerResponse,
   });
 }

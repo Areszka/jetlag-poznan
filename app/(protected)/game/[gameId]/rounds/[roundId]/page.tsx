@@ -30,7 +30,7 @@ export default async function Page({ params }: { params: { gameId: string; round
 
   return (
     <>
-      {userRole}
+      {userRole} - {userTeam.team.name}
       <Time startTime={round.start_time} endTime={round.end_time} />
       {round.end_time && <OneMoreTurnButton />}
       {!round.start_time && userRole === "HIDER" && <StartRoundButton />}
@@ -38,6 +38,7 @@ export default async function Page({ params }: { params: { gameId: string; round
         <StopRoundButton startTime={round.start_time} />
       )}
       {userRole === "HIDER" && <HiderPage response={data} />}
+      {userRole === "SEEKER" && <SeekerPage response={data} userTeamId={userTeam.teamId} />}
     </>
   );
 }

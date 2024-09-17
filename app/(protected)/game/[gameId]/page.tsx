@@ -10,10 +10,10 @@ export default async function Page({
   children: JSX.Element;
   params: { gameId: string; roundId: string };
 }) {
-  const response = await serverFetch(`/api/games/${params.gameId}/rounds`);
+  const response = await serverFetch(`/api/games/${params.gameId}/rounds`, { cache: "no-cache" });
 
   if (!response.ok) {
-    return <p>Error</p>;
+    return <p>Error when fetching rounds</p>;
   }
 
   const data: GetRoundsResponse = await response.json();

@@ -4,6 +4,7 @@ import Tag from "@/app/ui/components/tag/tag";
 import ThrowCurse from "@/app/ui/throw-curse/throw-curse";
 import CursesCard from "./cursesCard";
 import TeamCurse from "./teamCurse";
+import { HiderQuestionItem } from "./QuestionItem/QuestionItem";
 
 export default async function HiderPage({ response }: { response: GetRoundResponse }) {
   const round = response.round;
@@ -28,6 +29,38 @@ export default async function HiderPage({ response }: { response: GetRoundRespon
                   }
                 })}
               </div>
+            </div>
+          );
+        })}
+      </div>
+      <div>
+        {round.questions.map((question) => {
+          const questionDetails = round.game.questions.find((q) => q.id === question.questionId)!;
+
+          return (
+            <HiderQuestionItem
+              content={questionDetails.content}
+              team={question.team}
+              key={question.questionId}
+              questionId={question.questionId}
+              questionDetails={question}
+            />
+          );
+          return (
+            <div key={question.questionId}>
+              <p>Asked by: {question.team.name}</p>
+              <p>{questionDetails.content}</p>
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  console.log(event.currentTarget.answer.value);
+                }}
+              >
+                <label>
+                  Answer <input type="text" name="answer" />
+                </label>
+                <button>Answer</button>
+              </form>
             </div>
           );
         })}

@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import "../globals.css";
-import { Inter } from "next/font/google";
 import { Navigation } from "@/app/ui/navigation";
 import { validateSession } from "@/app/api/auth";
 import { db } from "@/app/api/db";
 import React from "react";
-
-const inter = Inter({ subsets: ["latin"] });
+import { inter } from "@/app/fonts";
 
 export const metadata: Metadata = {
   title: "Jetlag Poznań",
