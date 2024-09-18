@@ -1,6 +1,7 @@
 .description {
   color: #718096;
   font-size: 0.875rem;
+  word-break: break-all;
 }
 
 .title {

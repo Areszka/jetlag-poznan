@@ -7,6 +7,7 @@ import OneMoreTurnButton from "./GameButtons/OneMoreTurnButton";
 import StopRoundButton from "./GameButtons/StopRoundButton";
 import StartRoundButton from "./GameButtons/StartRoundButton";
 import Time from "./Time/Time";
+import { getTime } from "@/app/helpers";
 
 export default async function Page({ params }: { params: { gameId: string; roundId: string } }) {
   const userId = await validateSession();
@@ -31,11 +32,18 @@ export default async function Page({ params }: { params: { gameId: string; round
   return (
     <>
       {userRole} - {userTeam.team.name}
+      <br />
+      jailTime - {getTime(round.game.jail_duration)}
+      <br />
+      anser limit - {getTime(round.game.answer_time_limit)}
+      <br />
+      coins per dice - {round.game.dice_cost}
+      <br />
       <Time startTime={round.start_time} endTime={round.end_time} />
       {round.end_time && <OneMoreTurnButton />}
       {!round.start_time && userRole === "HIDER" && <StartRoundButton />}
       {round.start_time && !round.end_time && userRole === "SEEKER" && (
-        <StopRoundButton startTime={round.start_time} />
+        <StopRoundButton startTime={round.start_time} jailPeriod={round.game.jail_duration} />
       )}
       {userRole === "HIDER" && <HiderPage response={data} />}
       {userRole === "SEEKER" && <SeekerPage response={data} userTeamId={userTeam.teamId} />}

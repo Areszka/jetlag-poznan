@@ -22,7 +22,7 @@ export default function SeekerPage({
         })}
       </div>
       <Card title="Questions">
-        {response.round.game.questions.map((q) => {
+        {response.round.game.game_questions.map((q) => {
           const questionDetails = questionsAskedByUserTeam.find((ques) => ques.questionId === q.id);
 
           return (

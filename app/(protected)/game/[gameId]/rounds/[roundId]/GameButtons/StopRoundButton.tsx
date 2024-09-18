@@ -4,9 +4,13 @@ import { useParams, useRouter } from "next/navigation";
 import GameButton from "./GameButton";
 import React from "react";
 
-const JAIL_PERIOD = 1000 * 60 * 10;
-
-export default function StopRoundButton({ startTime }: { startTime: Date }) {
+export default function StopRoundButton({
+  startTime,
+  jailPeriod,
+}: {
+  startTime: Date;
+  jailPeriod: number;
+}) {
   const params = useParams<{ gameId: string; roundId: string }>();
   const router = useRouter();
 
@@ -16,11 +20,11 @@ export default function StopRoundButton({ startTime }: { startTime: Date }) {
     let intervalId: NodeJS.Timeout;
 
     const nextJailTimeLeft =
-      JAIL_PERIOD - (new Date().getTime() - new Date(startTime).getTime()) + 1000;
+      jailPeriod - (new Date().getTime() - new Date(startTime).getTime()) + 1000;
 
     if (nextJailTimeLeft > 0) {
       intervalId = setInterval(() => {
-        const n = JAIL_PERIOD - (new Date().getTime() - new Date(startTime).getTime()) + 1000;
+        const n = jailPeriod - (new Date().getTime() - new Date(startTime).getTime()) + 1000;
         setJailTimeLeft(n);
       }, 1000);
     }

@@ -49,12 +49,31 @@ export default function CreateGamePage() {
 
   const router = useRouter();
 
-  async function createGame() {
+  async function createGame() {}
+
+  async function handleSubmitForm(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const inputJailDuration: string = event.currentTarget.jailDuration.value;
+    const jailHours = Number(inputJailDuration.split(":")[0]);
+    const jailMinutes = Number(inputJailDuration.split(":")[1]);
+
+    const jailDuration = 1000 * 60 * jailMinutes + 1000 * 60 * 60 * jailHours;
+
+    const inputAnswerTimeLimit: string = event.currentTarget.answerTimeLimit.value;
+    const answerLimitHours = Number(inputAnswerTimeLimit.split(":")[0]);
+    const answerLimitMinutes = Number(inputAnswerTimeLimit.split(":")[1]);
+
+    const answerTimeLimit = 1000 * 60 * answerLimitMinutes + 1000 * 60 * 60 * answerLimitHours;
+
     const requestData: PostGamesRequest = {
       name: game.name,
       questionIds: game.questionIds,
       teams: game.teams,
       curseIds: game.curses.map((curse) => curse.id),
+      diceCost: Number(event.currentTarget.diceCost.value),
+      answerTimeLimit,
+      jailDuration,
     };
 
     const response = await fetchWithBaseUrl(`/api/games`, {
@@ -68,11 +87,6 @@ export default function CreateGamePage() {
       const data: PostGamesResponse = await response.json();
       router.push(`/game/${data.game.id}/rounds/${data.game.rounds[0].id}`);
     }
-  }
-
-  function handleSubmitForm(event: FormEvent) {
-    event.preventDefault();
-    createGame();
   }
 
   function handleAddTeam(teamName: string) {
@@ -125,6 +139,24 @@ export default function CreateGamePage() {
           value={game.name}
           onChange={(name) => dispatch({ type: "name_changed", name })}
         />
+        <label>
+          {" "}
+          Number of coins needed to roll one dice
+          <input type="number" name="diceCost" defaultValue="50" required />
+        </label>
+
+        <label>
+          {" "}
+          Time limit for hiders to answer a question
+          <input type="time" name="answerTimeLimit" min="00:10" defaultValue="00:15" required />
+        </label>
+
+        <label>
+          {" "}
+          Jail period (time seekers need to wait before starting their expedition)
+          <input type="time" name="jailDuration" defaultValue="00:30" required />
+        </label>
+
         <InputWithAddButton label="Teams" onClick={handleAddTeam} />
         <Teams
           teams={game.teams}

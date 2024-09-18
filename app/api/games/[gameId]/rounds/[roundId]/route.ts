@@ -23,7 +23,7 @@ export type GetRoundResponse = {
     >;
     curses: Array<TeamRoundCurse & { curse: Curse }>;
     questions: Array<TeamRoundQuestion & { team: Team }>;
-    game: Game & { questions: Array<Question> };
+    game: Game & { game_questions: Array<Question> };
   };
 };
 
@@ -80,7 +80,7 @@ export async function GET(
       },
       game: {
         include: {
-          questions: true,
+          game_questions: true,
         },
       },
     },

@@ -16,6 +16,7 @@
   flex-direction: column;
   margin-bottom: 16px;
   gap: 4px;
+  word-break: break-all;
 }
 
 .form input {

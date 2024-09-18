@@ -14,14 +14,17 @@ model User {
   teams     Team[]
   curses    Curse[]
   questions Question[]
-  Game      Game[]
+  game      Game[]
 }
 
 model Game {
   id        String      @id @default(uuid())
   name      String
-  questions Question[]
-  curses    GameCurse[]
+  dice_cost Int
+  jail_duration Int
+  answer_time_limit Int
+  game_questions Question[]
+  game_curses    GameCurse[]
   rounds    Round[]
   ownerId   String
   owner     User        @relation(fields: [ownerId], references: [id], onDelete: Restrict)

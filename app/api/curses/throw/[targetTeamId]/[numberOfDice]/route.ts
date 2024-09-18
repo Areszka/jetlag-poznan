@@ -42,8 +42,7 @@ export async function POST(
   });
 
   const numberOfDice = parseNumberOfDice(params.numberOfDice);
-  const costPerDice = 50;
-  const cost = costPerDice * numberOfDice;
+  const cost = game.dice_cost * numberOfDice;
 
   const team = await db.teamRound.update({
     where: {

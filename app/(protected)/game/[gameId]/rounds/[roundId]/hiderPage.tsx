@@ -19,7 +19,11 @@ export default async function HiderPage({ response }: { response: GetRoundRespon
               <div className={styles.teamHeader}>
                 {team.name} <Tag>{coins.toString()}</Tag>
               </div>
-              <ThrowCurse teamId={team.id} coins={coins} />
+              <ThrowCurse
+                teamId={team.id}
+                coins={coins}
+                costPerDice={response.round.game.dice_cost}
+              />
               <div>
                 {round.curses.map((curse, index) => {
                   if (curse.teamId === team.id) {
@@ -35,7 +39,9 @@ export default async function HiderPage({ response }: { response: GetRoundRespon
       </div>
       <div>
         {round.questions.map((question) => {
-          const questionDetails = round.game.questions.find((q) => q.id === question.questionId)!;
+          const questionDetails = round.game.game_questions.find(
+            (q) => q.id === question.questionId
+          )!;
 
           return (
             <HiderQuestionItem
@@ -45,23 +51,6 @@ export default async function HiderPage({ response }: { response: GetRoundRespon
               questionId={question.questionId}
               questionDetails={question}
             />
-          );
-          return (
-            <div key={question.questionId}>
-              <p>Asked by: {question.team.name}</p>
-              <p>{questionDetails.content}</p>
-              <form
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  console.log(event.currentTarget.answer.value);
-                }}
-              >
-                <label>
-                  Answer <input type="text" name="answer" />
-                </label>
-                <button>Answer</button>
-              </form>
-            </div>
           );
         })}
       </div>

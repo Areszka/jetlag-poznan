@@ -6,7 +6,6 @@ import styles from "./throw-curse.module.css";
 import { CgDice1, CgDice2, CgDice3, CgDice4, CgDice5, CgDice6 } from "react-icons/cg";
 
 import DiceControls from "./dice-controls";
-import { COST_PER_DICE } from "@/app/consts";
 import { useRouter } from "next/navigation";
 
 const diceComponents = {
@@ -20,12 +19,20 @@ const diceComponents = {
 
 type Dots = 1 | 2 | 3 | 4 | 5 | 6;
 
-export default function ThrowCurse({ teamId, coins }: { teamId: string; coins: number }) {
+export default function ThrowCurse({
+  teamId,
+  coins,
+  costPerDice,
+}: {
+  teamId: string;
+  coins: number;
+  costPerDice: number;
+}) {
   const [isLoading, setIsLoading] = React.useState<Boolean>(false);
   const [dice, setDice] = React.useState<Array<Dots>>([3]);
   const router = useRouter();
 
-  const MaxNumberOfDiceTeamCanAfford = Math.floor(coins / COST_PER_DICE);
+  const MaxNumberOfDiceTeamCanAfford = Math.floor(coins / costPerDice);
 
   function increaseNumberOfDice() {
     if (dice.length < MaxNumberOfDiceTeamCanAfford) {
