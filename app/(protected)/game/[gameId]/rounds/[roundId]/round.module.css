@@ -78,3 +78,16 @@
   justify-content: space-between;
   align-items: baseline;
 }
+
+.questionsWrapper {
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+}
+
+.pageWrapper {
+  margin: 32px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

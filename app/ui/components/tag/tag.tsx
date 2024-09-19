@@ -9,8 +9,8 @@ export default function Tag({
   children: JSX.Element | string;
 }) {
   return (
-    <div className={styles.tag} style={{ "--hue": hue } as CSSProperties}>
+    <span className={styles.tag} style={{ "--hue": hue } as CSSProperties}>
       {children}
-    </div>
+    </span>
   );
 }

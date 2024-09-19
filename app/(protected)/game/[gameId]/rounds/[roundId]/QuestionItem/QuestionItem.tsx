@@ -1,84 +1,73 @@
 "use client";
-import { useServerLoading } from "@/app/hooks/use-server-loading";
+
 import Tag from "@/app/ui/components/tag/tag";
-import { Question, Team, TeamRoundQuestion } from "@prisma/client";
+import { Role } from "@prisma/client";
 import styles from "./QuestionItem.module.css";
 import AskButton from "./AskButton";
-import { Text } from "@/app/ui/components/text/text";
-import { fetchWithBaseUrl } from "@/app/helpers";
-import { useRouter } from "next/navigation";
+import React from "react";
+import TimeLeftToAnswer from "./TimeLeftToAnswer";
+import AnswerForm from "./AnswerForm";
+
+type ItemStyle = "default" | "pending" | "answered";
 
 export default function QuestionItem({
   question,
   askedAt,
-  questionDetails,
-}: {
-  question: Question;
-  askedAt: Date | undefined;
-  questionDetails: TeamRoundQuestion | undefined;
-}) {
-  const isLoading = useServerLoading();
-
-  return (
-    <li className={styles.questionWrapper}>
-      <div>
-        <div className={styles.question}>
-          <Text type="title">{question.content}</Text>
-          <Tag>{question.cost.toString()}</Tag>
-        </div>
-        {question.details && <Text type="description">{question.details}</Text>}
-      </div>
-      {questionDetails?.answer && <p>{questionDetails.answer}</p>}
-      {!askedAt && <AskButton questionId={question.id} />}
-      {askedAt && <p>Asked at: {isLoading ? "--:--" : new Date(askedAt).toLocaleTimeString()}</p>}
-    </li>
-  );
-}
-
-export function HiderQuestionItem({
-  team,
-  content,
+  details,
+  cost,
+  answer,
+  userRole,
   questionId,
-  questionDetails,
+  askedBy,
+  timeLimitToAnswerQuestion,
+  ownerTeamId,
 }: {
-  team: Team;
-  content: string;
+  question: string;
   questionId: string;
-  questionDetails: TeamRoundQuestion;
+  details: string | null;
+  cost: number;
+  askedAt: Date | null;
+  answer: string | null;
+  userRole: Role;
+  askedBy?: string;
+  timeLimitToAnswerQuestion: number;
+  ownerTeamId?: string;
 }) {
-  const router = useRouter();
+  const itemStyle: ItemStyle = askedAt
+    ? answer || timeLimitToAnswerQuestion < 0
+      ? "answered"
+      : "pending"
+    : "default";
+
+  console.log("QuestionItem RENDERED");
+
   return (
-    <div>
-      <p>Asked by: {team.name}</p>
-      <p>{content}</p>
-      {questionDetails.answer ? (
-        questionDetails.answer
-      ) : (
-        <form
-          onSubmit={async (event) => {
-            event.preventDefault();
-
-            const answer = event.currentTarget.answer.value;
-            const response = await fetchWithBaseUrl(
-              `/api/questions/answer/${team.id}/${questionId}`,
-              {
-                body: JSON.stringify({ answer }),
-                method: "POST",
-              }
-            );
-
-            if (!response.ok) {
-              throw Error("Error when answering");
-            }
-            router.refresh();
-          }}
-        >
-          <label>
-            Answer <input type="text" name="answer" />
-          </label>
-          <button>Answer</button>
-        </form>
-      )}
+    <div className={`${styles.wrapper} ${styles[itemStyle]}`}>
+      <div>
+        <p className={styles.title}>
+          {question} <Tag>{cost.toString()}</Tag>
+          {"  "}
+          {askedBy && <Tag hue={200}>{askedBy}</Tag>}
+        </p>
+        {details && <p className={styles.details}>{details}</p>}
+        {answer && <p className={styles.answer}>Answer: {answer}</p>}
+        {askedAt && !answer && (
+          <TimeLeftToAnswer
+            askedAt={askedAt}
+            timeLimitToAnswerQuestion={timeLimitToAnswerQuestion}
+          />
+        )}
+        {askedAt && !answer && userRole === "HIDER" && (
+          <AnswerForm
+            askedAt={askedAt}
+            ownerTeamId={ownerTeamId}
+            questionId={questionId}
+            timeLimitToAnswerQuestion={timeLimitToAnswerQuestion}
+            userRole={userRole}
+          />
+        )}
+      </div>
+      {!askedAt && userRole === "SEEKER" && <AskButton questionId={questionId} />}
     </div>
   );
 }

@@ -27,6 +27,8 @@ export default function StopRoundButton({
         const n = jailPeriod - (new Date().getTime() - new Date(startTime).getTime()) + 1000;
         setJailTimeLeft(n);
       }, 1000);
+    } else {
+      setJailTimeLeft(0);
     }
 
     return () => clearInterval(intervalId);

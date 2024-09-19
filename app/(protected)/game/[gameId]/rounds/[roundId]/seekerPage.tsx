@@ -2,7 +2,8 @@ import { GetRoundResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/rout
 import { TeamRoundQuestion } from "@prisma/client";
 import React from "react";
 import QuestionItem from "./QuestionItem/QuestionItem";
-import Card from "@/app/ui/components/card/card";
+import styles from "./round.module.css";
+
 export default function SeekerPage({
   response,
   userTeamId,
@@ -21,21 +22,25 @@ export default function SeekerPage({
           return <p key={curse.curseId}>{curse.curse.name}</p>;
         })}
       </div>
-      <Card title="Questions">
+      <div className={styles.questionsWrapper}>
         {response.round.game.game_questions.map((q) => {
           const questionDetails = questionsAskedByUserTeam.find((ques) => ques.questionId === q.id);
 
           return (
             <QuestionItem
               key={q.id}
-              question={q}
-              askedAt={questionDetails ? questionDetails.created_at : undefined}
-              questionDetails={questionDetails ?? undefined}
+              askedAt={questionDetails ? questionDetails.created_at : null}
+              answer={questionDetails ? questionDetails.answer : null}
+              cost={q.cost}
+              details={q.details}
+              question={q.content}
+              userRole="SEEKER"
+              questionId={q.id}
+              timeLimitToAnswerQuestion={response.round.game.answer_time_limit}
             />
           );
         })}
-        `
-      </Card>
+      </div>
     </>
   );
 }
