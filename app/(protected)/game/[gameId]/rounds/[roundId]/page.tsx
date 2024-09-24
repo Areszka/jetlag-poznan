@@ -6,9 +6,8 @@ import SeekerPage from "./seekerPage";
 import OneMoreTurnButton from "./GameButtons/OneMoreTurnButton";
 import StopRoundButton from "./GameButtons/StopRoundButton";
 import StartRoundButton from "./GameButtons/StartRoundButton";
-import Time from "./Time/Time";
-import { getTime } from "@/app/helpers";
 import styles from "./round.module.css";
+import InfoCards from "./InfoCards/InfoCards";
 
 export default async function Page({ params }: { params: { gameId: string; roundId: string } }) {
   const userId = await validateSession();
@@ -30,17 +29,49 @@ export default async function Page({ params }: { params: { gameId: string; round
 
   const userRole = userTeam.role;
 
+  let activeCurses: string[] = [];
+  if (userRole === "SEEKER") {
+    round.curses.forEach((curse) => {
+      if (curse.teamId === userTeam.teamId && !curse.lifted_at && !curse.vetoed_at) {
+        activeCurses.push(curse.curse.name);
+      }
+    });
+  }
+
+  const activeCurse = (() => {
+    if (userRole === "SEEKER" && activeCurses.length > 0) return activeCurses[0];
+    if (userRole === "SEEKER") return "None!";
+    return undefined;
+  })();
+
+  let pendingQuestions = 0;
+
+  if (userRole === "HIDER") {
+    round.questions.forEach((question) => {
+      if (!question.answer) {
+        pendingQuestions++;
+      }
+    });
+  } else {
+    round.questions.forEach((question) => {
+      if (!question.answer && question.teamId === userTeam.teamId) {
+        pendingQuestions++;
+      }
+    });
+  }
+
   return (
-    <div className={styles.pageWrapper}>
-      {userRole} - {userTeam.team.name}
-      <br />
-      jailTime - {getTime(round.game.jail_duration)}
-      <br />
-      anser limit - {getTime(round.game.answer_time_limit)}
-      <br />
-      coins per dice - {round.game.dice_cost}
-      <br />
-      <Time startTime={round.start_time} endTime={round.end_time} />
+    <>
+      <InfoCards
+        role={userRole}
+        team={userTeam.team.name}
+        endTime={round.end_time}
+        startTime={round.start_time}
+        activeCurse={activeCurse}
+        pendingQuestions={pendingQuestions}
+        answerTimeLimit={round.game.answer_time_limit}
+      ></InfoCards>
+
       {round.end_time && <OneMoreTurnButton />}
       {!round.start_time && userRole === "HIDER" && <StartRoundButton />}
       {round.start_time && !round.end_time && userRole === "SEEKER" && (
@@ -48,6 +79,6 @@ export default async function Page({ params }: { params: { gameId: string; round
       )}
       {userRole === "HIDER" && <HiderPage response={data} />}
       {userRole === "SEEKER" && <SeekerPage response={data} userTeamId={userTeam.teamId} />}
-    </div>
+    </>
   );
 }

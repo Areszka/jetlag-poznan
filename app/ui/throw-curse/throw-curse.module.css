@@ -15,20 +15,6 @@
   flex-direction: column;
 }
 
-.buttonsWrapper > button {
-  background-color: white;
-  padding: 12px 16px;
-  border: solid 2px lightgray;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: box-shadow 300ms, transform 300ms;
-  will-change: transform;
-}
-
-.buttonsWrapper > button:hover {
-  border-color: darkgray;
-}
-
 .wrapper {
   display: flex;
   flex-wrap: wrap;

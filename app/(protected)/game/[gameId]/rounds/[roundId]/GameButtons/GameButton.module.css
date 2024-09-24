@@ -7,6 +7,8 @@
   background-color: hsl(240, 4%, 95%);
   color: black;
   cursor: pointer;
+  width: 100%;
+  margin-block: 32px;
 }
 
 .button:not(:disabled):hover {

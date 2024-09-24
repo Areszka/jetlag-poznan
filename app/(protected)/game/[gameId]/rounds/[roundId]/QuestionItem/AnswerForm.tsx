@@ -72,30 +72,38 @@ export default function AnswerForm({
 
 function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: string }) {
   const router = useRouter();
+
+  async function sendAnswer(answer: string) {
+    const response = await fetchWithBaseUrl(`/api/questions/answer/${ownerTeamId}/${questionId}`, {
+      body: JSON.stringify({ answer }),
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      throw Error("Error when answering");
+    }
+    router.refresh();
+  }
+
   return (
     <form
       onSubmit={async (event) => {
         event.preventDefault();
-
         const answer = event.currentTarget.answer.value;
-        const response = await fetchWithBaseUrl(
-          `/api/questions/answer/${ownerTeamId}/${questionId}`,
-          {
-            body: JSON.stringify({ answer }),
-            method: "POST",
-          }
-        );
-
-        if (!response.ok) {
-          throw Error("Error when answering");
-        }
-        router.refresh();
+        sendAnswer(answer);
       }}
     >
       <input type="text" name="answer" />
-      <div>
+      <div className={styles.buttons}>
         <button>Answer</button>
-        <button>Cannot Answer</button>
+        <button
+          type="button"
+          onClick={() => {
+            sendAnswer("Hiders couldn't answer that");
+          }}
+        >
+          Cannot Answer
+        </button>
       </div>
     </form>
   );

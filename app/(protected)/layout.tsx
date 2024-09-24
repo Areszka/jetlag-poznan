@@ -4,7 +4,7 @@ import { Navigation } from "@/app/ui/navigation";
 import { validateSession } from "@/app/api/auth";
 import { db } from "@/app/api/db";
 import React from "react";
-import { inter } from "@/app/fonts";
+import { comfortaa } from "@/app/fonts";
 
 export const metadata: Metadata = {
   title: "Jetlag Poznań",
@@ -25,7 +25,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={comfortaa.className}>
         <Navigation username={user.username} />
         {children}
         <footer>

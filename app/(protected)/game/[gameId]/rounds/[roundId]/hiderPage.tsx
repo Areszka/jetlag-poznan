@@ -3,8 +3,9 @@ import styles from "./round.module.css";
 import Tag from "@/app/ui/components/tag/tag";
 import ThrowCurse from "@/app/ui/throw-curse/throw-curse";
 import CursesCard from "./cursesCard";
-import TeamCurse from "./teamCurse";
 import QuestionItem from "./QuestionItem/QuestionItem";
+import Header from "@/app/ui/components/header/header";
+import TeamCurseItem, { CursesWrapper } from "./CurseItem/TeamCurseItem";
 
 export default function HiderPage({ response }: { response: GetRoundResponse }) {
   const round = response.round;
@@ -24,19 +25,27 @@ export default function HiderPage({ response }: { response: GetRoundResponse }) 
                 coins={coins}
                 costPerDice={response.round.game.dice_cost}
               />
-              <div>
-                {round.curses.map((curse, index) => {
-                  if (curse.teamId === team.id) {
-                    return (
-                      <TeamCurse key={team.id + index} roundCurse={curse} curse={curse.curse} />
-                    );
-                  }
-                })}
-              </div>
+              <CursesWrapper>
+                <>
+                  {round.curses.map((curse, index) => {
+                    if (curse.teamId === team.id) {
+                      return (
+                        <TeamCurseItem
+                          key={team.id + index}
+                          userRole="HIDER"
+                          roundCurse={curse}
+                          curse={curse.curse}
+                        />
+                      );
+                    }
+                  })}
+                </>
+              </CursesWrapper>
             </div>
           );
         })}
       </div>
+      <Header>Questions</Header>
       <div className={styles.questionsWrapper}>
         {round.questions.map((question) => {
           const questionDetails = round.game.game_questions.find(

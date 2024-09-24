@@ -20,13 +20,6 @@
   padding: 8px;
 }
 
-.pageWrapper {
-  max-width: 800px;
-  display: flex;
-  flex-direction: column;
-  margin: auto;
-}
-
 .teamHeader {
   display: flex;
   justify-content: space-between;
@@ -36,22 +29,14 @@
   display: flex;
   gap: 16px;
   align-items: flex-start;
+  margin: 16px 0;
+  flex-wrap: wrap;
 }
 .teamWrapper {
-  flex: 1 1 50%;
-  border: 1px solid gray;
-  border-radius: 8px;
-}
-
-.teamCurseWrapper {
-  border: 2px solid black;
+  flex: 1 0 200px;
+  border: 1px solid #ececec;
   border-radius: 12px;
-  padding: 16px;
-  margin: 16px;
-}
-
-.name {
-  font-weight: 700;
+  padding: 12px 16px;
 }
 
 .effect {
@@ -59,35 +44,14 @@
   font-size: 0.875rem;
 }
 
-.liftCurseButton {
-  background-color: rgb(169, 210, 153);
-  color: rgb(23, 119, 23);
-  border: rgb(23, 119, 23) 2px solid;
-  padding: 8px 16px;
-  border-radius: 8px;
-  width: 100%;
-  margin-top: 16px;
-  cursor: pointer;
-}
-
-.liftCurseButton:hover {
-  background-color: rgb(136, 167, 123);
-}
-.nameWrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
 .questionsWrapper {
   display: flex;
-  gap: 16px;
+  gap: 8px;
   flex-direction: column;
 }
 
 .pageWrapper {
-  margin: 32px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  max-width: 800px;
+  margin: auto;
+  padding: 32px 16px;
 }

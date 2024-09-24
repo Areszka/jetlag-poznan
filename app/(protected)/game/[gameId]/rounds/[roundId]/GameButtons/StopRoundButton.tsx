@@ -3,6 +3,7 @@ import { fetchWithBaseUrl, timeToMinutesAndSeconds } from "@/app/helpers";
 import { useParams, useRouter } from "next/navigation";
 import GameButton from "./GameButton";
 import React from "react";
+import useCountdown from "@/app/hooks/use-countdown";
 
 export default function StopRoundButton({
   startTime,
@@ -13,26 +14,7 @@ export default function StopRoundButton({
 }) {
   const params = useParams<{ gameId: string; roundId: string }>();
   const router = useRouter();
-
-  const [jailTimeLeft, setJailTimeLeft] = React.useState<number | null>(null);
-
-  React.useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    const nextJailTimeLeft =
-      jailPeriod - (new Date().getTime() - new Date(startTime).getTime()) + 1000;
-
-    if (nextJailTimeLeft > 0) {
-      intervalId = setInterval(() => {
-        const n = jailPeriod - (new Date().getTime() - new Date(startTime).getTime()) + 1000;
-        setJailTimeLeft(n);
-      }, 1000);
-    } else {
-      setJailTimeLeft(0);
-    }
-
-    return () => clearInterval(intervalId);
-  }, []);
+  const jailTimeLeft = useCountdown({ period: jailPeriod, startTime });
 
   async function setGameStopTime() {
     const response = await fetchWithBaseUrl(

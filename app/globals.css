@@ -8,6 +8,8 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  background-color: #fcfcfc;
+  word-break: break-word;
 }
 
 a {
@@ -42,4 +44,8 @@ footer > a {
 footer > a:hover {
   transform: translateY(-2px);
   text-underline-offset: 8px;
+}
+
+button {
+  font-family: inherit;
 }

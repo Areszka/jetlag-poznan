@@ -29,8 +29,8 @@ export default async function Layout({
               className={round.id === params.roundId ? styles.active : ""}
             >
               Round {index + 1}{" "}
-              {round.start_time && (
-                <TimeSpan startDate={round.start_time} endDate={round.end_time ?? undefined} />
+              {round.start_time && round.end_time && (
+                <TimeSpan startDate={round.start_time} endDate={round.end_time} />
               )}
             </Link>
           </li>

@@ -1,0 +1,27 @@
+.cardsWrapper {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cardWrapper {
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  padding: 8px 16px;
+  text-align: center;
+  min-width: max-content;
+  background-color: white;
+}
+
+.label {
+  color: #918fa3;
+  text-transform: uppercase;
+  font-size: 0.625rem;
+  padding-block-start: 6px;
+}
+
+.value {
+  font-weight: 700;
+  color: #1860e9;
+}

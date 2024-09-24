@@ -7,6 +7,7 @@ import { CgDice1, CgDice2, CgDice3, CgDice4, CgDice5, CgDice6 } from "react-icon
 
 import DiceControls from "./dice-controls";
 import { useRouter } from "next/navigation";
+import { Button } from "../components/button/button";
 
 const diceComponents = {
   1: CgDice1,
@@ -62,7 +63,7 @@ export default function ThrowCurse({
         </div>
         <DiceControls addDice={increaseNumberOfDice} removeDice={decreaseNumberOfDice} />
 
-        <button
+        <Button
           disabled={dice.length <= 0}
           onClick={async () => {
             if (dice.length < 1) {
@@ -83,14 +84,13 @@ export default function ThrowCurse({
             if (response.ok) {
               const { dice } = await response.json();
               router.refresh();
-              //refresh??
               setDice(dice);
               setIsLoading(false);
             }
           }}
         >
           Roll next curse
-        </button>
+        </Button>
       </div>
     </>
   );
