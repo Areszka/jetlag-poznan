@@ -8,6 +8,7 @@ import { CgDice1, CgDice2, CgDice3, CgDice4, CgDice5, CgDice6 } from "react-icon
 import DiceControls from "./dice-controls";
 import { useRouter } from "next/navigation";
 import { Button } from "../components/button/button";
+import { useRoundContext } from "@/app/(protected)/game/[gameId]/rounds/[roundId]/TeamProvider";
 
 const diceComponents = {
   1: CgDice1,
@@ -20,18 +21,14 @@ const diceComponents = {
 
 type Dots = 1 | 2 | 3 | 4 | 5 | 6;
 
-export default function ThrowCurse({
-  teamId,
-  coins,
-  costPerDice,
-}: {
-  teamId: string;
-  coins: number;
-  costPerDice: number;
-}) {
+export default function ThrowCurse({ teamId }: { teamId: string }) {
   const [isLoading, setIsLoading] = React.useState<Boolean>(false);
   const [dice, setDice] = React.useState<Array<Dots>>([3]);
   const router = useRouter();
+
+  const { round } = useRoundContext();
+  const costPerDice = round.game.dice_cost;
+  const coins = round.teams.find((team) => team.teamId === teamId)!.coins;
 
   const MaxNumberOfDiceTeamCanAfford = Math.floor(coins / costPerDice);
 

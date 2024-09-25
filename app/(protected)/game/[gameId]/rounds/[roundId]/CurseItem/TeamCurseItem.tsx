@@ -1,33 +1,34 @@
-import { Curse, Role, TeamRoundCurse } from "@prisma/client";
+import { Curse, TeamRoundCurse } from "@prisma/client";
 import styles from "./TeamCurseItem.module.css";
 import { Text } from "@/app/ui/components/text/text";
 import LiftCurseButton from "./LiftCurseButton";
 import VetoCurseButton from "./VetoCurseButton";
 import VetoText from "./VetoText";
-import TeamCursesWrapper from "./TeamCursesWrapper";
-
-export function CursesWrapper({ children }: { children: JSX.Element }) {
-  return <div className={styles.cursesWrapper}>{children}</div>;
-}
+import TeamCurseWrapper from "./TeamCurseWrapper";
+import { useRoundContext } from "../TeamProvider";
 
 export default function TeamCurseItem({
-  userRole,
   curse,
   roundCurse,
-  targetTeamName,
 }: {
   curse: Curse;
   roundCurse: TeamRoundCurse;
-  userRole: Role;
-  targetTeamName?: string;
 }) {
-  console.log("TeamCurseItem RENDERED");
+  const { userTeam, round } = useRoundContext();
+
   const curseIsActive = !roundCurse.lifted_at && !roundCurse.vetoed_at;
 
-  const isHider = userRole === "HIDER";
+  const isHider = userTeam.role === "HIDER";
+
+  const isTarget = roundCurse.teamId === userTeam.teamId;
+
+  const targetTeamName =
+    !isTarget && !isHider
+      ? round.teams.find((team) => team.teamId === roundCurse.teamId)?.name
+      : undefined;
 
   return (
-    <TeamCursesWrapper curseIsActive={curseIsActive} vetoedAt={roundCurse.vetoed_at}>
+    <TeamCurseWrapper curseIsActive={curseIsActive} vetoedAt={roundCurse.vetoed_at}>
       <>
         <div>
           <div className={styles.nameWrapper}>
@@ -51,6 +52,6 @@ export default function TeamCurseItem({
         </div>
         {roundCurse.vetoed_at && <VetoText vetoedAt={roundCurse.vetoed_at}></VetoText>}
       </>
-    </TeamCursesWrapper>
+    </TeamCurseWrapper>
   );
 }

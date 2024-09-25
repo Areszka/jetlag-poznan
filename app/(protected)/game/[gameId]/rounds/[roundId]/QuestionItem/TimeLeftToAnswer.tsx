@@ -1,17 +1,16 @@
 "use client";
 
 import { timeToMinutesAndSeconds } from "@/app/helpers";
-import useTimeLeftToAnswer from "./use_time_left_to_answer";
 import styles from "./QuestionItem.module.css";
+import useCountdown from "@/app/hooks/use-countdown";
+import { useRoundContext } from "../TeamProvider";
 
-export default function TimeLeftToAnswer({
-  askedAt,
-  timeLimitToAnswerQuestion,
-}: {
-  askedAt: Date;
-  timeLimitToAnswerQuestion: number;
-}) {
-  const timeLeftToAnswer = useTimeLeftToAnswer({ askedAt, timeLimitToAnswerQuestion });
+export default function TimeLeftToAnswer({ askedAt }: { askedAt: Date }) {
+  const { round } = useRoundContext();
+  const timeLeftToAnswer = useCountdown({
+    startTime: askedAt,
+    period: round.game.answer_time_limit,
+  });
 
   return (
     <p className={styles.timeToAnswer}>

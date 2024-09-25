@@ -4,7 +4,6 @@ import {
   Game,
   Question,
   Round,
-  Team,
   TeamRound,
   TeamRoundCurse,
   TeamRoundQuestion,
@@ -12,19 +11,20 @@ import {
 import { validateSession } from "@/app/api/auth";
 import { db } from "@/app/api/db";
 
+export type FlatTeamRound = TeamRound & {
+  name: string;
+  members: Array<{ id: string }>;
+};
+
+export type ExpandedRound = Round & {
+  teams: Array<FlatTeamRound>;
+  curses: Array<TeamRoundCurse & { curse: Curse }>;
+  questions: Array<TeamRoundQuestion>;
+  game: Game & { game_questions: Array<Question> };
+};
+
 export type GetRoundResponse = {
-  round: Round & {
-    teams: Array<
-      TeamRound & {
-        team: Team & {
-          members: Array<{ id: string }>;
-        };
-      }
-    >;
-    curses: Array<TeamRoundCurse & { curse: Curse }>;
-    questions: Array<TeamRoundQuestion & { team: Team }>;
-    game: Game & { game_questions: Array<Question> };
-  };
+  round: ExpandedRound;
 };
 
 export async function GET(
@@ -73,11 +73,7 @@ export async function GET(
           curse: true,
         },
       },
-      questions: {
-        include: {
-          team: true,
-        },
-      },
+      questions: true,
       game: {
         include: {
           game_questions: true,
@@ -86,5 +82,21 @@ export async function GET(
     },
   });
 
-  return NextResponse.json<GetRoundResponse>({ round });
+  return NextResponse.json<GetRoundResponse>({
+    round: {
+      ...round,
+      teams: [
+        ...round.teams.map((team) => {
+          return {
+            name: team.team.name,
+            members: team.team.members,
+            teamId: team.teamId,
+            roundId: team.roundId,
+            coins: team.coins,
+            role: team.role,
+          };
+        }),
+      ],
+    },
+  });
 }

@@ -3,25 +3,22 @@
 import { fetchWithBaseUrl } from "@/app/helpers";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { Role } from "@prisma/client";
-import useTimeLeftToAnswer from "./use_time_left_to_answer";
 import styles from "./QuestionItem.module.css";
+import useCountdown from "@/app/hooks/use-countdown";
 
 export default function AnswerForm({
   askedAt,
-  userRole,
   questionId,
   timeLimitToAnswerQuestion,
   ownerTeamId,
 }: {
   questionId: string;
   askedAt: Date;
-  userRole: Role;
   askedBy?: string;
   timeLimitToAnswerQuestion: number;
   ownerTeamId?: string;
 }) {
-  const timeLeftToAnswer = useTimeLeftToAnswer({ askedAt, timeLimitToAnswerQuestion });
+  const timeLeftToAnswer = useCountdown({ startTime: askedAt, period: timeLimitToAnswerQuestion });
   const router = useRouter();
 
   React.useEffect(() => {
@@ -43,23 +40,10 @@ export default function AnswerForm({
     const nextTimeLeftToAnswer =
       timeLimitToAnswerQuestion - (new Date().getTime() - new Date(askedAt).getTime()) + 1000;
 
-    if (
-      askedAt &&
-      nextTimeLeftToAnswer <= 1000 &&
-      (timeLeftToAnswer ?? 0) <= 0 &&
-      userRole === "HIDER"
-    ) {
+    if (askedAt && nextTimeLeftToAnswer <= 1000 && (timeLeftToAnswer ?? 0) <= 0) {
       sendDefaultAnswer();
     }
-  }, [
-    askedAt,
-    timeLeftToAnswer,
-    userRole,
-    timeLimitToAnswerQuestion,
-    ownerTeamId,
-    questionId,
-    router,
-  ]);
+  }, [askedAt, timeLeftToAnswer, timeLimitToAnswerQuestion, ownerTeamId, questionId, router]);
 
   return (
     <>

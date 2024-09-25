@@ -20,7 +20,7 @@ export default async function Layout({
   const data: GetRoundsResponse = await response.json();
 
   return (
-    <div>
+    <>
       <ol className={styles.rounds}>
         {data.rounds.map((round, index) => (
           <li key={round.id}>
@@ -37,6 +37,6 @@ export default async function Layout({
         ))}
       </ol>
       <div className={styles.pageWrapper}>{children}</div>
-    </div>
+    </>
   );
 }

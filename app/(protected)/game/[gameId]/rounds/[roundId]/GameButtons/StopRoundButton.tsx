@@ -1,26 +1,23 @@
 "use client";
 import { fetchWithBaseUrl, timeToMinutesAndSeconds } from "@/app/helpers";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import GameButton from "./GameButton";
 import React from "react";
 import useCountdown from "@/app/hooks/use-countdown";
+import { useRoundContext } from "../TeamProvider";
 
-export default function StopRoundButton({
-  startTime,
-  jailPeriod,
-}: {
-  startTime: Date;
-  jailPeriod: number;
-}) {
-  const params = useParams<{ gameId: string; roundId: string }>();
+export default function StopRoundButton() {
+  const { round } = useRoundContext();
   const router = useRouter();
-  const jailTimeLeft = useCountdown({ period: jailPeriod, startTime });
+  const jailTimeLeft = useCountdown({
+    period: round.game.jail_duration,
+    startTime: round.start_time!,
+  });
 
   async function setGameStopTime() {
-    const response = await fetchWithBaseUrl(
-      `/api/games/${params.gameId}/rounds/${params.roundId}/stop`,
-      { method: "PATCH" }
-    );
+    const response = await fetchWithBaseUrl(`/api/games/${round.gameId}/rounds/${round.id}/stop`, {
+      method: "PATCH",
+    });
 
     if (!response.ok) {
       throw new Error("Ops... couldn't stop the time!");

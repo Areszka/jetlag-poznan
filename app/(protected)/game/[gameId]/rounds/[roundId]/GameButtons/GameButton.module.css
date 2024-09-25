@@ -8,7 +8,6 @@
   color: black;
   cursor: pointer;
   width: 100%;
-  margin-block: 32px;
 }
 
 .button:not(:disabled):hover {

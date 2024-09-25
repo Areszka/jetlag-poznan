@@ -1,6 +1,6 @@
 "use client";
 
-import { getTime } from "@/app/helpers";
+import { timeToMinutesAndSeconds } from "@/app/helpers";
 import useCountdown from "@/app/hooks/use-countdown";
 import styles from "./TeamCurseItem.module.css";
 
@@ -16,5 +16,9 @@ export default function VetoText({ vetoedAt }: { vetoedAt: Date }) {
     return;
   }
 
-  return <p className={styles.vetoText}>VETOED {timeLeftVeto ? getTime(timeLeftVeto) : "--:--"}</p>;
+  return (
+    <p className={styles.vetoText}>
+      VETOED {timeLeftVeto ? timeToMinutesAndSeconds(timeLeftVeto) : "--:--"}
+    </p>
+  );
 }

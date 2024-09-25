@@ -3,7 +3,7 @@
 import useCountdown from "@/app/hooks/use-countdown";
 import Item from "@/app/ui/components/Item/Item";
 
-export default function TeamCursesWrapper({
+export default function TeamCurseWrapper({
   children,
   vetoedAt,
   curseIsActive,
@@ -16,7 +16,10 @@ export default function TeamCursesWrapper({
     return <Item style="red">{children}</Item>;
   }
 
-  console.log("Border RENDERED");
+  return <Wrapper vetoedAt={vetoedAt}>{children}</Wrapper>;
+}
+
+function Wrapper({ children, vetoedAt }: { children: JSX.Element; vetoedAt: Date | null }) {
   const timeLeftVeto = useCountdown({
     startTime: vetoedAt ?? new Date(),
     period: 1000 * 60 * 15,
