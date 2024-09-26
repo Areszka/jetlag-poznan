@@ -48,3 +48,10 @@
   font-size: 0.75rem;
   margin-block-start: 12px;
 }
+
+.team {
+  color: #1860e9;
+  font-size: 14px;
+  margin-bottom: 6px;
+  font-weight: 700;
+}

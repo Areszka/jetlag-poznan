@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import {
-  Curse,
   Game,
+  GameCurse,
   Question,
   Round,
   TeamRound,
@@ -13,14 +13,19 @@ import { db } from "@/app/api/db";
 
 export type FlatTeamRound = TeamRound & {
   name: string;
-  members: Array<{ id: string }>;
+  members: Array<{ id: string; username: string }>;
+};
+
+export type FlatGameCurse = GameCurse & {
+  name: string;
+  effect: string;
 };
 
 export type ExpandedRound = Round & {
   teams: Array<FlatTeamRound>;
-  curses: Array<TeamRoundCurse & { curse: Curse }>;
+  curses: Array<TeamRoundCurse>;
   questions: Array<TeamRoundQuestion>;
-  game: Game & { game_questions: Array<Question> };
+  game: Game & { game_questions: Array<Question>; game_curses: Array<FlatGameCurse> };
 };
 
 export type GetRoundResponse = {
@@ -62,21 +67,23 @@ export async function GET(
               members: {
                 select: {
                   id: true,
+                  username: true,
                 },
               },
             },
           },
         },
       },
-      curses: {
-        include: {
-          curse: true,
-        },
-      },
+      curses: true,
       questions: true,
       game: {
         include: {
           game_questions: true,
+          game_curses: {
+            include: {
+              curse: true,
+            },
+          },
         },
       },
     },
@@ -85,6 +92,17 @@ export async function GET(
   return NextResponse.json<GetRoundResponse>({
     round: {
       ...round,
+      game: {
+        ...round.game,
+        game_curses: [
+          ...round.game.game_curses.map((gameCurse) => {
+            return {
+              ...gameCurse,
+              ...gameCurse.curse,
+            };
+          }),
+        ],
+      },
       teams: [
         ...round.teams.map((team) => {
           return {

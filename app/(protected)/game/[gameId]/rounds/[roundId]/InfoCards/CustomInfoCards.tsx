@@ -11,15 +11,23 @@ export function ActiveCurseCard() {
 
   if (userTeam.role === "HIDER") return;
 
-  const activeCurses = [
+  const activeCursesIds = [
     ...round.curses
       .filter((curse) => curse.teamId === userTeam.teamId && !curse.lifted_at && !curse.vetoed_at)
-      .map((curse) => curse.curse.name),
+      .map((curse) => curse.curseId),
   ];
+
+  let activeCurse = undefined;
+
+  if (activeCursesIds.length > 0) {
+    activeCurse = round.game.game_curses.find(
+      (gameCurse) => gameCurse.curseId === activeCursesIds[0]
+    )?.name!;
+  }
 
   return (
     <InfoCard label="Active curse" color="#fd1216">
-      {activeCurses.length > 0 ? activeCurses[0] : "None!"}
+      {activeCurse || "None!"}
     </InfoCard>
   );
 }

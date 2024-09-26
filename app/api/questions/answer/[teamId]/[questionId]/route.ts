@@ -70,27 +70,29 @@ export async function POST(
     },
   });
 
-  const updatedTeamRound = await db.teamRound.update({
-    where: {
-      teamId_roundId: {
-        teamId: params.teamId,
-        roundId: lastRound.roundId,
+  if (answer !== "Hiders didn't manage to answer before time ran out") {
+    const updatedTeamRound = await db.teamRound.update({
+      where: {
+        teamId_roundId: {
+          teamId: params.teamId,
+          roundId: lastRound.roundId,
+        },
       },
-    },
-    data: {
-      coins: {
-        increment: question.cost,
+      data: {
+        coins: {
+          increment: question.cost,
+        },
       },
-    },
-  });
+    });
 
-  if (!updatedTeamRound) {
-    return NextResponse.json(
-      {
-        error: `Couldn't update number of coins`,
-      },
-      { status: 400 }
-    );
+    if (!updatedTeamRound) {
+      return NextResponse.json(
+        {
+          error: `Couldn't update number of coins`,
+        },
+        { status: 400 }
+      );
+    }
   }
 
   return NextResponse.json<AnswerQuestionResponse>({

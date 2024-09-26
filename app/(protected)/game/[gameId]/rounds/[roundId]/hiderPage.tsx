@@ -12,7 +12,7 @@ export default function HiderPage() {
       <GameControlButton />
       <TeamsSection />
       <div>
-        <Header>Questions</Header>
+        <Header>Asked Questions</Header>
         <Questions />
       </div>
       <CursesCard />

@@ -1,4 +1,3 @@
-import { TagProps } from "@/app/ui/components/tag/tag";
 import { Question, TeamRoundQuestion } from "@prisma/client";
 import styles from "./QuestionItem.module.css";
 import AskButton from "./AskButton";
@@ -17,28 +16,14 @@ export default function QuestionItem({
   question: Question;
 }) {
   const { round, userTeam } = useRoundContext();
-
   const isAnswerPending = teamQuestion && teamQuestion.created_at && !teamQuestion.answer;
-
-  function getTitleTags() {
-    let titleTags: Array<TagProps> = [{ children: question.cost.toString() }];
-    if (!teamQuestion) {
-      return titleTags;
-    }
-    const askedBy = round.teams.find((team) => team.teamId === teamQuestion.teamId)?.name;
-
-    if (askedBy) {
-      titleTags.push({ children: askedBy, hue: 200 });
-    }
-
-    return titleTags;
-  }
 
   return (
     <Item style={isAnswerPending ? "orange" : undefined}>
       <div className={`${styles.wrapper}`}>
         <div>
-          <Text type="title" tags={getTitleTags()}>
+          {teamQuestion && <AskedBy teamId={teamQuestion.teamId} />}
+          <Text type="title" tags={[{ children: question.cost.toString() }]}>
             {question.content}
           </Text>
           {question.details && <p className={styles.details}>{question.details}</p>}
@@ -58,5 +43,21 @@ export default function QuestionItem({
         {!teamQuestion && userTeam.role === "SEEKER" && <AskButton questionId={question.id} />}
       </div>
     </Item>
+  );
+}
+
+function AskedBy({ teamId }: { teamId: string }) {
+  const { round, userTeam } = useRoundContext();
+
+  const team = round.teams.find((team) => team.teamId === teamId);
+
+  if (userTeam.role === "SEEKER" || !team) {
+    return;
+  }
+
+  return (
+    <p className={styles.askedBy}>
+      {`${team.name} - ${team.members.map((m) => m.username).join(", ")}`}
+    </p>
   );
 }

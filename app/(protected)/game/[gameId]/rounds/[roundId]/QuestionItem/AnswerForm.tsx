@@ -26,7 +26,7 @@ export default function AnswerForm({
       const response = await fetchWithBaseUrl(
         `/api/questions/answer/${ownerTeamId}/${questionId}`,
         {
-          body: JSON.stringify({ answer: "Hiders didn't manage to answer before time ran out " }),
+          body: JSON.stringify({ answer: "Hiders didn't manage to answer before time ran out" }),
           method: "POST",
         }
       );
