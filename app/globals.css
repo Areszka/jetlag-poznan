@@ -22,9 +22,10 @@ ul {
 }
 
 footer {
-  padding: 64px;
+  padding: 64px 16px;
   color: #718096;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: baseline;
   gap: 6px;
