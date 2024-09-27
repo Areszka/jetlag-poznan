@@ -10,5 +10,5 @@ export default function usePolling(ms: number) {
     }, ms);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [ms, router]);
 }
