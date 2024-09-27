@@ -63,10 +63,9 @@ export async function POST(request: Request) {
   const body: PostGamesRequest = await request.json();
 
   if (body.teams.length < 2) {
-    return NextResponse.json(null, {
-      status: 400,
-      statusText: `Required at least 2 teams, got ${body.teams.length}. Add more teams to create a game`,
-    });
+    return Error(
+      `Required at least 2 teams, got ${body.teams.length}. Add more teams to create a game`
+    );
   }
 
   const playersIds: string[] = [];
@@ -96,16 +95,13 @@ export async function POST(request: Request) {
   });
 
   if (usersAlreadyPlaying.length > 0) {
-    let statusText;
+    let errorMessage;
     if (usersAlreadyPlaying.length === 1) {
-      statusText = `Player ${usersAlreadyPlaying[0].username} is currenlty playing another game`;
+      errorMessage = `Player ${usersAlreadyPlaying[0].username} is currenlty playing another game`;
     } else {
-      statusText = `Players ${usersAlreadyPlaying.map((p) => p.username).join(", ")} are currenlty playing another game`;
+      errorMessage = `Players ${usersAlreadyPlaying.map((p) => p.username).join(", ")} are currenlty playing another game`;
     }
-    return NextResponse.json(null, {
-      status: 400,
-      statusText,
-    });
+    return Error(errorMessage);
   }
 
   const teamsWithNoMembers: string[] = [];
@@ -117,28 +113,19 @@ export async function POST(request: Request) {
   });
 
   if (teamsWithNoMembers.length > 0) {
-    return NextResponse.json(null, {
-      status: 400,
-      statusText: `Team ${teamsWithNoMembers[0]} have no members`,
-    });
+    return Error(`Team ${teamsWithNoMembers[0]} have no members`);
   }
 
   const gameHasSeeker = body.teams.some((team) => team.role === Role.SEEKER);
 
   if (!gameHasSeeker) {
-    return NextResponse.json(null, {
-      status: 400,
-      statusText: `At least one team needs to be a seeker`,
-    });
+    return Error(`At least one team needs to be a seeker`);
   }
 
   const gameHasOneHider = body.teams.filter((team) => team.role === Role.HIDER).length === 1;
 
   if (!gameHasOneHider) {
-    return NextResponse.json(null, {
-      status: 400,
-      statusText: `Too many hiders, only one is allowed`,
-    });
+    return Error(`Too many hiders, only one is allowed`);
   }
 
   const game = await db.game.create({
@@ -192,4 +179,15 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json<PostGamesResponse>({ game });
+}
+
+function Error(message: string) {
+  return NextResponse.json(
+    {
+      error: message,
+    },
+    {
+      status: 400,
+    }
+  );
 }

@@ -2,7 +2,7 @@
 
 import { fetchWithBaseUrl } from "@/app/helpers";
 import Card from "@/app/ui/components/card/card";
-import { Game, Question, Role } from "@prisma/client";
+import { Question, Role } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, Reducer } from "react";
 import styles from "./page.module.css";
@@ -10,6 +10,11 @@ import { MdOutlineErrorOutline } from "react-icons/md";
 import reducer, { GameAction, GameState } from "./reducer";
 import Teams, { InputWithAddButton, NameInput } from "./components";
 import { PostGamesRequest, PostGamesResponse } from "@/app/api/games/route";
+import { GetQuestionsResponse } from "@/app/api/questions/route";
+import { Text } from "@/app/ui/components/text/text";
+import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { VerticalLabel } from "./components/VerticalLabel/VerticalLabel";
 
 const INITIAL_SETTINGS: GameState = {
   name: "",
@@ -35,7 +40,11 @@ export default function CreateGamePage() {
       const cursesResponse = await fetchWithBaseUrl(`/api/curses`);
 
       if (questionsResponse.ok) {
-        const data = await questionsResponse.json();
+        const data: GetQuestionsResponse = await questionsResponse.json();
+        dispatch({
+          type: "all_questions_added",
+          questionsIds: data.questions.map((question) => question.id),
+        });
         setQuestions(data.questions);
       }
 
@@ -48,8 +57,6 @@ export default function CreateGamePage() {
   }, []);
 
   const router = useRouter();
-
-  async function createGame() {}
 
   async function handleSubmitForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -82,7 +89,12 @@ export default function CreateGamePage() {
     });
 
     if (!response.ok) {
-      setErrorMessage(response.statusText);
+      const { error } = await response.json();
+      if (error) {
+        setErrorMessage(error);
+      } else {
+        setErrorMessage(response.statusText);
+      }
     } else {
       const data: PostGamesResponse = await response.json();
       router.push(`/game/${data.game.id}/rounds/${data.game.rounds[0].id}`);
@@ -139,23 +151,20 @@ export default function CreateGamePage() {
           value={game.name}
           onChange={(name) => dispatch({ type: "name_changed", name })}
         />
-        <label>
-          {" "}
+        <VerticalLabel>
           Number of coins needed to roll one dice
           <input type="number" name="diceCost" defaultValue="50" required />
-        </label>
+        </VerticalLabel>
 
-        <label>
-          {" "}
-          Time limit for hiders to answer a question
+        <VerticalLabel>
+          Time limit for hiders to answer questions
           <input type="time" name="answerTimeLimit" min="00:10" defaultValue="00:15" required />
-        </label>
+        </VerticalLabel>
 
-        <label>
-          {" "}
+        <VerticalLabel>
           Jail period (time seekers need to wait before starting their expedition)
           <input type="time" name="jailDuration" defaultValue="00:30" required />
-        </label>
+        </VerticalLabel>
 
         <InputWithAddButton label="Teams" onClick={handleAddTeam} />
         <Teams
@@ -166,11 +175,11 @@ export default function CreateGamePage() {
           removeMember={handleRemoveMember}
         ></Teams>
         <fieldset>
-          <legend>Choose questions</legend>
+          <legend>Questions</legend>
           {questions &&
             questions.map((question) => {
               return (
-                <label key={question.id}>
+                <label key={question.id} className={styles.checkbox}>
                   <input
                     type="checkbox"
                     name="question"
@@ -189,29 +198,43 @@ export default function CreateGamePage() {
                       }
                     }}
                   />
-                  {question.content}
-                  <br />
-                  Details: {question.details}
+                  <FlexWithGap gap={4}>
+                    <Text type="title" tags={[{ children: question.cost.toString() }]}>
+                      {question.content}
+                    </Text>
+                    {question.details && <Text type="description">{question.details}</Text>}
+                  </FlexWithGap>
                 </label>
               );
             })}
         </fieldset>
-
-        <ol>
-          {game.curses.map((curse) => {
-            return (
-              <li key={curse.id}>
-                <button type="button" onClick={() => moveCurseUp(curse.id)}>
-                  up
-                </button>
-                <button type="button" onClick={() => moveCurseDown(curse.id)}>
-                  down
-                </button>
-                {curse.name}
-              </li>
-            );
-          })}
-        </ol>
+        <fieldset>
+          <legend>Curses</legend>
+          <ul>
+            {game.curses.map((curse, index) => {
+              return (
+                <li key={curse.id}>
+                  <div className={styles.curseButtons}>
+                    {index > 0 && (
+                      <button type="button" onClick={() => moveCurseUp(curse.id)}>
+                        <IoIosArrowUp />
+                      </button>
+                    )}
+                    {index !== game.curses.length - 1 && (
+                      <button type="button" onClick={() => moveCurseDown(curse.id)}>
+                        <IoIosArrowDown />
+                      </button>
+                    )}
+                  </div>
+                  <FlexWithGap gap={0}>
+                    <Text type="title">{curse.name}</Text>
+                    <Text type="description">{curse.effect}</Text>
+                  </FlexWithGap>
+                </li>
+              );
+            })}
+          </ul>
+        </fieldset>
         <button className={styles.createButton}>Create</button>
       </form>
       {errorMessage && (

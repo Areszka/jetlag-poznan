@@ -58,6 +58,11 @@ type DecreaseDifficultyAction = {
   curseId: string;
 };
 
+type AddAllQuestionsAction = {
+  type: "all_questions_added";
+  questionsIds: string[];
+};
+
 export type GameAction =
   | ChangeNameAction
   | AddTeamAction
@@ -69,7 +74,8 @@ export type GameAction =
   | RemoveQuestionAction
   | InitializeCursesAction
   | IncreaseDifficultyAction
-  | DecreaseDifficultyAction;
+  | DecreaseDifficultyAction
+  | AddAllQuestionsAction;
 
 export interface GameState {
   name: string;
@@ -137,6 +143,9 @@ export default function reducer(game: GameState, action: GameAction) {
         return team;
       });
       return { ...game, teams: nextTeams };
+    }
+    case "all_questions_added": {
+      return { ...game, questionIds: action.questionsIds };
     }
     case "question_added": {
       return { ...game, questionIds: [...game.questionIds, action.questionId] };

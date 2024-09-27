@@ -8,14 +8,24 @@
 
 .form {
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form fieldset,
+.form fieldset ul {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-block-start: 4px;
 }
 
 .form label {
-  font-weight: 500;
   display: flex;
-  flex-direction: column;
-  margin-bottom: 16px;
   gap: 4px;
+  font-weight: 500;
 }
 
 .form input {
@@ -110,4 +120,37 @@
   display: flex;
   gap: 4px;
   align-items: center;
+  margin: 0 -16px -16px;
+}
+
+.form fieldset li {
+  border: 1px solid rgb(213, 213, 213);
+  background-color: white;
+  border-radius: 4px;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 6px;
+}
+
+.curseButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+}
+
+.curseButtons button {
+  height: 24px;
+}
+
+.checkbox {
+  border: 1px solid rgb(213, 213, 213);
+  background-color: white;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.checkbox input {
+  margin-inline: 6px 14px;
 }
