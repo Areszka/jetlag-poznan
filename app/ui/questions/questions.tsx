@@ -1,11 +1,5 @@
-import { JSX } from "react";
-import { headers } from "next/headers";
 import Link from "next/link";
-import { fetchWithBaseUrl } from "../../helpers";
-import Card from "../components/card/card";
 import { Text } from "../components/text/text";
-import Tag from "../components/tag/tag";
-import styles from "./questions.module.css";
 import { serverFetch } from "@/app/server-fetch";
 
 export async function Questions(): Promise<JSX.Element> {
@@ -17,24 +11,26 @@ export async function Questions(): Promise<JSX.Element> {
 
   const data = await response.json();
   return (
-    <Card title="Questions">
-      <Link href="/questions/new">Add new question</Link>
-      <ul>
-        {data.questions.map((question: any) => {
-          return (
-            <li key={question.id} className={styles.questionWrapper}>
-              <Link href={`/questions/${question.id}`}>
-                <div className={styles.question}>
-                  <Text type="title">{question.content}</Text>
-                  <Tag>{question.cost}</Tag> <Tag hue={HUES[question.type]}>{question.type}</Tag>
-                </div>
-                {question.details && <Text type="description">{question.details}</Text>}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </Card>
+    <>
+      {data.questions.map((question: any) => {
+        return (
+          <li key={question.id}>
+            <Link href={`/questions/${question.id}`}>
+              <Text
+                type="title"
+                tags={[
+                  { children: question.cost },
+                  { children: question.type, hue: HUES[question.type] },
+                ]}
+              >
+                {question.content}
+              </Text>
+              {question.details && <Text type="description">{question.details}</Text>}
+            </Link>
+          </li>
+        );
+      })}
+    </>
   );
 }
 

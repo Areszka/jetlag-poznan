@@ -3,7 +3,6 @@ import "../globals.css";
 import { Navigation } from "@/app/ui/navigation";
 import { validateSession } from "@/app/api/auth";
 import { db } from "@/app/api/db";
-import React from "react";
 import { comfortaa } from "@/app/fonts";
 
 export const metadata: Metadata = {

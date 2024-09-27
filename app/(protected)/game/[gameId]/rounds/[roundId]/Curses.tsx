@@ -22,7 +22,7 @@ export default function Curses({ teamId }: { teamId?: string }) {
   return (
     <FlexWithGap>
       {curses.map((curse) => {
-        return <TeamCurseItem key={curse.curseId} roundCurse={curse} />;
+        return <TeamCurseItem key={`${curse.curseId}_${curse.teamId}`} roundCurse={curse} />;
       })}
     </FlexWithGap>
   );

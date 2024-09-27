@@ -1,0 +1,13 @@
+.wrapper {
+  display: flex;
+  gap: 1px;
+  flex-direction: column;
+}
+.wrapper > *:not(:last-child) {
+  border-bottom: 1px dotted rgb(206, 206, 206);
+  padding-block: 16px;
+}
+
+.wrapper > *:last-child {
+  padding-block-start: 16px;
+}

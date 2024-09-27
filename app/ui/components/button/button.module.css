@@ -7,6 +7,7 @@
   font-weight: 500;
   border: 1px solid #ababab;
   transition: background-color 0.2s;
+  text-align: center;
 
   &:hover {
     background-color: #e5e5e5;

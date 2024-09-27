@@ -1,19 +1,42 @@
-import { Suspense, JSX } from "react";
-import { Questions } from "../ui/questions/questions";
-import { Curses } from "../ui/curses/curses";
+import { Suspense } from "react";
+import { Questions } from "../ui/questions/Questions";
+import { Curses } from "../ui/curses/Curses";
 import styles from "./page.module.css";
-import Game from "../ui/game";
+import Games from "../ui/games";
+import Card from "../ui/components/card/card";
+import { ButtonLink } from "../ui/components/button/button";
+import FlexWithGap from "../ui/components/FlexWithGap/FlexWithGap";
+import ListWrapper from "../ui/components/ListWrapper/ListWrapper";
 
 export default function Page(): JSX.Element {
   return (
     <div className={styles.pageWrapper}>
-      <Game />
-      <Suspense fallback={<p>Questions are loading... </p>}>
-        <Questions />
-      </Suspense>
-      <Suspense fallback={<p>Curses are loading... </p>}>
-        <Curses />
-      </Suspense>
+      <FlexWithGap gap={32}>
+        <Card title="Games">
+          <ButtonLink href={"/game/create"}>Create new Game</ButtonLink>
+          <ListWrapper>
+            <Suspense fallback={<p>Games are loading... </p>}>
+              <Games />
+            </Suspense>
+          </ListWrapper>
+        </Card>
+        <Card title="Questions">
+          <ButtonLink href="/questions/new">Add new question</ButtonLink>
+          <ListWrapper>
+            <Suspense fallback={<p>Questions are loading... </p>}>
+              <Questions />
+            </Suspense>
+          </ListWrapper>
+        </Card>
+        <Card title="Curses">
+          <ButtonLink href="/curses/new">Add new curse</ButtonLink>
+          <ListWrapper>
+            <Suspense fallback={<p>Curses are loading... </p>}>
+              <Curses />
+            </Suspense>
+          </ListWrapper>
+        </Card>
+      </FlexWithGap>
     </div>
   );
 }

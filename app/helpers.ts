@@ -7,7 +7,7 @@ export function getBaseUrl(): string {
   return base_url;
 }
 
-export async function fetchWithBaseUrl(url: string, requestInit?: RequestInit) {
+export function fetchWithBaseUrl(url: string, requestInit?: RequestInit) {
   return fetch(`${getBaseUrl()}${url}`, { ...requestInit });
 }
 

@@ -1,6 +1,8 @@
 .pageWrapper {
-  margin-block-start: 128px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin: 32px auto;
+  max-width: 750px;
+}
+
+.pageWrapper > div {
+  margin-inline: 16px;
 }

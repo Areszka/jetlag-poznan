@@ -5,7 +5,7 @@ export default function Card({ title, children }: { title: string; children: Rea
   return (
     <div className={styles.cardWrapper}>
       <h2>{title}</h2>
-      {children}
+      <div className={styles.cardContentWrapper}>{children}</div>
     </div>
   );
 }
