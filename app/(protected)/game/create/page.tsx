@@ -14,7 +14,7 @@ import { GetQuestionsResponse } from "@/app/api/questions/route";
 import { Text } from "@/app/ui/components/text/text";
 import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { VerticalLabel } from "./components/VerticalLabel/VerticalLabel";
+import Form from "@/app/ui/components/Form/Form";
 
 const INITIAL_SETTINGS: GameState = {
   name: "",
@@ -146,25 +146,25 @@ export default function CreateGamePage() {
 
   return (
     <Card title="Create New Game">
-      <form onSubmit={handleSubmitForm} className={styles.form}>
+      <Form onSubmit={handleSubmitForm}>
         <NameInput
           value={game.name}
           onChange={(name) => dispatch({ type: "name_changed", name })}
         />
-        <VerticalLabel>
+        <label>
           Number of coins needed to roll one dice
           <input type="number" name="diceCost" defaultValue="50" required />
-        </VerticalLabel>
+        </label>
 
-        <VerticalLabel>
+        <label>
           Time limit for hiders to answer questions
           <input type="time" name="answerTimeLimit" min="00:10" defaultValue="00:15" required />
-        </VerticalLabel>
+        </label>
 
-        <VerticalLabel>
+        <label>
           Jail period (time seekers need to wait before starting their expedition)
           <input type="time" name="jailDuration" defaultValue="00:30" required />
-        </VerticalLabel>
+        </label>
 
         <InputWithAddButton label="Teams" onClick={handleAddTeam} />
         <Teams
@@ -179,7 +179,11 @@ export default function CreateGamePage() {
           {questions &&
             questions.map((question) => {
               return (
-                <label key={question.id} className={styles.checkbox}>
+                <label
+                  key={question.id}
+                  className={styles.checkbox}
+                  style={{ flexDirection: "row" }}
+                >
                   <input
                     type="checkbox"
                     name="question"
@@ -213,7 +217,7 @@ export default function CreateGamePage() {
           <ul>
             {game.curses.map((curse, index) => {
               return (
-                <li key={curse.id}>
+                <li key={curse.id} className={styles.curse}>
                   <div className={styles.curseButtons}>
                     {index > 0 && (
                       <button type="button" onClick={() => moveCurseUp(curse.id)}>
@@ -236,7 +240,7 @@ export default function CreateGamePage() {
           </ul>
         </fieldset>
         <button className={styles.createButton}>Create</button>
-      </form>
+      </Form>
       {errorMessage && (
         <div className={styles.error}>
           <MdOutlineErrorOutline /> {errorMessage}

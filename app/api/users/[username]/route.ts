@@ -14,8 +14,8 @@ export async function GET(_: Request, { params }: { params: { username: string }
 
   if (user === null) {
     return NextResponse.json(
-      {},
-      { status: 400, statusText: `User "${params.username}" does not exist` }
+      { error: `User "${params.username}" does not exist` },
+      { status: 400 }
     );
   }
 

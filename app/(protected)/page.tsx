@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { Questions } from "../ui/questions/Questions";
 import { Curses } from "../ui/curses/Curses";
-import styles from "./page.module.css";
 import Games from "../ui/games";
 import Card from "../ui/components/card/card";
 import { ButtonLink } from "../ui/components/button/button";
@@ -10,7 +9,7 @@ import ListWrapper from "../ui/components/ListWrapper/ListWrapper";
 
 export default function Page(): JSX.Element {
   return (
-    <div className={styles.pageWrapper}>
+    <>
       <FlexWithGap gap={32}>
         <Card title="Games">
           <ButtonLink href={"/game/create"}>Create new Game</ButtonLink>
@@ -37,6 +36,6 @@ export default function Page(): JSX.Element {
           </ListWrapper>
         </Card>
       </FlexWithGap>
-    </div>
+    </>
   );
 }

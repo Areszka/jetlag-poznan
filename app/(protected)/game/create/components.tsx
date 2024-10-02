@@ -4,7 +4,6 @@ import { Team, User } from "./reducer";
 import { Role } from "@prisma/client";
 import React, { ReactNode } from "react";
 import Spinner from "@/app/ui/components/spinner/spinner";
-import { VerticalLabel } from "./components/VerticalLabel/VerticalLabel";
 
 export function NameInput({
   value,
@@ -14,10 +13,10 @@ export function NameInput({
   onChange: (name: string) => void;
 }) {
   return (
-    <VerticalLabel>
+    <label>
       Game name
       <input required value={value} onChange={(event) => onChange(event.target.value)} />
-    </VerticalLabel>
+    </label>
   );
 }
 
@@ -109,7 +108,7 @@ export function InputWithAddButton({
   const [isLoading, setIsLoading] = React.useState(false);
 
   return (
-    <VerticalLabel>
+    <label>
       {label}
       <div className={styles.addInputWrapper}>
         <input value={input} onChange={(event) => setInput(event.target.value)} />
@@ -127,7 +126,7 @@ export function InputWithAddButton({
           {isLoading ? <Spinner /> : "Add"}
         </button>
       </div>
-    </VerticalLabel>
+    </label>
   );
 }
 

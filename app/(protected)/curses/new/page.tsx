@@ -1,6 +1,10 @@
-import { JSX } from "react";
 import { CurseForm } from "@/app/(protected)/curses/CurseForm";
+import Card from "@/app/ui/components/card/card";
 
 export default function Page(): JSX.Element {
-  return <CurseForm type="create" />;
+  return (
+    <Card title="Create curse">
+      <CurseForm type="create" />
+    </Card>
+  );
 }

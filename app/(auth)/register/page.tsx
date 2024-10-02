@@ -2,17 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Card from "../../ui/components/card/card";
+import Form from "../../ui/components/Form/Form";
+import { Button } from "../../ui/components/button/button";
 
 export default function Page() {
   const router = useRouter();
   return (
-    <div>
-      <h1>Login</h1>
-
-      <form
+    <Card title="Register">
+      <Form
         onSubmit={(e) => {
           e.preventDefault();
-          fetch("/api/login", {
+          fetch("/api/register", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -30,15 +31,15 @@ export default function Page() {
       >
         <label>
           Username
-          <input type="text" name="username" />
+          <input type="text" name="username" required />
         </label>
         <label>
           Password
-          <input type="password" name="password" />
+          <input type="password" name="password" required />
         </label>
-        <button type="submit">Login</button>
-        <Link href="/register">I don&apos;t have an account</Link>
-      </form>
-    </div>
+        <Button type="submit">Register</Button>
+        <Link href="/login">I already have an account</Link>
+      </Form>
+    </Card>
   );
 }

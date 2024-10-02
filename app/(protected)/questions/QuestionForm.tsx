@@ -1,7 +1,8 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { PostQuestionsRequest } from "@/app/api/questions/route";
-import { JSX } from "react";
+import { Button } from "@/app/ui/components/button/button";
+import Form from "@/app/ui/components/Form/Form";
 
 export function QuestionForm({
   type,
@@ -14,7 +15,7 @@ export function QuestionForm({
 }): JSX.Element {
   const router = useRouter();
   return (
-    <form
+    <Form
       onSubmit={(e) => {
         e.preventDefault();
         const requestBody: PostQuestionsRequest = {
@@ -50,14 +51,9 @@ export function QuestionForm({
       </label>
       <label>
         Details
-        <textarea
-          name="details"
-          defaultValue={initialValues?.details ?? undefined}
-        />
+        <textarea name="details" defaultValue={initialValues?.details ?? undefined} />
       </label>
-      <button type="submit">
-        {type === "create" ? "Create" : "Update"} question
-      </button>
-    </form>
+      <Button type="submit">{type === "create" ? "Create" : "Update"} question</Button>
+    </Form>
   );
 }

@@ -2,6 +2,8 @@
 import { useRouter } from "next/navigation";
 import { JSX } from "react";
 import { PostCursesRequest } from "@/app/api/curses/route";
+import { Button } from "@/app/ui/components/button/button";
+import Form from "@/app/ui/components/Form/Form";
 
 export function CurseForm({
   type,
@@ -14,7 +16,7 @@ export function CurseForm({
 }): JSX.Element {
   const router = useRouter();
   return (
-    <form
+    <Form
       onSubmit={(e) => {
         e.preventDefault();
         const requestBody: PostCursesRequest = {
@@ -51,9 +53,7 @@ export function CurseForm({
           defaultValue={initialValues?.defaultDifficulty ?? undefined}
         />
       </label>
-      <button type="submit">
-        {type === "create" ? "Create" : "Update"} curse
-      </button>
-    </form>
+      <Button type="submit">{type === "create" ? "Create" : "Update"} curse</Button>
+    </Form>
   );
 }
