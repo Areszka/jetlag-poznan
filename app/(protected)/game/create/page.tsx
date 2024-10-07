@@ -15,6 +15,7 @@ import { Text } from "@/app/ui/components/text/text";
 import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import Form from "@/app/ui/components/Form/Form";
+import { motion } from "framer-motion";
 
 const INITIAL_SETTINGS: GameState = {
   name: "",
@@ -217,7 +218,7 @@ export default function CreateGamePage() {
           <ul>
             {game.curses.map((curse, index) => {
               return (
-                <li key={curse.id} className={styles.curse}>
+                <motion.li key={curse.id} className={styles.curse} layout={true}>
                   <div className={styles.curseButtons}>
                     {index > 0 && (
                       <button type="button" onClick={() => moveCurseUp(curse.id)}>
@@ -234,7 +235,7 @@ export default function CreateGamePage() {
                     <Text type="title">{curse.name}</Text>
                     <Text type="description">{curse.effect}</Text>
                   </FlexWithGap>
-                </li>
+                </motion.li>
               );
             })}
           </ul>
