@@ -21,3 +21,13 @@
 .cardContentWrapper {
   margin: 16px;
 }
+
+.error {
+  color: red;
+  background-color: rgb(245, 196, 196);
+  padding: 16px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin: 0 -16px -16px;
+}

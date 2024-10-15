@@ -6,7 +6,6 @@ import { Question, Role } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, Reducer } from "react";
 import styles from "./page.module.css";
-import { MdOutlineErrorOutline } from "react-icons/md";
 import reducer, { GameAction, GameState } from "./reducer";
 import Teams, { InputWithAddButton, NameInput } from "./components";
 import { PostGamesRequest, PostGamesResponse } from "@/app/api/games/route";
@@ -16,6 +15,7 @@ import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import Form from "@/app/ui/components/Form/Form";
 import { motion } from "framer-motion";
+import CardError from "@/app/ui/components/card/CardError";
 
 const INITIAL_SETTINGS: GameState = {
   name: "",
@@ -242,11 +242,7 @@ export default function CreateGamePage() {
         </fieldset>
         <button className={styles.createButton}>Create</button>
       </Form>
-      {errorMessage && (
-        <div className={styles.error}>
-          <MdOutlineErrorOutline /> {errorMessage}
-        </div>
-      )}
+      {errorMessage && <CardError>{errorMessage}</CardError>}
     </Card>
   );
 }
