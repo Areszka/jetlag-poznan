@@ -1,6 +1,8 @@
 import {
   ActiveCurseCard,
   AnswerTimeLimitCard,
+  DiceCostCard,
+  MapCard,
   PendingQuestionsCard,
   RoleCard,
   TeamNameCard,
@@ -16,6 +18,8 @@ export function SeekerInfoCards() {
       <TeamNameCard />
       <PendingQuestionsCard />
       <ActiveCurseCard />
+      <DiceCostCard />
+      <MapCard />
     </InfoCards>
   );
 }
@@ -28,6 +32,8 @@ export function HiderInfoCards() {
       <AnswerTimeLimitCard />
       <TeamNameCard />
       <PendingQuestionsCard />
+      <DiceCostCard />
+      <MapCard />
     </InfoCards>
   );
 }

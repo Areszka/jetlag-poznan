@@ -40,14 +40,16 @@ export default function TeamCurseItem({ roundCurse }: { roundCurse: TeamRoundCur
           {curseIsActive && (
             <>
               <Text type="description">{curse.effect}</Text>
-              {userIsHider && (
+              {userIsHider && !round.end_time && (
                 <LiftCurseButton curseId={roundCurse.curseId} teamId={roundCurse.teamId} />
               )}
-              {isTarget && <VetoCurseButton curseId={roundCurse.curseId} />}
+              {isTarget && !round.end_time && <VetoCurseButton curseId={roundCurse.curseId} />}
             </>
           )}
         </div>
-        {roundCurse.vetoed_at && <VetoText vetoedAt={roundCurse.vetoed_at}></VetoText>}
+        {roundCurse.vetoed_at && !round.end_time && (
+          <VetoText vetoedAt={roundCurse.vetoed_at}></VetoText>
+        )}
       </>
     </TeamCurseWrapper>
   );

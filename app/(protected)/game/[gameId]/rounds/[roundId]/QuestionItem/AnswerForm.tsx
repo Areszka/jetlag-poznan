@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import styles from "./QuestionItem.module.css";
 import useCountdown from "@/app/hooks/use-countdown";
+import useSWRMutation from "swr/mutation";
+import Spinner from "@/app/ui/components/spinner/spinner";
 
 export default function AnswerForm({
   askedAt,
@@ -56,39 +58,46 @@ export default function AnswerForm({
 
 function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: string }) {
   const router = useRouter();
-
-  async function sendAnswer(answer: string) {
-    const response = await fetchWithBaseUrl(`/api/questions/answer/${ownerTeamId}/${questionId}`, {
-      body: JSON.stringify({ answer }),
-      method: "POST",
-    });
-
-    if (!response.ok) {
-      throw Error("Error when answering");
-    }
-    router.refresh();
-  }
+  const { trigger, isMutating } = useSWRMutation<any, Error, any, string>(
+    `/api/questions/answer/${ownerTeamId}/${questionId}`,
+    fetcher
+  );
 
   return (
     <form
       onSubmit={async (event) => {
         event.preventDefault();
         const answer = event.currentTarget.answer.value;
-        sendAnswer(answer);
+        trigger(answer).then(() => router.refresh());
       }}
     >
       <input type="text" name="answer" />
       <div className={styles.buttons}>
-        <button>Answer</button>
+        <button disabled={isMutating}>Answer</button>
         <button
           type="button"
           onClick={() => {
-            sendAnswer("Hiders couldn't answer that");
+            trigger("Hiders couldn't answer that").then(() => router.refresh());
           }}
+          disabled={isMutating}
         >
           Cannot Answer
         </button>
       </div>
+      {isMutating && <Spinner />}
     </form>
   );
+}
+
+async function fetcher(url: string, { arg }: { arg: string }) {
+  return fetch(url, {
+    body: JSON.stringify({ answer: arg }),
+    method: "POST",
+  }).then(async (res) => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      throw new Error(res.statusText);
+    }
+  });
 }

@@ -7,6 +7,7 @@ import Form from "../../ui/components/Form/Form";
 import { Button } from "../../ui/components/button/button";
 import useSWRMutation from "swr/mutation";
 import CardError from "@/app/ui/components/card/CardError";
+import Spinner from "@/app/ui/components/spinner/spinner";
 
 async function register(url: string, { arg }: { arg: { username: string; password: string } }) {
   return fetch(url, {
@@ -59,7 +60,7 @@ export default function Page() {
           <input type="password" name="password" required />
         </label>
         <Button type="submit" disabled={isMutating}>
-          {isMutating ? "Loading..." : "Register"}
+          {isMutating ? <Spinner /> : "Register"}
         </Button>
         <Link href="/login">I already have an account</Link>
       </Form>

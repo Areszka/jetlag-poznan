@@ -5,6 +5,7 @@ import { useRoundContext } from "../TeamProvider";
 import InfoCard from "./InfoCard";
 import { useServerLoading } from "@/app/hooks/use-server-loading";
 import useGameTime from "@/app/hooks/use-game-time";
+import Link from "next/link";
 
 export function ActiveCurseCard() {
   const { round, userTeam } = useRoundContext();
@@ -94,4 +95,24 @@ export function TimeCard() {
   const time = useGameTime({ endTime: round.end_time, startTime: round.start_time });
 
   return <InfoCard label="time">{isLoading ? "--:--:--" : getTime(time)}</InfoCard>;
+}
+
+export function MapCard() {
+  return (
+    <Link
+      target="_blank"
+      href="https://www.google.com/maps/d/u/0/edit?mid=1UF7JVajasCXbH6uLcbGnUnYDvUTjpQg&ll=52.410191460656776%2C16.884149898367138&z=13"
+    >
+      <InfoCard label="map">🗺️</InfoCard>
+    </Link>
+  );
+}
+
+export function DiceCostCard() {
+  const { round } = useRoundContext();
+  return (
+    <InfoCard label="dice cost" color="#e6d30b">
+      {round.game.dice_cost.toString()}
+    </InfoCard>
+  );
 }

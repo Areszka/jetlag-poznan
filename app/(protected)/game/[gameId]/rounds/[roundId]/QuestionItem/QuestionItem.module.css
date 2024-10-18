@@ -16,7 +16,12 @@
   cursor: pointer;
 }
 
-.wrapper button:hover {
+.wrapper button:disabled {
+  cursor: not-allowed;
+  background-color: gray;
+}
+
+.wrapper button:not(:disabled):hover {
   background-color: #4a4956;
 }
 

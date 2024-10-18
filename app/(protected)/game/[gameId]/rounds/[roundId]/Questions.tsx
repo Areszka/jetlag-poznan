@@ -38,6 +38,7 @@ export default function Questions() {
 
   return (
     <FlexWithGap>
+      {questions.length === 0 && "No questions yet!"}
       {questions.map(({ question, questionDetails }) => {
         return (
           <QuestionItem key={question.id} question={question} teamQuestion={questionDetails} />

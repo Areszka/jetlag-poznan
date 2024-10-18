@@ -9,6 +9,7 @@ import React from "react";
 import useSWRMutation from "swr/mutation";
 import { LoginRequest, LoginResponse } from "@/app/api/login/route";
 import CardError from "@/app/ui/components/card/CardError";
+import Spinner from "@/app/ui/components/spinner/spinner";
 
 async function login(url: string, { arg }: { arg: LoginRequest }) {
   return fetch(url, {
@@ -58,7 +59,7 @@ export default function Page() {
           <input type="password" name="password" required />
         </label>
         <Button type="submit" disabled={isMutating}>
-          {isMutating ? "Loading..." : "Login"}
+          {isMutating ? <Spinner /> : "Login"}
         </Button>
         <Link href="/register">I don&apos;t have an account</Link>
       </Form>

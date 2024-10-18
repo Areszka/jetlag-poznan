@@ -1,3 +1,5 @@
+"use client";
+
 import { Question, TeamRoundQuestion } from "@prisma/client";
 import styles from "./QuestionItem.module.css";
 import AskButton from "./AskButton";
@@ -7,6 +9,7 @@ import AnswerForm from "./AnswerForm";
 import Item from "@/app/ui/components/Item/Item";
 import { Text } from "@/app/ui/components/text/text";
 import { useRoundContext } from "../TeamProvider";
+import useCountdown from "@/app/hooks/use-countdown";
 
 export default function QuestionItem({
   teamQuestion,
@@ -17,7 +20,6 @@ export default function QuestionItem({
 }) {
   const { round, userTeam } = useRoundContext();
   const isAnswerPending = teamQuestion && teamQuestion.created_at && !teamQuestion.answer;
-
   return (
     <Item style={isAnswerPending ? "orange" : undefined}>
       <div className={`${styles.wrapper}`}>
@@ -30,8 +32,10 @@ export default function QuestionItem({
           {teamQuestion && teamQuestion.answer && (
             <p className={styles.answer}>Answer: {teamQuestion.answer}</p>
           )}
-          {isAnswerPending && <TimeLeftToAnswer askedAt={teamQuestion.created_at} />}
-          {isAnswerPending && userTeam.role === "HIDER" && (
+          {isAnswerPending && !round.end_time && (
+            <TimeLeftToAnswer askedAt={teamQuestion.created_at} />
+          )}
+          {isAnswerPending && userTeam.role === "HIDER" && !round.end_time && (
             <AnswerForm
               askedAt={teamQuestion.created_at}
               ownerTeamId={teamQuestion.teamId}
@@ -40,10 +44,22 @@ export default function QuestionItem({
             />
           )}
         </div>
-        {!teamQuestion && userTeam.role === "SEEKER" && <AskButton questionId={question.id} />}
+        {!teamQuestion && userTeam.role === "SEEKER" && round.start_time && !round.end_time && (
+          <AskButtonWrapper questionId={question.id} />
+        )}
       </div>
     </Item>
   );
+}
+
+function AskButtonWrapper({ questionId }: { questionId: string }) {
+  const { round } = useRoundContext();
+  const jailTimeLeft = useCountdown({
+    period: round.game.jail_duration,
+    startTime: round.start_time!,
+  });
+
+  return <AskButton questionId={questionId} disabled={(jailTimeLeft ?? 1) > 0} />;
 }
 
 function AskedBy({ teamId }: { teamId: string }) {

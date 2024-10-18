@@ -2,7 +2,13 @@
 import { fetchWithBaseUrl } from "@/app/helpers";
 import { useRouter } from "next/navigation";
 
-export default function AskButton({ questionId }: { questionId: string }) {
+export default function AskButton({
+  questionId,
+  disabled,
+}: {
+  questionId: string;
+  disabled: boolean;
+}) {
   const router = useRouter();
 
   async function ask() {
@@ -17,5 +23,9 @@ export default function AskButton({ questionId }: { questionId: string }) {
     router.refresh();
   }
 
-  return <button onClick={ask}>Ask</button>;
+  return (
+    <button onClick={ask} disabled={disabled}>
+      Ask
+    </button>
+  );
 }
