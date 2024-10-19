@@ -5,6 +5,7 @@ import HiderPage from "./hiderPage";
 import SeekerPage from "./seekerPage";
 import TeamProvider from "./TeamProvider";
 import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
+import PollingWrapper from "./WrapperPolling";
 
 export default async function Page({ params }: { params: { gameId: string; roundId: string } }) {
   const userId = await validateSession();
@@ -22,9 +23,11 @@ export default async function Page({ params }: { params: { gameId: string; round
 
   return (
     <TeamProvider userId={userId} round={round}>
-      <FlexWithGap gap={32}>
-        {userTeam!.role === "HIDER" ? <HiderPage /> : <SeekerPage />}
-      </FlexWithGap>
+      <PollingWrapper>
+        <FlexWithGap gap={32}>
+          {userTeam!.role === "HIDER" ? <HiderPage /> : <SeekerPage />}
+        </FlexWithGap>
+      </PollingWrapper>
     </TeamProvider>
   );
 }
