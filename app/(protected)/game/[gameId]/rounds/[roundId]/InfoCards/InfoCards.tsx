@@ -15,6 +15,7 @@ export function SeekerInfoCards() {
     <InfoCards>
       <TimeCard />
       <RoleCard />
+      <AnswerTimeLimitCard />
       <TeamNameCard />
       <PendingQuestionsCard />
       <ActiveCurseCard />

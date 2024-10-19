@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { Game, Role } from "@prisma/client";
+import { Game, Role, Round } from "@prisma/client";
 import { validateSession } from "@/app/api/auth";
 import { db } from "@/app/api/db";
 import { User } from "@/app/(protected)/game/create/reducer";
 
-export type GetGamesResponse = { games: Array<Game & { isActive: boolean }> };
+export type GetGamesResponse = { games: Array<Game & { isActive: boolean; rounds: Array<Round> }> };
 
 export async function GET() {
   const userId = await validateSession();

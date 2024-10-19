@@ -80,6 +80,9 @@ export async function GET(
         include: {
           game_questions: true,
           game_curses: {
+            orderBy: {
+              difficulty: "asc",
+            },
             include: {
               curse: true,
             },

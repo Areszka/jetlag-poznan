@@ -1,7 +1,7 @@
 import { GetRoundsResponse } from "@/app/api/games/[gameId]/rounds/route";
 import { serverFetch } from "@/app/server-fetch";
 import Link from "next/link";
-import TimeSpan from "../../timeSpan";
+import TimeSpan from "./timeSpan";
 import styles from "./round.module.css";
 
 export default async function Layout({
