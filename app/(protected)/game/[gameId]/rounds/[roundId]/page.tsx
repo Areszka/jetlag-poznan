@@ -7,6 +7,8 @@ import TeamProvider from "./TeamProvider";
 import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
 import PollingWrapper from "./WrapperPolling";
 import Winner from "./Winner";
+import Header from "@/app/ui/components/header/header";
+import GameCursesCard from "./GameCursesCard";
 
 export default async function Page({ params }: { params: { gameId: string; roundId: string } }) {
   const userId = await validateSession();
@@ -28,6 +30,10 @@ export default async function Page({ params }: { params: { gameId: string; round
         <FlexWithGap gap={32}>
           <Winner />
           {userTeam!.role === "HIDER" ? <HiderPage /> : <SeekerPage />}
+          <div>
+            <Header>List of avaible curses</Header>
+            <GameCursesCard />
+          </div>
         </FlexWithGap>
       </PollingWrapper>
     </TeamProvider>
