@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { db } from "@/app/api/db";
 import { validateSession } from "@/app/api/auth";
-import { TeamRoundCurse } from "@prisma/client";
+import { Curse, TeamRoundCurse } from "@prisma/client";
 
 export type ThrowCurseResponse = {
-  curse: TeamRoundCurse;
+  curse: TeamRoundCurse & { curse: Curse };
   dice: number[];
 };
 
@@ -119,6 +119,9 @@ export async function POST(
       curseId: gameCurse.curseId,
       teamId: params.targetTeamId,
       roundId: lastRound.roundId,
+    },
+    include: {
+      curse: true,
     },
   });
 

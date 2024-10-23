@@ -3,12 +3,18 @@ import { db } from "@/app/api/db";
 import { validateSession } from "@/app/api/auth";
 import { PatchRoundResponse } from "../start/route";
 
+export type StopRoundRequest = {
+  winnerTeamId: string;
+};
+
 export async function PATCH(
-  _request: Request,
+  request: Request,
   { params }: { params: { gameId: string; roundId: string } }
 ) {
   const userId = await validateSession();
   const endedAt = new Date();
+
+  const { winnerTeamId } = (await request.json()) as StopRoundRequest;
 
   const updatedRound = await db.round.update({
     where: {
@@ -28,6 +34,7 @@ export async function PATCH(
     },
     data: {
       end_time: endedAt,
+      winner_id: winnerTeamId,
     },
   });
 

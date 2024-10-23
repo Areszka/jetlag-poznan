@@ -9,7 +9,9 @@ import AnswerForm from "./AnswerForm";
 import Item from "@/app/ui/components/Item/Item";
 import { Text } from "@/app/ui/components/text/text";
 import { useRoundContext } from "../TeamProvider";
-import useCountdown from "@/app/hooks/use-countdown";
+import { fetchWithBaseUrl } from "@/app/helpers";
+import { sendNotification } from "@/app/(protected)/actions";
+import { useRouter } from "next/navigation";
 
 export default function QuestionItem({
   teamQuestion,
@@ -19,7 +21,13 @@ export default function QuestionItem({
   question: Question;
 }) {
   const { round, userTeam } = useRoundContext();
+  const hidersIds = round.teams
+    .find((team) => team.role === "HIDER")
+    ?.members.map((member) => member.id);
   const isAnswerPending = teamQuestion && teamQuestion.created_at && !teamQuestion.answer;
+
+  const router = useRouter();
+
   return (
     <Item style={isAnswerPending ? "orange" : undefined}>
       <div className={`${styles.wrapper}`}>
@@ -45,21 +53,24 @@ export default function QuestionItem({
           )}
         </div>
         {!teamQuestion && userTeam.role === "SEEKER" && round.start_time && !round.end_time && (
-          <AskButtonWrapper questionId={question.id} />
+          <AskButton onClick={sendQuestion} />
         )}
       </div>
     </Item>
   );
-}
 
-function AskButtonWrapper({ questionId }: { questionId: string }) {
-  const { round } = useRoundContext();
-  const jailTimeLeft = useCountdown({
-    period: round.game.jail_duration,
-    startTime: round.start_time!,
-  });
+  async function sendQuestion() {
+    const response = await fetchWithBaseUrl(`/api/questions/ask/${question.id}`, {
+      method: "POST",
+    });
 
-  return <AskButton questionId={questionId} disabled={(jailTimeLeft ?? 1) > 0} />;
+    if (!response.ok) {
+      throw Error("Error when asking question");
+    }
+    await sendNotification(`New question from ${userTeam.name}`, question.content, hidersIds!);
+
+    router.refresh();
+  }
 }
 
 function AskedBy({ teamId }: { teamId: string }) {

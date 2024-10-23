@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/app/api/db";
 import { validateSession } from "@/app/api/auth";
 import { Round } from "@prisma/client";
+import { sendNotification } from "@/app/(protected)/actions";
 
 export type PatchRoundResponse = {
   round: Round;
@@ -32,7 +33,31 @@ export async function PATCH(
     data: {
       start_time: startedAt,
     },
+    include: {
+      game: true,
+      teams: {
+        include: {
+          team: {
+            include: { members: true },
+          },
+        },
+      },
+    },
   });
+
+  if (updatedRound) {
+    const playersIds: string[] = updatedRound.teams.flatMap((team) =>
+      team.team.members.flatMap((member) => member.id)
+    );
+
+    setTimeout(async () => {
+      await sendNotification(
+        `Jail period is over!`,
+        "From now on Hiders cannot leave their district",
+        playersIds
+      );
+    }, updatedRound.game.jail_duration);
+  }
 
   return NextResponse.json<PatchRoundResponse>({ round: updatedRound });
 }

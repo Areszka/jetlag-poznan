@@ -10,8 +10,6 @@ export default function VetoText({ vetoedAt }: { vetoedAt: Date }) {
     period: 1000 * 60 * 15,
   });
 
-  console.log("VetoText RENDERED");
-
   if (timeLeftVeto !== null && timeLeftVeto <= 0) {
     return;
   }

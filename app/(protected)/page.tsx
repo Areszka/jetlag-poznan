@@ -6,10 +6,12 @@ import Card from "../ui/components/card/card";
 import { ButtonLink } from "../ui/components/button/button";
 import FlexWithGap from "../ui/components/FlexWithGap/FlexWithGap";
 import ListWrapper from "../ui/components/ListWrapper/ListWrapper";
+import PushNotificationManager from "./PushNotificationManager";
 
 export default function Page(): JSX.Element {
   return (
     <>
+      <PushNotificationManager />
       <FlexWithGap gap={32}>
         <Card title="Games">
           <ButtonLink href={"/game/create"}>Create new Game</ButtonLink>

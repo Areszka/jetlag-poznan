@@ -39,3 +39,5 @@ next-env.d.ts
 
 # editor config
 /.idea
+
+certificates

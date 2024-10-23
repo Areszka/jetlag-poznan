@@ -1,12 +1,13 @@
 "use client";
 
-import { fetchWithBaseUrl } from "@/app/helpers";
 import { useRouter } from "next/navigation";
 import React from "react";
 import styles from "./QuestionItem.module.css";
 import useCountdown from "@/app/hooks/use-countdown";
 import useSWRMutation from "swr/mutation";
 import Spinner from "@/app/ui/components/spinner/spinner";
+import { sendNotification } from "@/app/(protected)/actions";
+import { useRoundContext } from "../TeamProvider";
 
 export default function AnswerForm({
   askedAt,
@@ -21,31 +22,6 @@ export default function AnswerForm({
   ownerTeamId?: string;
 }) {
   const timeLeftToAnswer = useCountdown({ startTime: askedAt, period: timeLimitToAnswerQuestion });
-  const router = useRouter();
-
-  React.useEffect(() => {
-    async function sendDefaultAnswer() {
-      const response = await fetchWithBaseUrl(
-        `/api/questions/answer/${ownerTeamId}/${questionId}`,
-        {
-          body: JSON.stringify({ answer: "Hiders didn't manage to answer before time ran out" }),
-          method: "POST",
-        }
-      );
-
-      if (!response.ok) {
-        throw Error("Error when answering");
-      }
-      router.refresh();
-    }
-
-    const nextTimeLeftToAnswer =
-      timeLimitToAnswerQuestion - (new Date().getTime() - new Date(askedAt).getTime()) + 1000;
-
-    if (askedAt && nextTimeLeftToAnswer <= 1000 && (timeLeftToAnswer ?? 0) <= 0) {
-      sendDefaultAnswer();
-    }
-  }, [askedAt, timeLeftToAnswer, timeLimitToAnswerQuestion, ownerTeamId, questionId, router]);
 
   return (
     <>
@@ -62,22 +38,38 @@ function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: st
     `/api/questions/answer/${ownerTeamId}/${questionId}`,
     fetcher
   );
+  const { round } = useRoundContext();
+  const ownerTeamMembersIds = round.teams
+    .find((team) => team.teamId === ownerTeamId)
+    ?.members.map((member) => member.id);
 
   return (
     <form
       onSubmit={async (event) => {
         event.preventDefault();
         const answer = event.currentTarget.answer.value;
-        trigger(answer).then(() => router.refresh());
+        trigger(answer).then(async () => {
+          await sendNotification(`New answer`, answer, ownerTeamMembersIds!);
+          router.refresh();
+        });
       }}
     >
-      <input type="text" name="answer" />
+      <input type="text" name="answer" required={true} minLength={1} />
       <div className={styles.buttons}>
-        <button disabled={isMutating}>Answer</button>
+        <button disabled={isMutating} type="submit">
+          Answer
+        </button>
         <button
           type="button"
           onClick={() => {
-            trigger("Hiders couldn't answer that").then(() => router.refresh());
+            trigger("Hiders were unable to answer this question").then(async () => {
+              await sendNotification(
+                `New answer 👀`,
+                "Hiders were unable to answer this question",
+                ownerTeamMembersIds!
+              );
+              router.refresh();
+            });
           }}
           disabled={isMutating}
         >

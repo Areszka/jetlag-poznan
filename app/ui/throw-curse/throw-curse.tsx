@@ -9,6 +9,8 @@ import DiceControls from "./dice-controls";
 import { useRouter } from "next/navigation";
 import { Button } from "../components/button/button";
 import { useRoundContext } from "@/app/(protected)/game/[gameId]/rounds/[roundId]/TeamProvider";
+import { sendNotification } from "@/app/(protected)/actions";
+import { ThrowCurseResponse } from "@/app/api/curses/throw/[targetTeamId]/[numberOfDice]/route";
 
 const diceComponents = {
   1: CgDice1,
@@ -79,9 +81,28 @@ export default function ThrowCurse({ teamId }: { teamId: string }) {
             });
 
             if (response.ok) {
-              const { dice } = await response.json();
+              const data: ThrowCurseResponse = await response.json();
               router.refresh();
-              setDice(dice);
+
+              const cursedTeam = round.teams.find((team) => team.teamId === teamId);
+
+              await sendNotification(
+                `You've been cursed!`,
+                data.curse.curse.name,
+                cursedTeam?.members.map((member) => member.id)!
+              );
+
+              const otherSeekers = round.teams
+                .filter((team) => team.teamId !== teamId && team.role === "SEEKER")
+                .flatMap((team) => team.members.map((m) => m.id));
+
+              await sendNotification(
+                `${cursedTeam?.name} has been cursed!`,
+                data.curse.curse.name,
+                otherSeekers!
+              );
+
+              setDice(data.dice as Dots[]);
               setIsLoading(false);
             }
           }}

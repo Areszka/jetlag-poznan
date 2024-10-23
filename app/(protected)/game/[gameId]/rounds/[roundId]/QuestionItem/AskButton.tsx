@@ -1,30 +1,17 @@
 "use client";
-import { fetchWithBaseUrl } from "@/app/helpers";
-import { useRouter } from "next/navigation";
 
-export default function AskButton({
-  questionId,
-  disabled,
-}: {
-  questionId: string;
-  disabled: boolean;
-}) {
-  const router = useRouter();
+import { useRoundContext } from "../TeamProvider";
+import useCountdown from "@/app/hooks/use-countdown";
 
-  async function ask() {
-    const response = await fetchWithBaseUrl(`/api/questions/ask/${questionId}`, {
-      method: "POST",
-    });
-
-    if (!response.ok) {
-      throw Error("Error when asking question");
-    }
-
-    router.refresh();
-  }
+export default function AskButton({ onClick }: { onClick: () => {} }) {
+  const { round } = useRoundContext();
+  const jailTimeLeft = useCountdown({
+    period: round.game.jail_duration,
+    startTime: round.start_time!,
+  });
 
   return (
-    <button onClick={ask} disabled={disabled}>
+    <button onClick={onClick} disabled={(jailTimeLeft ?? 1) > 0}>
       Ask
     </button>
   );
