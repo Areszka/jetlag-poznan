@@ -30,7 +30,7 @@ export default function TimeSpan({
       }, 1000);
     }
     return () => clearInterval(intervalId);
-  }, [endDate]);
+  }, [endDate, startDate]);
 
   if (loading) {
     return "(...)";

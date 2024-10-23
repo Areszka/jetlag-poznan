@@ -5,7 +5,7 @@ import { db } from "../api/db";
 import { validateSession } from "../api/auth";
 
 webpush.setVapidDetails(
-  process.env.NOTIFY_EMAIL ?? "",
+  `mailto:${process.env.NOTIFY_EMAIL ?? ""}`,
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
   process.env.VAPID_PRIVATE_KEY!
 );
