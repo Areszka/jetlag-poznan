@@ -9,6 +9,7 @@ import PollingWrapper from "./WrapperPolling";
 import Winner from "./Winner";
 import Header from "@/app/ui/components/header/header";
 import GameCursesCard from "./GameCursesCard";
+import AllTeamsSection from "./AllTeamsSection/AllTeamsSection";
 
 export default async function Page({ params }: { params: { gameId: string; roundId: string } }) {
   const userId = await validateSession();
@@ -34,6 +35,7 @@ export default async function Page({ params }: { params: { gameId: string; round
             <Header>List of avaible curses</Header>
             <GameCursesCard />
           </div>
+          <AllTeamsSection />
         </FlexWithGap>
       </PollingWrapper>
     </TeamProvider>

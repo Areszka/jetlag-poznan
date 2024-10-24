@@ -5,7 +5,6 @@ import {
   MapCard,
   PendingQuestionsCard,
   RoleCard,
-  TeamNameCard,
   TimeCard,
 } from "./CustomInfoCards";
 import styles from "./InfoCards.module.css";
@@ -13,14 +12,13 @@ import styles from "./InfoCards.module.css";
 export function SeekerInfoCards() {
   return (
     <InfoCards>
-      <TimeCard />
       <RoleCard />
       <AnswerTimeLimitCard />
-      <TeamNameCard />
-      <PendingQuestionsCard />
-      <ActiveCurseCard />
       <DiceCostCard />
+      <PendingQuestionsCard />
       <MapCard />
+      <TimeCard />
+      <ActiveCurseCard />
     </InfoCards>
   );
 }
@@ -28,13 +26,12 @@ export function SeekerInfoCards() {
 export function HiderInfoCards() {
   return (
     <InfoCards>
-      <TimeCard />
       <RoleCard />
       <AnswerTimeLimitCard />
-      <TeamNameCard />
-      <PendingQuestionsCard />
       <DiceCostCard />
+      <PendingQuestionsCard />
       <MapCard />
+      <TimeCard />
     </InfoCards>
   );
 }

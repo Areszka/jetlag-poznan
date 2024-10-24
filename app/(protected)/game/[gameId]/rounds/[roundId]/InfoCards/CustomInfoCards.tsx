@@ -69,21 +69,11 @@ export function PendingQuestionsCard() {
   );
 }
 
-export function TeamNameCard() {
-  const { userTeam } = useRoundContext();
-
-  return (
-    <InfoCard label="team" color="#35AF4F">
-      {userTeam.name}
-    </InfoCard>
-  );
-}
-
 export function RoleCard() {
   const { userTeam } = useRoundContext();
 
   return (
-    <InfoCard label="role" color="#35AF4F">
+    <InfoCard label="your role" color="#35AF4F">
       {userTeam.role}
     </InfoCard>
   );
@@ -101,7 +91,7 @@ export function MapCard() {
   return (
     <Link
       target="_blank"
-      href="https://www.google.com/maps/d/u/0/edit?mid=1UF7JVajasCXbH6uLcbGnUnYDvUTjpQg&ll=52.410191460656776%2C16.884149898367138&z=13"
+      href="https://www.google.com/maps/d/u/0/edit?mid=1nPSputglR8wKnNoCp9CQVtynoM7IsZw&ll=52.399101289084555%2C16.919556011105684&z=13"
     >
       <InfoCard label="map">🗺️</InfoCard>
     </Link>

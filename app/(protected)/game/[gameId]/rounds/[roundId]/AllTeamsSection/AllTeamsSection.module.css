@@ -1,0 +1,10 @@
+.teamsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.teamsWrapper > * {
+  flex: 1 1 auto;
+  text-align: center;
+}
