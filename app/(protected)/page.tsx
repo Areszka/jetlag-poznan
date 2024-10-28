@@ -7,6 +7,7 @@ import { ButtonLink } from "../ui/components/button/button";
 import FlexWithGap from "../ui/components/FlexWithGap/FlexWithGap";
 import ListWrapper from "../ui/components/ListWrapper/ListWrapper";
 import PushNotificationManager from "./PushNotificationManager";
+import Footer from "../ui/components/Footer/Footer";
 
 export default function Page(): JSX.Element {
   return (
@@ -38,6 +39,7 @@ export default function Page(): JSX.Element {
           </ListWrapper>
         </Card>
       </FlexWithGap>
+      <Footer />
     </>
   );
 }

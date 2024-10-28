@@ -21,32 +21,6 @@ ul {
   list-style: none;
 }
 
-footer {
-  padding: 64px 16px;
-  color: #718096;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: baseline;
-  gap: 6px;
-}
-
-footer > a {
-  text-decoration: wavy;
-  color: rgb(81, 88, 97);
-  text-decoration: underline wavy;
-  transition:
-    transform 200ms,
-    text-underline-offset 200ms;
-  will-change: transform;
-  text-underline-offset: 6px;
-}
-
-footer > a:hover {
-  transform: translateY(-2px);
-  text-underline-offset: 8px;
-}
-
 button {
   font-family: inherit;
 }

@@ -14,12 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={comfortaa.className}>
-        {children}
-        <footer>
-          Inspired by <a href="https://nebula.tv/jetlag/">Jet Lag: The Game</a>
-        </footer>
-      </body>
+      <body className={comfortaa.className}>{children}</body>
     </html>
   );
 }
