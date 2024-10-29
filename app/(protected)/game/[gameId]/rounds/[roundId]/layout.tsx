@@ -3,6 +3,7 @@ import { serverFetch } from "@/app/server-fetch";
 import Link from "next/link";
 import TimeSpan from "./timeSpan";
 import styles from "./round.module.css";
+import Navbar from "./components/Navbar/Navbar";
 
 export default async function Layout({
   children,
@@ -37,6 +38,7 @@ export default async function Layout({
         ))}
       </ol>
       <div className={styles.pageWrapper}>{children}</div>
+      <Navbar params={params} />
     </>
   );
 }

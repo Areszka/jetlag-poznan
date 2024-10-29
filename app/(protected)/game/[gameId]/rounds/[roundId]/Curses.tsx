@@ -1,6 +1,6 @@
 "use client";
 
-import TeamCurseItem from "./CurseItem/TeamCurseItem";
+import TeamCurseItem from "./components/CurseItem/TeamCurseItem";
 import { useRoundContext } from "./TeamProvider";
 import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
 

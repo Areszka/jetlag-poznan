@@ -9,7 +9,7 @@ import PollingWrapper from "./WrapperPolling";
 import Winner from "./Winner";
 import Header from "@/app/ui/components/header/header";
 import GameCursesCard from "./GameCursesCard";
-import AllTeamsSection from "./AllTeamsSection/AllTeamsSection";
+import AllTeamsSection from "./components/AllTeamsSection/AllTeamsSection";
 
 export default async function Page({ params }: { params: { gameId: string; roundId: string } }) {
   const userId = await validateSession();

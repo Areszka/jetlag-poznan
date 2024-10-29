@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/app/api/db";
 import { validateSession } from "@/app/api/auth";
 import { Question, TeamRoundQuestion } from "@prisma/client";
-import { sendNotification } from "@/app/(protected)/actions";
+import { sendNotification } from "@/app/utils/actions";
 
 export type AskQuestionResponse = {
   question: TeamRoundQuestion & { question: Question };

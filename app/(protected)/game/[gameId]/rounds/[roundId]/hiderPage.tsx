@@ -1,8 +1,8 @@
 import Header from "@/app/ui/components/header/header";
-import { HiderInfoCards } from "./InfoCards/InfoCards";
-import GameControlButton from "./GameButtons/GameControlButton";
-import TeamsSection from "./TeamsSection/TeamsSection";
 import Questions from "./Questions";
+import { HiderInfoCards } from "./components/InfoCards/InfoCards";
+import GameControlButton from "./components/GameButtons/GameControlButton";
+import TeamsSection from "./components/TeamsSection/TeamsSection";
 
 export default function HiderPage() {
   return (

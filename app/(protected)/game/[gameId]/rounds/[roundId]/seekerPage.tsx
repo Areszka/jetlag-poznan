@@ -1,8 +1,8 @@
 import Header from "@/app/ui/components/header/header";
-import { SeekerInfoCards } from "./InfoCards/InfoCards";
-import GameControlButton from "./GameButtons/GameControlButton";
 import Curses from "./Curses";
 import Questions from "./Questions";
+import { SeekerInfoCards } from "./components/InfoCards/InfoCards";
+import GameControlButton from "./components/GameButtons/GameControlButton";
 
 export default function SeekerPage() {
   return (

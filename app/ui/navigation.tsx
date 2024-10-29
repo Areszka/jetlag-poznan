@@ -1,8 +1,17 @@
 import Link from "next/link";
 import styles from "./navigation.module.css";
 import { Button } from "@/app/ui/components/button/button";
+import { validateSession } from "../api/auth";
+import { db } from "@/app/api/db";
 
-export function Navigation({ username }: { username: string }) {
+export async function Navigation() {
+  const userId = await validateSession();
+  const { username } = await db.user.findFirstOrThrow({
+    where: {
+      id: userId,
+    },
+  });
+
   return (
     <div className={styles.navigation}>
       <nav>

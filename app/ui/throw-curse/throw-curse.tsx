@@ -9,7 +9,7 @@ import DiceControls from "./dice-controls";
 import { useRouter } from "next/navigation";
 import { Button } from "../components/button/button";
 import { useRoundContext } from "@/app/(protected)/game/[gameId]/rounds/[roundId]/TeamProvider";
-import { sendNotification } from "@/app/(protected)/actions";
+import { sendNotification } from "@/app/utils/actions";
 import { ThrowCurseResponse } from "@/app/api/curses/throw/[targetTeamId]/[numberOfDice]/route";
 
 const diceComponents = {

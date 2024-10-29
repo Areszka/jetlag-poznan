@@ -146,103 +146,105 @@ export default function CreateGamePage() {
   }
 
   return (
-    <Card title="Create New Game">
-      <Form onSubmit={handleSubmitForm}>
-        <NameInput
-          value={game.name}
-          onChange={(name) => dispatch({ type: "name_changed", name })}
-        />
-        <label>
-          Number of coins needed to roll one dice
-          <input type="number" name="diceCost" defaultValue="50" required />
-        </label>
+    <div className={styles.layout}>
+      <Card title="Create New Game">
+        <Form onSubmit={handleSubmitForm}>
+          <NameInput
+            value={game.name}
+            onChange={(name) => dispatch({ type: "name_changed", name })}
+          />
+          <label>
+            Number of coins needed to roll one dice
+            <input type="number" name="diceCost" defaultValue="50" required />
+          </label>
 
-        <label>
-          Time limit for hiders to answer questions
-          <input type="time" name="answerTimeLimit" min="00:10" defaultValue="00:15" required />
-        </label>
+          <label>
+            Time limit for hiders to answer questions
+            <input type="time" name="answerTimeLimit" min="00:10" defaultValue="00:15" required />
+          </label>
 
-        <label>
-          Jail period (time seekers need to wait before starting their expedition)
-          <input type="time" name="jailDuration" defaultValue="00:30" required />
-        </label>
+          <label>
+            Jail period (time seekers need to wait before starting their expedition)
+            <input type="time" name="jailDuration" defaultValue="00:30" required />
+          </label>
 
-        <InputWithAddButton label="Teams" onClick={handleAddTeam} />
-        <Teams
-          teams={game.teams}
-          removeTeam={handleRemoveTeam}
-          changeRole={handleChangeRole}
-          addMember={handleAddMember}
-          removeMember={handleRemoveMember}
-        ></Teams>
-        <fieldset>
-          <legend>Questions</legend>
-          {questions &&
-            questions.map((question) => {
-              return (
-                <label
-                  key={question.id}
-                  className={styles.checkbox}
-                  style={{ flexDirection: "row" }}
-                >
-                  <input
-                    type="checkbox"
-                    name="question"
-                    checked={game.questionIds.includes(question.id)}
-                    onChange={() => {
-                      if (game.questionIds.includes(question.id)) {
-                        dispatch({
-                          type: "question_removed",
-                          questionId: question.id,
-                        });
-                      } else {
-                        dispatch({
-                          type: "question_added",
-                          questionId: question.id,
-                        });
-                      }
-                    }}
-                  />
-                  <FlexWithGap gap={4}>
-                    <Text type="title" tags={[{ children: question.cost.toString() }]}>
-                      {question.content}
-                    </Text>
-                    {question.details && <Text type="description">{question.details}</Text>}
-                  </FlexWithGap>
-                </label>
-              );
-            })}
-        </fieldset>
-        <fieldset>
-          <legend>Curses</legend>
-          <ul>
-            {game.curses.map((curse, index) => {
-              return (
-                <motion.li key={curse.id} className={styles.curse} layout={true}>
-                  <div className={styles.curseButtons}>
-                    {index > 0 && (
-                      <button type="button" onClick={() => moveCurseUp(curse.id)}>
-                        <IoIosArrowUp />
-                      </button>
-                    )}
-                    {index !== game.curses.length - 1 && (
-                      <button type="button" onClick={() => moveCurseDown(curse.id)}>
-                        <IoIosArrowDown />
-                      </button>
-                    )}
-                  </div>
-                  <FlexWithGap gap={0}>
-                    <Text type="title">{curse.name}</Text>
-                    <Text type="description">{curse.effect}</Text>
-                  </FlexWithGap>
-                </motion.li>
-              );
-            })}
-          </ul>
-        </fieldset>
-        <button className={styles.createButton}>Create</button>
-      </Form>
-      {errorMessage && <CardError>{errorMessage}</CardError>}
-    </Card>
+          <InputWithAddButton label="Teams" onClick={handleAddTeam} />
+          <Teams
+            teams={game.teams}
+            removeTeam={handleRemoveTeam}
+            changeRole={handleChangeRole}
+            addMember={handleAddMember}
+            removeMember={handleRemoveMember}
+          ></Teams>
+          <fieldset>
+            <legend>Questions</legend>
+            {questions &&
+              questions.map((question) => {
+                return (
+                  <label
+                    key={question.id}
+                    className={styles.checkbox}
+                    style={{ flexDirection: "row" }}
+                  >
+                    <input
+                      type="checkbox"
+                      name="question"
+                      checked={game.questionIds.includes(question.id)}
+                      onChange={() => {
+                        if (game.questionIds.includes(question.id)) {
+                          dispatch({
+                            type: "question_removed",
+                            questionId: question.id,
+                          });
+                        } else {
+                          dispatch({
+                            type: "question_added",
+                            questionId: question.id,
+                          });
+                        }
+                      }}
+                    />
+                    <FlexWithGap gap={4}>
+                      <Text type="title" tags={[{ children: question.cost.toString() }]}>
+                        {question.content}
+                      </Text>
+                      {question.details && <Text type="description">{question.details}</Text>}
+                    </FlexWithGap>
+                  </label>
+                );
+              })}
+          </fieldset>
+          <fieldset>
+            <legend>Curses</legend>
+            <ul>
+              {game.curses.map((curse, index) => {
+                return (
+                  <motion.li key={curse.id} className={styles.curse} layout={true}>
+                    <div className={styles.curseButtons}>
+                      {index > 0 && (
+                        <button type="button" onClick={() => moveCurseUp(curse.id)}>
+                          <IoIosArrowUp />
+                        </button>
+                      )}
+                      {index !== game.curses.length - 1 && (
+                        <button type="button" onClick={() => moveCurseDown(curse.id)}>
+                          <IoIosArrowDown />
+                        </button>
+                      )}
+                    </div>
+                    <FlexWithGap gap={0}>
+                      <Text type="title">{curse.name}</Text>
+                      <Text type="description">{curse.effect}</Text>
+                    </FlexWithGap>
+                  </motion.li>
+                );
+              })}
+            </ul>
+          </fieldset>
+          <button className={styles.createButton}>Create</button>
+        </Form>
+        {errorMessage && <CardError>{errorMessage}</CardError>}
+      </Card>
+    </div>
   );
 }

@@ -3,7 +3,7 @@
 import { Question, TeamRoundQuestion } from "@prisma/client";
 import { useRoundContext } from "./TeamProvider";
 import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
-import QuestionItem from "./QuestionItem/QuestionItem";
+import QuestionItem from "./components/QuestionItem/QuestionItem";
 
 export default function Questions() {
   const { round, userTeam } = useRoundContext();
@@ -41,7 +41,11 @@ export default function Questions() {
       {questions.length === 0 && "No questions yet!"}
       {questions.map(({ question, questionDetails }) => {
         return (
-          <QuestionItem key={question.id} question={question} teamQuestion={questionDetails} />
+          <QuestionItem
+            key={`${question.id}_${questionDetails?.teamId}`}
+            question={question}
+            teamQuestion={questionDetails}
+          />
         );
       })}
     </FlexWithGap>
