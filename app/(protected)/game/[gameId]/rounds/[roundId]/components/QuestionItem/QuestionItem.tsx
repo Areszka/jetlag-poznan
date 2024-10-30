@@ -1,6 +1,5 @@
 "use client";
 
-import { Question, TeamRoundQuestion } from "@prisma/client";
 import styles from "./QuestionItem.module.css";
 import AskButton from "./AskButton";
 import React from "react";
@@ -8,59 +7,47 @@ import TimeLeftToAnswer from "./TimeLeftToAnswer";
 import AnswerForm from "./AnswerForm";
 import Item from "@/app/ui/components/Item/Item";
 import { Text } from "@/app/ui/components/text/text";
-import { fetchWithBaseUrl } from "@/app/helpers";
 import { sendNotification } from "@/app/utils/actions";
 import { useRouter } from "next/navigation";
-import { useRoundContext } from "../../TeamProvider";
+import useUserTeam from "@/app/hooks/use_user_team";
+import { FlatQuestion } from "@/app/api/games/[gameId]/rounds/[roundId]/questions/route";
+import useHidersIds from "@/app/hooks/use_hiders_ids";
 
-export default function QuestionItem({
-  teamQuestion,
-  question,
-}: {
-  teamQuestion: TeamRoundQuestion | undefined;
-  question: Question;
-}) {
-  const { round, userTeam } = useRoundContext();
-  const hidersIds = round.teams
-    .find((team) => team.role === "HIDER")
-    ?.members.map((member) => member.id);
-  const isAnswerPending = teamQuestion && teamQuestion.created_at && !teamQuestion.answer;
-
+export function QuestionItem({ question }: { question: FlatQuestion }) {
   const router = useRouter();
+  const { userTeam } = useUserTeam();
+  const { hidersIds } = useHidersIds();
+
+  const answerIsPending = question.created_at !== null && !question.answer;
 
   return (
-    <Item style={isAnswerPending ? "orange" : undefined}>
+    <Item style={answerIsPending ? "orange" : undefined}>
       <div className={`${styles.wrapper}`}>
         <div>
-          {teamQuestion && <AskedBy teamId={teamQuestion.teamId} />}
+          {new Date(question.created_at ?? 0).toLocaleTimeString()}
+          {new Date(question.created_at ?? 0).toLocaleDateString()}
+          {question.askedBy && <p className={styles.askedBy}>{question.askedBy.name}</p>}
           <Text type="title" tags={[{ children: question.cost.toString() }]}>
             {question.content}
           </Text>
           {question.details && <p className={styles.details}>{question.details}</p>}
-          {teamQuestion && teamQuestion.answer && (
-            <p className={styles.answer}>Answer: {teamQuestion.answer}</p>
-          )}
-          {isAnswerPending && !round.end_time && (
-            <TimeLeftToAnswer askedAt={teamQuestion.created_at} />
-          )}
-          {isAnswerPending && userTeam.role === "HIDER" && !round.end_time && (
+          {question.answer && <p className={styles.answer}>Answer: {question.answer}</p>}
+          {answerIsPending && <TimeLeftToAnswer askedAt={question.created_at!} />}
+          {answerIsPending && question.askedBy !== undefined && (
             <AnswerForm
-              askedAt={teamQuestion.created_at}
-              ownerTeamId={teamQuestion.teamId}
-              questionId={teamQuestion.questionId}
-              timeLimitToAnswerQuestion={round.game.answer_time_limit}
+              askedAt={question.created_at!}
+              ownerTeamId={question.askedBy.id}
+              questionId={question.id}
             />
           )}
         </div>
-        {!teamQuestion && userTeam.role === "SEEKER" && round.start_time && !round.end_time && (
-          <AskButton onClick={sendQuestion} />
-        )}
+        {!question.answer && !answerIsPending && <AskButton onClick={sendQuestion} />}
       </div>
     </Item>
   );
 
   async function sendQuestion() {
-    const response = await fetchWithBaseUrl(`/api/questions/ask/${question.id}`, {
+    const response = await fetch(`/api/questions/ask/${question.id}`, {
       method: "POST",
     });
 
@@ -71,20 +58,4 @@ export default function QuestionItem({
 
     router.refresh();
   }
-}
-
-function AskedBy({ teamId }: { teamId: string }) {
-  const { round, userTeam } = useRoundContext();
-
-  const team = round.teams.find((team) => team.teamId === teamId);
-
-  if (userTeam.role === "SEEKER" || !team) {
-    return;
-  }
-
-  return (
-    <p className={styles.askedBy}>
-      {`${team.name} - ${team.members.map((m) => m.username).join(", ")}`}
-    </p>
-  );
 }

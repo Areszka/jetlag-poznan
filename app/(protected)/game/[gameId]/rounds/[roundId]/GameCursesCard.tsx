@@ -2,12 +2,12 @@
 
 import Item from "@/app/ui/components/Item/Item";
 import { Text } from "@/app/ui/components/text/text";
-import { useRoundContext } from "./TeamProvider";
 import React from "react";
+import { useGameContext } from "./GameProvider";
 
 export default function GameCursesCard() {
-  const { round } = useRoundContext();
-  const curses = round.game.game_curses;
+  const { game } = useGameContext();
+  const curses = game.game_curses;
 
   return (
     <ol style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "12px" }}>

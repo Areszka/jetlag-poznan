@@ -1,6 +1,6 @@
 "use client";
 
-import { useRoundContext } from "./TeamProvider";
+import { useRoundContext } from "./RoundProvider";
 
 export default function Winner() {
   const { round } = useRoundContext();
@@ -9,10 +9,15 @@ export default function Winner() {
     return;
   }
 
-  const winnerTeam = round.teams.find((team) => team.teamId === round.winner_id);
+  const winnerTeam = round.teams.find((team) => team.id === round.winner_id);
+
+  if (!winnerTeam) {
+    throw Error("Winner not found");
+  }
+
   return (
     <p>
-      Winner: {winnerTeam?.name} ({winnerTeam?.members.map((m) => m.username).join(", ")})
+      Winner: {winnerTeam.name} ({winnerTeam.members.map((m) => m.username).join(", ")})
     </p>
   );
 }

@@ -45,7 +45,7 @@ export async function sendNotification(title: string, message: string, targetUse
   });
 
   if (subscriptions.length === 0) {
-    throw new Error("No subscription available");
+    console.error("No subscription available");
   }
 
   subscriptions.forEach(async ({ sub }) => {

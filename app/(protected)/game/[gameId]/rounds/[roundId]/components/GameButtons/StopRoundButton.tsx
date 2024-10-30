@@ -4,13 +4,18 @@ import { useRouter } from "next/navigation";
 import GameButton from "./GameButton";
 import React from "react";
 import useCountdown from "@/app/hooks/use-countdown";
-import { useRoundContext } from "../../TeamProvider";
+import { useRoundContext } from "../../RoundProvider";
+import { useGameContext } from "../../GameProvider";
+import useUserTeam from "@/app/hooks/use_user_team";
 
 export default function StopRoundButton() {
-  const { round, userTeam } = useRoundContext();
+  const { round } = useRoundContext();
+  const { game } = useGameContext();
+  const { userTeam } = useUserTeam();
+
   const router = useRouter();
   const jailTimeLeft = useCountdown({
-    period: round.game.jail_duration,
+    period: game.jail_duration,
     startTime: round.start_time!,
   });
 

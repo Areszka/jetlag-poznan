@@ -5,72 +5,20 @@ import InfoCard from "./InfoCard";
 import { useServerLoading } from "@/app/hooks/use-server-loading";
 import useGameTime from "@/app/hooks/use-game-time";
 import Link from "next/link";
-import { useRoundContext } from "../../TeamProvider";
-
-export function ActiveCurseCard() {
-  const { round, userTeam } = useRoundContext();
-
-  if (userTeam.role === "HIDER") return;
-
-  const activeCursesIds = [
-    ...round.curses
-      .filter((curse) => curse.teamId === userTeam.teamId && !curse.lifted_at && !curse.vetoed_at)
-      .map((curse) => curse.curseId),
-  ];
-
-  let activeCurse = undefined;
-
-  if (activeCursesIds.length > 0) {
-    activeCurse = round.game.game_curses.find(
-      (gameCurse) => gameCurse.curseId === activeCursesIds[0]
-    )?.name!;
-  }
-
-  return (
-    <InfoCard label="Active curse" color="#fd1216">
-      {activeCurse || "None!"}
-    </InfoCard>
-  );
-}
+import { useRoundContext } from "../../RoundProvider";
+import { useGameContext } from "../../GameProvider";
+import useUserTeam from "@/app/hooks/use_user_team";
 
 export function AnswerTimeLimitCard() {
-  const { round } = useRoundContext();
+  const { game } = useGameContext();
 
   return (
-    <InfoCard label="answer Time Limit">
-      {timeToMinutesAndSeconds(round.game.answer_time_limit)}
-    </InfoCard>
-  );
-}
-
-export function PendingQuestionsCard() {
-  const { round, userTeam } = useRoundContext();
-
-  let pendingQuestions = 0;
-
-  if (userTeam.role === "HIDER") {
-    round.questions.forEach((question) => {
-      if (!question.answer) {
-        pendingQuestions++;
-      }
-    });
-  } else {
-    round.questions.forEach((question) => {
-      if (!question.answer && question.teamId === userTeam.teamId) {
-        pendingQuestions++;
-      }
-    });
-  }
-
-  return (
-    <InfoCard label="Pending questions" color="#FB6A35">
-      {pendingQuestions.toString()}
-    </InfoCard>
+    <InfoCard label="answer Time Limit">{timeToMinutesAndSeconds(game.answer_time_limit)}</InfoCard>
   );
 }
 
 export function RoleCard() {
-  const { userTeam } = useRoundContext();
+  const { userTeam } = useUserTeam();
 
   return (
     <InfoCard label="your role" color="#35AF4F">
@@ -99,10 +47,10 @@ export function MapCard() {
 }
 
 export function DiceCostCard() {
-  const { round } = useRoundContext();
+  const { game } = useGameContext();
   return (
     <InfoCard label="dice cost" color="#e6d30b">
-      {round.game.dice_cost.toString()}
+      {game.dice_cost.toString()}
     </InfoCard>
   );
 }

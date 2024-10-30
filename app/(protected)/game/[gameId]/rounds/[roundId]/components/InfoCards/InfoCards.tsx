@@ -1,41 +1,14 @@
-import {
-  ActiveCurseCard,
-  AnswerTimeLimitCard,
-  DiceCostCard,
-  MapCard,
-  PendingQuestionsCard,
-  RoleCard,
-  TimeCard,
-} from "./CustomInfoCards";
+import { AnswerTimeLimitCard, DiceCostCard, MapCard, RoleCard, TimeCard } from "./CustomInfoCards";
 import styles from "./InfoCards.module.css";
 
-export function SeekerInfoCards() {
+export default function InfoCards() {
   return (
-    <InfoCards>
+    <div className={styles.cardsWrapper}>
       <RoleCard />
       <AnswerTimeLimitCard />
       <DiceCostCard />
-      <PendingQuestionsCard />
       <MapCard />
       <TimeCard />
-      <ActiveCurseCard />
-    </InfoCards>
+    </div>
   );
-}
-
-export function HiderInfoCards() {
-  return (
-    <InfoCards>
-      <RoleCard />
-      <AnswerTimeLimitCard />
-      <DiceCostCard />
-      <PendingQuestionsCard />
-      <MapCard />
-      <TimeCard />
-    </InfoCards>
-  );
-}
-
-function InfoCards({ children }: { children: JSX.Element[] }) {
-  return <div className={styles.cardsWrapper}>{children}</div>;
 }

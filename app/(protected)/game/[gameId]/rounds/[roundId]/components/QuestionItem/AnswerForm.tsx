@@ -7,21 +7,23 @@ import useCountdown from "@/app/hooks/use-countdown";
 import useSWRMutation from "swr/mutation";
 import Spinner from "@/app/ui/components/spinner/spinner";
 import { sendNotification } from "@/app/utils/actions";
-import { useRoundContext } from "../../TeamProvider";
+import { useGameContext } from "../../GameProvider";
+import { useRoundContext } from "../../RoundProvider";
 
 export default function AnswerForm({
   askedAt,
   questionId,
-  timeLimitToAnswerQuestion,
   ownerTeamId,
 }: {
   questionId: string;
   askedAt: Date;
-  askedBy?: string;
-  timeLimitToAnswerQuestion: number;
   ownerTeamId?: string;
 }) {
-  const timeLeftToAnswer = useCountdown({ startTime: askedAt, period: timeLimitToAnswerQuestion });
+  const { game } = useGameContext();
+  const timeLeftToAnswer = useCountdown({
+    startTime: askedAt,
+    period: game.answer_time_limit,
+  });
 
   return (
     <>

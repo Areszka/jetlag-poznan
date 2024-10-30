@@ -2,26 +2,25 @@
 
 import { useRouter } from "next/navigation";
 import styles from "./TeamCurseItem.module.css";
-import { fetchWithBaseUrl } from "@/app/helpers";
+import { fetcherPost } from "@/app/helpers";
+import useSWRMutation from "swr/mutation";
+import Spinner from "@/app/ui/components/spinner/spinner";
 
 export default function LiftCurseButton({ curseId, teamId }: { curseId: string; teamId: string }) {
   const router = useRouter();
 
-  async function liftCurse() {
-    const response = await fetchWithBaseUrl(`/api/curses/${curseId}/${teamId}/lift`, {
-      method: "POST",
-    });
+  const { trigger, isMutating } = useSWRMutation(
+    `/api/curses/${curseId}/${teamId}/lift`,
+    fetcherPost
+  );
 
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-
-    router.refresh();
+  function liftCurse() {
+    trigger().then(() => router.refresh());
   }
 
   return (
-    <button className={styles.liftCurseButton} onClick={liftCurse}>
-      Mark as DONE!
+    <button className={styles.liftCurseButton} onClick={liftCurse} disabled={isMutating}>
+      {isMutating ? <Spinner /> : "Mark as DONE!"}
     </button>
   );
 }

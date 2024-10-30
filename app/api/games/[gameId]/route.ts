@@ -1,21 +1,10 @@
 import { db } from "../../db";
 import { NextResponse } from "next/server";
-import { Game, Question, Round, Team, TeamRound, User } from "@prisma/client";
+import { Curse, Game, GameCurse, Question } from "@prisma/client";
 import { validateSession } from "@/app/api/auth";
 
 export type GetGameResponse = {
-  game: Game & {
-    rounds: Array<
-      Round & {
-        teams: Array<
-          TeamRound & {
-            team: Team & { members: Array<Pick<User, "username" | "id">> };
-          }
-        >;
-      }
-    >;
-    game_questions: Array<Question>;
-  };
+  game: Game & { game_curses: (GameCurse & Curse)[]; game_questions: Question[] };
 };
 export async function GET(_: Request, { params }: { params: { gameId: string } }) {
   const userId = await validateSession();
@@ -39,35 +28,23 @@ export async function GET(_: Request, { params }: { params: { gameId: string } }
       },
     },
     include: {
-      game_questions: true,
-      rounds: {
+      game_curses: {
         include: {
-          teams: {
-            include: {
-              team: {
-                include: {
-                  questions: {
-                    select: {
-                      questionId: true,
-                      question: true,
-                    },
-                  },
-                  members: {
-                    select: {
-                      username: true,
-                      id: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
+          curse: true,
         },
       },
+      game_questions: true,
     },
   });
 
-  return NextResponse.json<GetGameResponse>({ game });
+  return NextResponse.json<GetGameResponse>({
+    game: {
+      ...game,
+      game_curses: game.game_curses.map((gameCurse) => {
+        return { ...gameCurse, ...gameCurse.curse };
+      }),
+    },
+  });
 }
 
 export type DeleteGamesResponse = { game: Game };

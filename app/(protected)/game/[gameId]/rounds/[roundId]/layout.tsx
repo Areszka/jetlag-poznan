@@ -4,6 +4,8 @@ import Link from "next/link";
 import TimeSpan from "./timeSpan";
 import styles from "./round.module.css";
 import Navbar from "./components/Navbar/Navbar";
+import RoundProvider from "./RoundProvider";
+import GameProvider from "./GameProvider";
 
 export default async function Layout({
   children,
@@ -18,12 +20,12 @@ export default async function Layout({
     return <p>Error</p>;
   }
 
-  const data: GetRoundsResponse = await response.json();
+  const { rounds }: GetRoundsResponse = await response.json();
 
   return (
     <>
       <ol className={styles.rounds}>
-        {data.rounds.map((round, index) => (
+        {rounds.map((round, index) => (
           <li key={round.id}>
             <Link
               href={`/game/${params.gameId}/rounds/${round.id}`}
@@ -37,7 +39,11 @@ export default async function Layout({
           </li>
         ))}
       </ol>
-      <div className={styles.pageWrapper}>{children}</div>
+      <GameProvider>
+        <RoundProvider>
+          <div className={styles.pageWrapper}>{children}</div>
+        </RoundProvider>
+      </GameProvider>
       <Navbar params={params} />
     </>
   );

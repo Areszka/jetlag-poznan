@@ -1,12 +1,14 @@
 "use client";
 
-import { useRoundContext } from "../../TeamProvider";
+import { useRoundContext } from "../../RoundProvider";
 import OneMoreTurnButton from "./OneMoreTurnButton";
 import StartRoundButton from "./StartRoundButton";
 import StopRoundButton from "./StopRoundButton";
+import useUserTeam from "@/app/hooks/use_user_team";
 
 export default function GameControlButton() {
-  const { round, userTeam } = useRoundContext();
+  const { round } = useRoundContext();
+  const { userTeam } = useUserTeam();
 
   if (round.end_time) return <OneMoreTurnButton />;
 

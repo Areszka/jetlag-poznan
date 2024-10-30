@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/app/api/db";
 import { validateSession } from "@/app/api/auth";
 import { Curse, TeamRoundCurse } from "@prisma/client";
+import { sendNotification } from "@/app/utils/actions";
 
 export type ThrowCurseResponse = {
   curse: TeamRoundCurse & { curse: Curse };
@@ -57,6 +58,15 @@ export async function POST(
     data: {
       coins: {
         decrement: cost,
+      },
+    },
+    include: {
+      team: {
+        include: {
+          members: {
+            select: { id: true },
+          },
+        },
       },
     },
   });
@@ -124,6 +134,12 @@ export async function POST(
       curse: true,
     },
   });
+
+  await sendNotification(
+    `You've been cursed!`,
+    curse.curse.name,
+    team.team.members.map((member) => member.id)
+  );
 
   return NextResponse.json<ThrowCurseResponse>({
     curse,

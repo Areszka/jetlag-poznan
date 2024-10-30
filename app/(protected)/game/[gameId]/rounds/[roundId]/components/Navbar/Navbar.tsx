@@ -19,7 +19,7 @@ export default function Navbar({ params }: { params: { gameId: string; roundId: 
         Questions
       </NavItem>
       <NavItem
-        href={`/game/${params.gameId}/rounds/${params.roundId}/questions`}
+        href={`/game/${params.gameId}/rounds/${params.roundId}/curses`}
         icon={FaMeteor}
         badge={<ActiveCursesBadge params={params} />}
       >

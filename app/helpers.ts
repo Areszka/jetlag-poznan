@@ -25,3 +25,23 @@ export function timeToMinutesAndSeconds(diff: number) {
 
   return `${mm < 10 ? "0" : ""}${mm}:${ss < 10 ? "0" : ""}${ss}`;
 }
+
+export async function fetcher(url: string) {
+  return fetch(url).then(async (res) => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      throw new Error(res.statusText);
+    }
+  });
+}
+
+export async function fetcherPost(url: string) {
+  return fetch(url, { method: "POST" }).then(async (res) => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      throw new Error(res.statusText);
+    }
+  });
+}

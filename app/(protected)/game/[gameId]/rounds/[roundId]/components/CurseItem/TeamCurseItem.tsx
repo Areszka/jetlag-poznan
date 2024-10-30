@@ -1,31 +1,27 @@
-import { TeamRoundCurse } from "@prisma/client";
 import styles from "./TeamCurseItem.module.css";
 import { Text } from "@/app/ui/components/text/text";
 import LiftCurseButton from "./LiftCurseButton";
 import VetoCurseButton from "./VetoCurseButton";
 import VetoText from "./VetoText";
 import TeamCurseWrapper from "./TeamCurseWrapper";
-import { useRoundContext } from "../../TeamProvider";
+import { FlatCurse } from "@/app/api/games/[gameId]/rounds/[roundId]/curses/route";
+import useUserTeam from "@/app/hooks/use_user_team";
+import { useRoundContext } from "../../RoundProvider";
 
-export default function TeamCurseItem({ roundCurse }: { roundCurse: TeamRoundCurse }) {
-  const { userTeam, round } = useRoundContext();
+export default function TeamCurseItem({ curse }: { curse: FlatCurse }) {
+  const { userTeam } = useUserTeam();
+  const { round } = useRoundContext();
 
-  const curse = round.game.game_curses.find((c) => c.curseId === roundCurse.curseId);
-
-  if (!curse) {
-    throw new Error(`Curse ${roundCurse.curseId} was not found in the game`);
-  }
-
-  const curseIsActive = !roundCurse.lifted_at && !roundCurse.vetoed_at;
+  const curseIsActive = !curse.lifted_at && !curse.vetoed_at;
 
   const userIsHider = userTeam.role === "HIDER";
 
-  const isTarget = roundCurse.teamId === userTeam.teamId;
+  const isTarget = curse.teamId === userTeam.id;
 
-  const targetTeamName = round.teams.find((team) => team.teamId === roundCurse.teamId)?.name;
+  const targetTeamName = round.teams.find((team) => team.id === curse.teamId)?.name;
 
   return (
-    <TeamCurseWrapper curseIsActive={curseIsActive} vetoedAt={roundCurse.vetoed_at}>
+    <TeamCurseWrapper curseIsActive={curseIsActive} vetoedAt={curse.vetoed_at}>
       <>
         <div>
           {targetTeamName && !userIsHider && (
@@ -35,21 +31,19 @@ export default function TeamCurseItem({ roundCurse }: { roundCurse: TeamRoundCur
           )}
           <div className={styles.nameWrapper}>
             <Text type="title">{curse.name}</Text>
-            {!curseIsActive && <p>{roundCurse.lifted_at ? "✅" : "❌"}</p>}
+            {!curseIsActive && <p>{curse.lifted_at ? "✅" : "❌"}</p>}
           </div>
           {curseIsActive && (
             <>
               <Text type="description">{curse.effect}</Text>
               {userIsHider && !round.end_time && (
-                <LiftCurseButton curseId={roundCurse.curseId} teamId={roundCurse.teamId} />
+                <LiftCurseButton curseId={curse.id} teamId={curse.teamId} />
               )}
-              {isTarget && !round.end_time && <VetoCurseButton curseId={roundCurse.curseId} />}
+              {isTarget && !round.end_time && <VetoCurseButton curseId={curse.id} />}
             </>
           )}
         </div>
-        {roundCurse.vetoed_at && !round.end_time && (
-          <VetoText vetoedAt={roundCurse.vetoed_at}></VetoText>
-        )}
+        {curse.vetoed_at && !round.end_time && <VetoText vetoedAt={curse.vetoed_at}></VetoText>}
       </>
     </TeamCurseWrapper>
   );

@@ -3,13 +3,13 @@
 import { timeToMinutesAndSeconds } from "@/app/helpers";
 import styles from "./QuestionItem.module.css";
 import useCountdown from "@/app/hooks/use-countdown";
-import { useRoundContext } from "../../TeamProvider";
+import { useGameContext } from "../../GameProvider";
 
 export default function TimeLeftToAnswer({ askedAt }: { askedAt: Date }) {
-  const { round } = useRoundContext();
+  const { game } = useGameContext();
   const timeLeftToAnswer = useCountdown({
     startTime: askedAt,
-    period: round.game.answer_time_limit,
+    period: game.answer_time_limit,
   });
 
   return (
