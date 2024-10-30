@@ -17,7 +17,8 @@
   min-width: max-content;
 }
 
-.navItem:hover {
+.navItem:hover,
+.activeNavItem {
   background-color: #1b3042;
   border-radius: 10px;
 }

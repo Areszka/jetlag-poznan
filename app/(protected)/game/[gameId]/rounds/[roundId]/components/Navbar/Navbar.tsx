@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import styles from "./Navbar.module.css";
 import { IconType } from "react-icons";
 import { FaHouse, FaMeteor, FaRectangleList, FaAlignLeft } from "react-icons/fa6";
 import { ReactNode } from "react";
 import { ActiveCursesBadge, PendingQuestionsBadge } from "./ClientBadges";
+import { usePathname } from "next/navigation";
 
 export default function Navbar({ params }: { params: { gameId: string; roundId: string } }) {
   return (
@@ -40,8 +43,12 @@ type NavItemProps = {
 };
 
 export function NavItem({ children, icon: Icon, href, badge }: NavItemProps) {
+  const pathname = usePathname().split("/").at(-1);
+
+  const itemIsActive = pathname === children.toLowerCase();
+
   return (
-    <Link href={href} className={styles.navItem}>
+    <Link href={href} className={`${styles.navItem} ${itemIsActive ? styles.activeNavItem : ""}`}>
       <Icon size="24px" />
       <p>{children}</p>
       {badge && badge}
