@@ -6,12 +6,13 @@ import styles from "./throw-curse.module.css";
 import { CgDice1, CgDice2, CgDice3, CgDice4, CgDice5, CgDice6 } from "react-icons/cg";
 
 import DiceControls from "./dice-controls";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Button } from "../components/button/button";
 import { ThrowCurseResponse } from "@/app/api/curses/throw/[targetTeamId]/[numberOfDice]/route";
 import { useGameContext } from "@/app/(protected)/game/[gameId]/rounds/[roundId]/GameProvider";
 import useSWRMutation from "swr/mutation";
 import Spinner from "../components/spinner/spinner";
+import { useSWRConfig } from "swr";
 
 const diceComponents = {
   1: CgDice1,
@@ -26,8 +27,9 @@ type Dots = 1 | 2 | 3 | 4 | 5 | 6;
 
 export default function ThrowCurse({ teamId, coins }: { teamId: string; coins: number }) {
   const [dice, setDice] = React.useState<Array<Dots>>([3]);
-  const router = useRouter();
   const { game } = useGameContext();
+  const { mutate } = useSWRConfig();
+  const params = useParams();
   const costPerDice = game.dice_cost;
 
   const MaxNumberOfDiceTeamCanAfford = Math.floor(coins / costPerDice);
@@ -78,7 +80,7 @@ export default function ThrowCurse({ teamId, coins }: { teamId: string; coins: n
             }
 
             trigger().then((data) => {
-              router.refresh();
+              mutate(`/api/games/${params.gameId}/rounds/${params.roundId}/curses`);
               setDice(data.dice as Dots[]);
             });
           }}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React from "react";
 import styles from "./QuestionItem.module.css";
 import useCountdown from "@/app/hooks/use-countdown";
@@ -9,6 +9,7 @@ import Spinner from "@/app/ui/components/spinner/spinner";
 import { sendNotification } from "@/app/utils/actions";
 import { useGameContext } from "../../GameProvider";
 import { useRoundContext } from "../../RoundProvider";
+import { useSWRConfig } from "swr";
 
 export default function AnswerForm({
   askedAt,
@@ -20,10 +21,15 @@ export default function AnswerForm({
   ownerTeamId?: string;
 }) {
   const { game } = useGameContext();
+  const { round } = useRoundContext();
   const timeLeftToAnswer = useCountdown({
     startTime: askedAt,
     period: game.answer_time_limit,
   });
+
+  if (round.end_time) {
+    return;
+  }
 
   return (
     <>
@@ -35,14 +41,15 @@ export default function AnswerForm({
 }
 
 function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: string }) {
-  const router = useRouter();
+  const { mutate } = useSWRConfig();
+  const params = useParams();
   const { trigger, isMutating } = useSWRMutation<any, Error, any, string>(
     `/api/questions/answer/${ownerTeamId}/${questionId}`,
     fetcher
   );
   const { round } = useRoundContext();
   const ownerTeamMembersIds = round.teams
-    .find((team) => team.teamId === ownerTeamId)
+    .find((team) => team.id === ownerTeamId)
     ?.members.map((member) => member.id);
 
   return (
@@ -52,7 +59,7 @@ function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: st
         const answer = event.currentTarget.answer.value;
         trigger(answer).then(async () => {
           await sendNotification(`New answer`, answer, ownerTeamMembersIds!);
-          router.refresh();
+          mutate(`/api/games/${params.gameId}/rounds/${params.roundId}/questions`);
         });
       }}
     >
@@ -70,7 +77,7 @@ function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: st
                 "Hiders were unable to answer this question",
                 ownerTeamMembersIds!
               );
-              router.refresh();
+              mutate(`/api/games/${params.gameId}/rounds/${params.roundId}/questions`);
             });
           }}
           disabled={isMutating}

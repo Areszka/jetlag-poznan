@@ -1,27 +1,25 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import styles from "./TeamCurseItem.module.css";
-import { fetchWithBaseUrl } from "@/app/helpers";
+import { fetcherPost } from "@/app/helpers";
+import { useSWRConfig } from "swr";
+import useSWRMutation from "swr/mutation";
+import Spinner from "@/app/ui/components/spinner/spinner";
 
 export default function VetoCurseButton({ curseId }: { curseId: string }) {
-  const router = useRouter();
+  const { mutate } = useSWRConfig();
+  const params = useParams();
+
+  const { trigger, isMutating } = useSWRMutation(`/api/curses/${curseId}/veto`, fetcherPost);
 
   async function vetoCurse() {
-    const response = await fetchWithBaseUrl(`/api/curses/${curseId}/veto`, {
-      method: "POST",
-    });
-
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-
-    router.refresh();
+    trigger().then(() => mutate(`/api/games/${params.gameId}/rounds/${params.roundId}/curses`));
   }
 
   return (
-    <button className={styles.vetoCurseButton} onClick={vetoCurse}>
-      Veto
+    <button className={styles.vetoCurseButton} onClick={vetoCurse} disabled={isMutating}>
+      {isMutating ? <Spinner /> : "Veto"}
     </button>
   );
 }

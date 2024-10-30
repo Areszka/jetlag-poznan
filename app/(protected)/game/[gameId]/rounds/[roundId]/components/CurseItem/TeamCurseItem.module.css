@@ -36,6 +36,8 @@
   margin-top: 12px;
   cursor: pointer;
   font-weight: 700;
+  display: grid;
+  place-content: center;
 }
 
 .liftCurseButton:hover {

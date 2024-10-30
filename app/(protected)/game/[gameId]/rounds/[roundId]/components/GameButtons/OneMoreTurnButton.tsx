@@ -18,8 +18,7 @@ export default function OneMoreTurnButton() {
     }
 
     const { round }: PostRoundResponse = await response.json();
-    router.push(`/game/${params.gameId}/rounds/${round.id}`);
-    router.refresh();
+    router.push(`/game/${params.gameId}/rounds/${round.id}/rules`);
   }
 
   return <GameButton onClick={createAndGoToNextRound}>One More Turn!</GameButton>;

@@ -111,6 +111,33 @@ export async function POST(_request: Request, { params }: { params: { questionId
     }, lastRound.round.game.answer_time_limit);
   }
 
+  const hidersIds = await db.teamRound.findFirstOrThrow({
+    where: {
+      role: "HIDER",
+      roundId: lastRound.roundId,
+      round: {
+        gameId: lastRound.round.gameId,
+      },
+    },
+    select: {
+      team: {
+        select: {
+          members: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  await sendNotification(
+    `New question`,
+    question.question.content,
+    hidersIds.team.members.map((member) => member.id)
+  );
+
   return NextResponse.json<AskQuestionResponse>({
     question,
   });

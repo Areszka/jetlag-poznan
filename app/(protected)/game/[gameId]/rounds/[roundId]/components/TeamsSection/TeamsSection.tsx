@@ -51,7 +51,7 @@ function TeamCard({ teamId }: { teamId: string }) {
       <div className={styles.teamHeader}>
         {team.name} <Tag>{team.coins.toString()}</Tag>
       </div>
-      <ThrowCurse teamId={team.teamId} coins={team.coins} />
+      <ThrowCurse teamId={team.id} coins={team.coins} />
       <Curses teamId={team.teamId}></Curses>
     </div>
   );

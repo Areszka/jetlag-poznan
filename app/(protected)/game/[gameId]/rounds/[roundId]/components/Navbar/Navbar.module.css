@@ -1,11 +1,36 @@
 .nav {
   background-color: #0f202e;
   position: fixed;
-  bottom: 0;
   right: 0;
   left: 0;
   padding: 6px;
   display: flex;
+  color: #b1bad3;
+}
+
+.top {
+  top: 0;
+}
+.top button,
+.top p {
+  font-size: 16px;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  flex: 1 1 auto;
+}
+
+.timer p {
+  padding-block-start: 2px;
+  font-size: 20px;
+}
+
+.bottom {
+  bottom: 0;
   justify-content: space-evenly;
 }
 
