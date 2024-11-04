@@ -51,11 +51,22 @@ export async function PATCH(
     );
 
     setTimeout(async () => {
-      await sendNotification(
-        `Jail period is over!`,
-        "From now on Hiders cannot leave their district",
-        playersIds
-      );
+      const round = await db.round.findFirst({
+        where: {
+          id: params.roundId,
+          gameId: params.gameId,
+          end_time: null,
+        },
+      });
+
+      if (round) {
+        await sendNotification({
+          title: `Jail period is over!`,
+          message: "From now on Hiders cannot leave their district",
+          targetUsersIds: playersIds,
+          url: `/game/${params.gameId}/rounds/${params.roundId}`,
+        });
+      }
     }, updatedRound.game.jail_duration);
   }
 

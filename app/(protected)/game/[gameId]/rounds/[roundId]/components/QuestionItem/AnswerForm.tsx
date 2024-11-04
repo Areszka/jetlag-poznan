@@ -58,7 +58,12 @@ function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: st
         event.preventDefault();
         const answer = event.currentTarget.answer.value;
         trigger(answer).then(async () => {
-          await sendNotification(`New answer`, answer, ownerTeamMembersIds!);
+          await sendNotification({
+            title: `New answer`,
+            message: answer,
+            targetUsersIds: ownerTeamMembersIds!,
+            url: `/game/${params.gameId}/rounds/${params.roundId}/questions`,
+          });
           mutate(`/api/games/${params.gameId}/rounds/${params.roundId}/questions`);
         });
       }}
@@ -72,11 +77,12 @@ function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: st
           type="button"
           onClick={() => {
             trigger("Hiders were unable to answer this question").then(async () => {
-              await sendNotification(
-                `New answer 👀`,
-                "Hiders were unable to answer this question",
-                ownerTeamMembersIds!
-              );
+              await sendNotification({
+                title: `New answer`,
+                message: "Hiders were unable to answer this question",
+                targetUsersIds: ownerTeamMembersIds!,
+                url: `/game/${params.gameId}/rounds/${params.roundId}/questions`,
+              });
               mutate(`/api/games/${params.gameId}/rounds/${params.roundId}/questions`);
             });
           }}

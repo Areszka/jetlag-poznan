@@ -3,6 +3,7 @@
 import webpush from "web-push";
 import { db } from "@/app/api/db";
 import { validateSession } from "@/app/api/auth";
+import { getBaseUrl } from "../helpers";
 
 webpush.setVapidDetails(
   `mailto:${process.env.NOTIFY_EMAIL ?? ""}`,
@@ -35,7 +36,17 @@ export async function unsubscribeUser() {
   return { success: true };
 }
 
-export async function sendNotification(title: string, message: string, targetUsersIds: string[]) {
+export async function sendNotification({
+  title,
+  message,
+  targetUsersIds,
+  url,
+}: {
+  title: string;
+  message: string;
+  targetUsersIds: string[];
+  url: string;
+}) {
   const subscriptions = await db.subscription.findMany({
     where: {
       userId: {
@@ -55,6 +66,7 @@ export async function sendNotification(title: string, message: string, targetUse
         JSON.stringify({
           title,
           body: message,
+          url: `${getBaseUrl()}${url}`,
         })
       );
       return { success: true };

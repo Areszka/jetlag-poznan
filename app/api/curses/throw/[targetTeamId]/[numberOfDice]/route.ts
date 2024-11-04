@@ -135,11 +135,12 @@ export async function POST(
     },
   });
 
-  await sendNotification(
-    `You've been cursed!`,
-    curse.curse.name,
-    team.team.members.map((member) => member.id)
-  );
+  await sendNotification({
+    title: `You've been cursed!`,
+    message: curse.curse.name,
+    targetUsersIds: team.team.members.map((member) => member.id),
+    url: `/game/${game.id}/rounds/${lastRound.roundId}/curses`,
+  });
 
   return NextResponse.json<ThrowCurseResponse>({
     curse,

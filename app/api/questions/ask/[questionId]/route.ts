@@ -70,10 +70,14 @@ export async function POST(_request: Request, { params }: { params: { questionId
           questionId: params.questionId,
           teamId: lastRound.teamId,
           roundId: lastRound.roundId,
+          answer: null,
+          round: {
+            end_time: null,
+          },
         },
       });
 
-      if (!ques?.answer) {
+      if (ques) {
         db.teamRoundQuestion
           .update({
             where: {
@@ -92,20 +96,22 @@ export async function POST(_request: Request, { params }: { params: { questionId
             },
           })
           .then(async () => {
-            await sendNotification(
-              `New answer`,
-              "Hiders ran out of time to answer",
-              lastRound.team.members.map((member) => member.id)
-            );
+            await sendNotification({
+              title: `New answer`,
+              message: "Hiders ran out of time to answer",
+              targetUsersIds: lastRound.team.members.map((member) => member.id),
+              url: `/game/${lastRound.round.gameId}/rounds/${lastRound.roundId}/questions`,
+            });
 
             const hidersIds: string[] = lastRound.round.teams
               .find((team) => team.role === "HIDER")
               ?.team.members.map((m) => m.id)!;
-            await sendNotification(
-              `You ran out of time!`,
-              `A default answer has been sent for the pending question from ${lastRound.team.name}`,
-              hidersIds
-            );
+            await sendNotification({
+              title: `You ran out of time!`,
+              message: `A default answer has been sent for the pending question from ${lastRound.team.name}`,
+              targetUsersIds: hidersIds,
+              url: `/game/${lastRound.round.gameId}/rounds/${lastRound.roundId}/questions`,
+            });
           });
       }
     }, lastRound.round.game.answer_time_limit);
@@ -132,11 +138,12 @@ export async function POST(_request: Request, { params }: { params: { questionId
     },
   });
 
-  await sendNotification(
-    `New question`,
-    question.question.content,
-    hidersIds.team.members.map((member) => member.id)
-  );
+  await sendNotification({
+    title: `New question`,
+    message: question.question.content,
+    targetUsersIds: hidersIds.team.members.map((member) => member.id),
+    url: `/game/${lastRound.round.gameId}/rounds/${lastRound.roundId}/questions`,
+  });
 
   return NextResponse.json<AskQuestionResponse>({
     question,
