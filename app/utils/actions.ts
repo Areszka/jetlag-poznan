@@ -3,7 +3,6 @@
 import webpush from "web-push";
 import { db } from "@/app/api/db";
 import { validateSession } from "@/app/api/auth";
-import { getBaseUrl } from "../helpers";
 
 webpush.setVapidDetails(
   `mailto:${process.env.NOTIFY_EMAIL ?? ""}`,
@@ -66,7 +65,7 @@ export async function sendNotification({
         JSON.stringify({
           title,
           body: message,
-          url: `${getBaseUrl()}${url}`,
+          url,
         })
       );
       return { success: true };

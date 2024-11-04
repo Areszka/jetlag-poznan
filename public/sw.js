@@ -7,6 +7,7 @@ self.addEventListener("push", function (event) {
       badge: "/badge.png",
       vibrate: [100, 50, 100],
       data: {
+        url: data.url,
         dateOfArrival: Date.now(),
         primaryKey: "2",
       },
@@ -16,7 +17,9 @@ self.addEventListener("push", function (event) {
 });
 
 self.addEventListener("notificationclick", function (event) {
+  const urlToOpen = event.notification.data?.url || "https://jetlag-poznan.vercel.app";
+
   console.log("Notification click received.");
   event.notification.close();
-  event.waitUntil(clients.openWindow(`<localhost:3000>`));
+  event.waitUntil(clients.openWindow(urlToOpen));
 });
