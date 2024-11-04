@@ -16,6 +16,8 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import Form from "@/app/ui/components/Form/Form";
 import { motion } from "framer-motion";
 import CardError from "@/app/ui/components/card/CardError";
+import useSWRMutation from "swr/mutation";
+import Spinner from "@/app/ui/components/spinner/spinner";
 
 const INITIAL_SETTINGS: GameState = {
   name: "",
@@ -34,6 +36,8 @@ export default function CreateGamePage() {
   React.useEffect(() => {
     setErrorMessage("");
   }, [game]);
+
+  const { trigger, isMutating, error } = useSWRMutation(`/api/games`, fetcher);
 
   React.useEffect(() => {
     const getData = async () => {
@@ -84,22 +88,9 @@ export default function CreateGamePage() {
       jailDuration,
     };
 
-    const response = await fetchWithBaseUrl(`/api/games`, {
-      method: "POST",
-      body: JSON.stringify(requestData),
-    });
-
-    if (!response.ok) {
-      const { error } = await response.json();
-      if (error) {
-        setErrorMessage(error);
-      } else {
-        setErrorMessage(response.statusText);
-      }
-    } else {
-      const data: PostGamesResponse = await response.json();
-      router.push(`/game/${data.game.id}/rounds/${data.game.rounds[0].id}`);
-    }
+    trigger(requestData).then(({ game }: PostGamesResponse) =>
+      router.push(`/game/${game.id}/rounds/${game.rounds[0].id}`)
+    );
   }
 
   function handleAddTeam(teamName: string) {
@@ -241,10 +232,27 @@ export default function CreateGamePage() {
               })}
             </ul>
           </fieldset>
-          <button className={styles.createButton}>Create</button>
+          <button className={styles.createButton} disabled={isMutating}>
+            {isMutating ? <Spinner /> : "Create"}
+          </button>
         </Form>
         {errorMessage && <CardError>{errorMessage}</CardError>}
+        {error && <CardError>{error.message}</CardError>}
       </Card>
     </div>
   );
+}
+
+export async function fetcher(url: string, { arg }: { arg: PostGamesRequest }) {
+  return fetch(url, { method: "POST", body: JSON.stringify(arg) }).then(async (res) => {
+    if (!res.ok) {
+      const { error } = await res.json();
+      if (error) {
+        throw new Error(error);
+      }
+      throw new Error(res.statusText);
+    }
+
+    return res.json();
+  });
 }

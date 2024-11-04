@@ -6,6 +6,10 @@
   margin-block: 32px;
 }
 
+.layout form input {
+  font-size: 16px;
+}
+
 .addInputWrapper input {
   flex: 1 1 auto;
   border-right: none;
