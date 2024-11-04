@@ -17,6 +17,16 @@ export function AnswerTimeLimitCard() {
   );
 }
 
+export function JailPeriodCard() {
+  const { game } = useGameContext();
+
+  return (
+    <InfoCard label="jail period" color="#d33333">
+      {timeToMinutesAndSeconds(game.jail_duration)}
+    </InfoCard>
+  );
+}
+
 export function RoleCard() {
   const { userTeam } = useUserTeam();
 
