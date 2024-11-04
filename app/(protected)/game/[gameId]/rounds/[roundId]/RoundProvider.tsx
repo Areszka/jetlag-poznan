@@ -13,7 +13,8 @@ export default function RoundProvider({ children }: { children: ReactNode }) {
 
   const { data, isLoading, error } = useSWR<GetRoundResponseTemp, any, any, any>(
     `/api/games/${params.gameId}/rounds/${params.roundId}`,
-    fetcher
+    fetcher,
+    { refreshInterval: 3000 }
   );
 
   if (error) {
