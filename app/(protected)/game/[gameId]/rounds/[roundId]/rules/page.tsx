@@ -4,24 +4,24 @@ import Header from "@/app/ui/components/header/header";
 import GameCursesCard from "../GameCursesCard";
 import AllTeamsSection from "../components/AllTeamsSection/AllTeamsSection";
 import InfoCards from "../components/InfoCards/InfoCards";
-import GameControlButton from "../components/GameButtons/GameControlButton";
 import { serverFetch } from "@/app/server-fetch";
 import { GetRoundsResponse } from "@/app/api/games/[gameId]/rounds/route";
 import Link from "next/link";
 import TimeSpan from "../timeSpan";
+import RemoveRoundButton from "../components/RemoveRoundButton/RemoveRoundButton";
 
 export default function Page({ params }: { params: { gameId: string; roundId: string } }) {
   return (
     <FlexWithGap gap={32}>
       <Rounds params={params} />
       <InfoCards />
-      <GameControlButton />
       <Winner />
       <div>
         <Header>List of avaible curses</Header>
         <GameCursesCard />
       </div>
       <AllTeamsSection />
+      <RemoveRoundButton />
     </FlexWithGap>
   );
 }

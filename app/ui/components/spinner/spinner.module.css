@@ -9,7 +9,6 @@
   width: min-content;
   height: min-content;
   animation: spin 1000ms linear infinite;
-  opacity: 0.6;
 }
 
 .wrapper svg {

@@ -1,17 +1,17 @@
 "use client";
 
-import { GetRoundResponseTemp } from "@/app/api/games/[gameId]/rounds/[roundId]/route";
+import { GetRoundResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/route";
 import { fetcher } from "@/app/helpers";
 import { useParams } from "next/navigation";
 import React, { ReactNode } from "react";
 import useSWR from "swr";
 
-const RoundContext = React.createContext<GetRoundResponseTemp | null>(null);
+const RoundContext = React.createContext<GetRoundResponse | null>(null);
 
 export default function RoundProvider({ children }: { children: ReactNode }) {
   const params: { gameId: string; roundId: string } = useParams();
 
-  const { data, isLoading, error } = useSWR<GetRoundResponseTemp, any, any, any>(
+  const { data, isLoading, error } = useSWR<GetRoundResponse, any, any, any>(
     `/api/games/${params.gameId}/rounds/${params.roundId}`,
     fetcher,
     { refreshInterval: 3000 }

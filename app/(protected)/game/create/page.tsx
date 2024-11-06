@@ -151,12 +151,12 @@ export default function CreateGamePage() {
 
           <label>
             Time limit for hiders to answer questions
-            <input type="time" name="answerTimeLimit" min="00:10" defaultValue="00:15" required />
+            <input type="time" name="answerTimeLimit" min="00:01" defaultValue="00:15" required />
           </label>
 
           <label>
             Jail period (time seekers need to wait before starting their expedition)
-            <input type="time" name="jailDuration" defaultValue="00:30" required />
+            <input type="time" name="jailDuration" min="00:01" defaultValue="00:30" required />
           </label>
 
           <InputWithAddButton label="Teams" onClick={handleAddTeam} />
@@ -243,7 +243,7 @@ export default function CreateGamePage() {
   );
 }
 
-export async function fetcher(url: string, { arg }: { arg: PostGamesRequest }) {
+async function fetcher(url: string, { arg }: { arg: PostGamesRequest }) {
   return fetch(url, { method: "POST", body: JSON.stringify(arg) }).then(async (res) => {
     if (!res.ok) {
       const { error } = await res.json();

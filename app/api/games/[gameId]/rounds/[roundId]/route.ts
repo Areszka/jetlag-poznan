@@ -3,7 +3,7 @@ import { Role, Round } from "@prisma/client";
 import { validateSession } from "@/app/api/auth";
 import { db } from "@/app/api/db";
 
-export type GetRoundResponseTemp = {
+export type GetRoundResponse = {
   round: Round & {
     teams: { members: { id: string; username: string }[]; name: string; role: Role; id: string }[];
   };
@@ -48,7 +48,7 @@ export async function GET(
     },
   });
 
-  return NextResponse.json<GetRoundResponseTemp>({
+  return NextResponse.json<GetRoundResponse>({
     round: {
       ...round,
       teams: round.teams.map((team) => {
@@ -61,4 +61,50 @@ export async function GET(
       }),
     },
   });
+}
+
+export type DeleteRoundResponse = { round: Round };
+export async function DELETE(
+  _request: Request,
+  { params }: { params: { gameId: string; roundId: string } }
+) {
+  const userId = await validateSession();
+  const round = await db.round.delete({
+    where: {
+      id: params.roundId,
+      gameId: params.gameId,
+      teams: {
+        some: {
+          team: {
+            members: {
+              some: {
+                id: userId,
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const game = await db.game.findFirst({
+    where: {
+      id: params.gameId,
+    },
+    include: {
+      rounds: true,
+    },
+  });
+
+  if (game) {
+    if (game.rounds.length === 0) {
+      await db.game.delete({
+        where: {
+          id: params.gameId,
+        },
+      });
+    }
+  }
+
+  return NextResponse.json<DeleteRoundResponse>({ round });
 }

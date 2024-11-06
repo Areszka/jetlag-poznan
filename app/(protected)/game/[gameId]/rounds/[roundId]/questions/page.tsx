@@ -4,9 +4,10 @@ import useSWR from "swr";
 import { GetGameQuestionsResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/questions/route";
 import { QuestionItem } from "../components/QuestionItem/QuestionItem";
 import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
+import { fetcher } from "@/app/helpers";
 
 export default function Page({ params }: { params: { gameId: string; roundId: string } }) {
-  const { data, isLoading, error } = useSWR<GetGameQuestionsResponse, any, any, any>(
+  const { data, isLoading, error } = useSWR<GetGameQuestionsResponse, Error, string, any>(
     `/api/games/${params.gameId}/rounds/${params.roundId}/questions`,
     fetcher,
     { refreshInterval: 3000 }
@@ -35,14 +36,4 @@ export default function Page({ params }: { params: { gameId: string; roundId: st
       ))}
     </FlexWithGap>
   );
-}
-
-async function fetcher(url: string) {
-  return fetch(url).then(async (res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      throw new Error(res.statusText);
-    }
-  });
 }

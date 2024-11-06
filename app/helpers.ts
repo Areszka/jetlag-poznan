@@ -45,3 +45,13 @@ export async function fetcherPost(url: string) {
     }
   });
 }
+
+export async function fetcherDelete(url: string) {
+  return fetch(url, { method: "DELETE" }).then(async (res) => {
+    if (res.ok) {
+      return res.json();
+    } else {
+      throw new Error(res.statusText);
+    }
+  });
+}

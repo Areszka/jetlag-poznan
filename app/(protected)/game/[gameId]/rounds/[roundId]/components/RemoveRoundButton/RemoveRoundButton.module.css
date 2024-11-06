@@ -1,0 +1,13 @@
+.button {
+  color: red;
+  border: none;
+  background-color: inherit;
+  font-size: 1rem;
+  text-align: start;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.button:hover {
+  text-decoration: underline;
+}
