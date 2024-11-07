@@ -6,6 +6,8 @@
   text-align: start;
   cursor: pointer;
   align-self: flex-start;
+  display: flex;
+  gap: 6px;
 }
 
 .button:hover {
