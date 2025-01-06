@@ -13,7 +13,10 @@ export function serverFetch(url: string, requestInit?: RequestInit) {
 }
 
 function fetchWithBaseUrl(url: string, requestInit?: RequestInit) {
-  let base_url = process.env.URL ?? "http://localhost:3000";
+  let base_url =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : "https://jetlag-poznan.vercel.app";
 
   return fetch(`${base_url}${url}`, { ...requestInit });
 }
