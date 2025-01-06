@@ -1,6 +1,6 @@
 "use client";
-import { fetchWithBaseUrl } from "@/app/helpers";
-import { useParams, useRouter } from "next/navigation";
+
+import { useParams } from "next/navigation";
 import GameButton from "./GameButton";
 import { useSWRConfig } from "swr";
 
@@ -9,10 +9,9 @@ export default function StartRoundButton() {
   const { mutate } = useSWRConfig();
 
   async function setGameStartTime() {
-    const response = await fetchWithBaseUrl(
-      `/api/games/${params.gameId}/rounds/${params.roundId}/start`,
-      { method: "PATCH" }
-    );
+    const response = await fetch(`/api/games/${params.gameId}/rounds/${params.roundId}/start`, {
+      method: "PATCH",
+    });
 
     if (!response.ok) {
       throw new Error(response.statusText);

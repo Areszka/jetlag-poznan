@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { subscribeUser, unsubscribeUser } from "@/app/utils/actions";
+import Spinner from "../spinner/spinner";
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -17,8 +18,9 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 export default function PushNotificationManager() {
-  const [isSupported, setIsSupported] = useState(false);
+  const [isSupported, setIsSupported] = useState<boolean>();
   const [subscription, setSubscription] = useState<PushSubscription | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if ("serviceWorker" in navigator && "PushManager" in window) {
@@ -26,6 +28,10 @@ export default function PushNotificationManager() {
       registerServiceWorker();
     }
   }, []);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, [subscription]);
 
   async function registerServiceWorker() {
     const registration = await navigator.serviceWorker.register("/sw.js", {
@@ -53,26 +59,25 @@ export default function PushNotificationManager() {
     await unsubscribeUser();
   }
 
-  if (!isSupported) {
+  if (isSupported === false) {
     return <p>Push notifications are not supported in this browser.</p>;
   }
 
   return (
-    <>
-      <div>
-        <h3>Push Notifications</h3>
-        {subscription ? (
-          <>
-            <p>You are subscribed to push notifications.</p>
-            <button onClick={unsubscribeFromPush}>Unsubscribe</button>
-          </>
-        ) : (
-          <>
-            <p>You are not subscribed to push notifications.</p>
-            <button onClick={subscribeToPush}>Subscribe</button>
-          </>
-        )}
-      </div>
-    </>
+    <label style={{ display: "flex", gap: "8px" }}>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <input
+          type="checkbox"
+          checked={!!subscription}
+          onChange={(e) => {
+            setIsLoading(true);
+            e.target.checked ? subscribeToPush() : unsubscribeFromPush();
+          }}
+        />
+      )}
+      Push Notifications
+    </label>
   );
 }

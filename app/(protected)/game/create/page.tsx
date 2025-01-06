@@ -1,6 +1,5 @@
 "use client";
 
-import { fetchWithBaseUrl } from "@/app/helpers";
 import Card from "@/app/ui/components/card/card";
 import { Question, Role } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -41,8 +40,8 @@ export default function CreateGamePage() {
 
   React.useEffect(() => {
     const getData = async () => {
-      const questionsResponse = await fetchWithBaseUrl(`/api/questions`);
-      const cursesResponse = await fetchWithBaseUrl(`/api/curses`);
+      const questionsResponse = await fetch(`/api/questions`);
+      const cursesResponse = await fetch(`/api/curses`);
 
       if (questionsResponse.ok) {
         const data: GetQuestionsResponse = await questionsResponse.json();
@@ -104,7 +103,7 @@ export default function CreateGamePage() {
   }
 
   async function handleAddMember(teamName: string, username: string) {
-    const response = await fetchWithBaseUrl(`/api/users/${username}`);
+    const response = await fetch(`/api/users/${username}`);
 
     if (response.ok) {
       const { user } = await response.json();

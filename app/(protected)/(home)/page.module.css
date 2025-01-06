@@ -1,8 +1,5 @@
 .pageWrapper {
   margin: 32px auto;
   max-width: 750px;
-}
-
-.pageWrapper > div {
-  margin-inline: 16px;
+  padding-inline: 16px;
 }

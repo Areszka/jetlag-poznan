@@ -1,5 +1,5 @@
 "use client";
-import { fetchWithBaseUrl } from "@/app/helpers";
+
 import { useParams, useRouter } from "next/navigation";
 import { PostRoundResponse } from "@/app/api/games/[gameId]/rounds/create/route";
 import GameButton from "./GameButton";
@@ -9,7 +9,7 @@ export default function OneMoreTurnButton() {
   const router = useRouter();
 
   async function createAndGoToNextRound() {
-    const response = await fetchWithBaseUrl(`/api/games/${params.gameId}/rounds/create`, {
+    const response = await fetch(`/api/games/${params.gameId}/rounds/create`, {
       method: "POST",
     });
 

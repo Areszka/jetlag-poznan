@@ -1,16 +1,3 @@
-export function getBaseUrl(): string {
-  let base_url =
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:3000"
-      : "https://jetlag-poznan.vercel.app";
-
-  return base_url;
-}
-
-export function fetchWithBaseUrl(url: string, requestInit?: RequestInit) {
-  return fetch(`${getBaseUrl()}${url}`, { ...requestInit });
-}
-
 export function getTime(diff: number) {
   let ss = Math.floor(diff / 1000) % 60;
   let mm = Math.floor(diff / 1000 / 60) % 60;

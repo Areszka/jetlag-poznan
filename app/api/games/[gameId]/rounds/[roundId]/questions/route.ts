@@ -118,20 +118,5 @@ export async function GET(
 }
 
 function compareFn(a: Date | null, b: Date | null) {
-  if (a) {
-    if (!b) {
-      return -1;
-    }
-    if (a < b) {
-      return 1;
-    } else if (a > b) {
-      return -1;
-    }
-    return 0;
-  }
-  if (b) {
-    return 1;
-  }
-
-  return 0;
+  return (b?.getMilliseconds() ?? 0) - (a?.getMilliseconds() ?? 0);
 }

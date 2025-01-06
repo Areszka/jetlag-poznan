@@ -1,5 +1,4 @@
 import { headers } from "next/headers";
-import { fetchWithBaseUrl } from "./helpers";
 
 export function serverFetch(url: string, requestInit?: RequestInit) {
   const headersList = headers();
@@ -11,4 +10,10 @@ export function serverFetch(url: string, requestInit?: RequestInit) {
       Cookie: cookieHeader, // Forward cookies here
     },
   });
+}
+
+function fetchWithBaseUrl(url: string, requestInit?: RequestInit) {
+  let base_url = process.env.URL ?? "http://localhost:3000";
+
+  return fetch(`${base_url}${url}`, { ...requestInit });
 }

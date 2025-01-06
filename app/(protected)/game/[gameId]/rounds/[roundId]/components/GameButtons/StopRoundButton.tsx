@@ -1,5 +1,5 @@
 "use client";
-import { fetchWithBaseUrl, timeToMinutesAndSeconds } from "@/app/helpers";
+import { timeToMinutesAndSeconds } from "@/app/helpers";
 import GameButton from "./GameButton";
 import React from "react";
 import useCountdown from "@/app/hooks/use-countdown";
@@ -20,7 +20,7 @@ export default function StopRoundButton() {
   });
 
   async function setGameStopTime() {
-    const response = await fetchWithBaseUrl(`/api/games/${round.gameId}/rounds/${round.id}/stop`, {
+    const response = await fetch(`/api/games/${round.gameId}/rounds/${round.id}/stop`, {
       method: "PATCH",
       body: JSON.stringify({
         winnerTeamId: userTeam.id,

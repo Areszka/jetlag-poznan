@@ -14,7 +14,7 @@ export async function Navigation() {
 
   return (
     <div className={styles.navigation}>
-      <nav>
+      <nav style={{ flexShrink: 0 }}>
         <ul>
           <li>
             <Link href="/">Home</Link>
@@ -22,8 +22,8 @@ export async function Navigation() {
         </ul>
       </nav>
       <form method="post" action="/api/logout" className={styles.loggedInUser}>
-        <p>Logged in as: {username}</p>
-        <Button>Logout</Button>
+        <p style={{ textAlign: "end" }}>{username}</p>
+        <Button style={{ flexShrink: 0 }}>Logout</Button>
       </form>
     </div>
   );

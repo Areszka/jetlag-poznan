@@ -12,8 +12,8 @@ import Footer from "@/app/ui/components/Footer/Footer";
 export default function Page(): JSX.Element {
   return (
     <>
-      <PushNotificationManager />
       <FlexWithGap gap={32}>
+        <PushNotificationManager />
         <Card title="Games">
           <ButtonLink href={"/game/create"}>Create new Game</ButtonLink>
           <ListWrapper>
@@ -38,8 +38,8 @@ export default function Page(): JSX.Element {
             </Suspense>
           </ListWrapper>
         </Card>
+        <Footer />
       </FlexWithGap>
-      <Footer />
     </>
   );
 }
