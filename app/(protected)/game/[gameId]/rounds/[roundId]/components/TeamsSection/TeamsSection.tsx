@@ -4,7 +4,7 @@ import styles from "./TeamsSection.module.css";
 import Tag from "@/app/ui/components/tag/tag";
 import ThrowCurse from "@/app/ui/throw-curse/throw-curse";
 import Curses from "../../curses/Curses";
-import { useRoundContext } from "../../RoundProvider";
+import { useRoundContext } from "../RoundProvider";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { fetcher } from "@/app/helpers";

@@ -3,8 +3,8 @@ import { timeToMinutesAndSeconds } from "@/app/helpers";
 import GameButton from "./GameButton";
 import React from "react";
 import useCountdown from "@/app/hooks/use-countdown";
-import { useRoundContext } from "../../RoundProvider";
-import { useGameContext } from "../../GameProvider";
+import { useRoundContext } from "../RoundProvider";
+import { useGameContext } from "../GameProvider";
 import useUserTeam from "@/app/hooks/use_user_team";
 import { useSWRConfig } from "swr";
 

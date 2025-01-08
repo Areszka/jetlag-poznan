@@ -1,39 +1,10 @@
 .nav {
+  justify-content: space-evenly;
   background-color: #0f202e;
-  position: fixed;
-  right: 0;
-  left: 0;
   padding: 6px;
   display: flex;
   color: #b1bad3;
 }
-
-.top {
-  top: 0;
-}
-.top button,
-.top p {
-  font-size: 16px;
-}
-
-.timer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  justify-content: center;
-  flex: 1 1 auto;
-}
-
-.timer p {
-  padding-block-start: 2px;
-  font-size: 20px;
-}
-
-.bottom {
-  bottom: 0;
-  justify-content: space-evenly;
-}
-
 .navItem {
   text-align: center;
   color: #b1bad3;
@@ -42,15 +13,15 @@
   min-width: max-content;
 }
 
+.navItem p {
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
 .navItem:hover,
 .activeNavItem {
   background-color: #1b3042;
   border-radius: 10px;
-}
-
-.navItem p {
-  font-size: 0.625rem;
-  font-weight: 700;
 }
 
 .badge {

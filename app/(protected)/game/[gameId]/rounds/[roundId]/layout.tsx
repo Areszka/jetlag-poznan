@@ -1,18 +1,27 @@
-import styles from "./round.module.css";
-import { BottomNavigation, TopNavigation } from "./components/Navbar/Navbar";
-import RoundProvider from "./RoundProvider";
-import GameProvider from "./GameProvider";
+import styles from "./layout.module.css";
+import RoundProvider from "./components/RoundProvider";
+import GameProvider from "./components/GameProvider";
+import BottomNavigation from "./components/BottomNavigation/BottomNavigation";
+import RoundsNavigation from "./components/RoundsNavigation/RoundsNavigation";
+import { TopNavigation } from "./components/TopNavigation/TopNavigation";
 
-export default async function Layout({ children }: { children: JSX.Element }) {
+export default function Layout({
+  children,
+  params,
+}: {
+  children: JSX.Element;
+  params: { gameId: string; roundId: string };
+}) {
   return (
-    <>
-      <GameProvider>
-        <RoundProvider>
+    <GameProvider>
+      <RoundProvider>
+        <div className={styles.grid}>
           <TopNavigation />
-          <div className={styles.pageWrapper}>{children}</div>
-        </RoundProvider>
-      </GameProvider>
-      <BottomNavigation />
-    </>
+          <RoundsNavigation params={params} />
+          <main className={styles.pageContentWrapper}>{children}</main>
+          <BottomNavigation params={params} />
+        </div>
+      </RoundProvider>
+    </GameProvider>
   );
 }

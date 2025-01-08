@@ -6,7 +6,7 @@ import VetoText from "./VetoText";
 import TeamCurseWrapper from "./TeamCurseWrapper";
 import { FlatCurse } from "@/app/api/games/[gameId]/rounds/[roundId]/curses/route";
 import useUserTeam from "@/app/hooks/use_user_team";
-import { useRoundContext } from "../../RoundProvider";
+import { useRoundContext } from "../RoundProvider";
 
 export default function TeamCurseItem({ curse }: { curse: FlatCurse }) {
   const { userTeam } = useUserTeam();

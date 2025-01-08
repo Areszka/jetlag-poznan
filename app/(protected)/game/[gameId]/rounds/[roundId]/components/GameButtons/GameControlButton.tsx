@@ -1,6 +1,6 @@
 "use client";
 
-import { useRoundContext } from "../../RoundProvider";
+import { useRoundContext } from "../RoundProvider";
 import OneMoreTurnButton from "./OneMoreTurnButton";
 import StartRoundButton from "./StartRoundButton";
 import StopRoundButton from "./StopRoundButton";

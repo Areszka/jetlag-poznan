@@ -1,12 +1,9 @@
 "use client";
 
-import { getTime, timeToMinutesAndSeconds } from "@/app/helpers";
+import { timeToMinutesAndSeconds } from "@/app/helpers";
 import InfoCard from "./InfoCard";
-import { useServerLoading } from "@/app/hooks/use-server-loading";
-import useGameTime from "@/app/hooks/use-game-time";
 import Link from "next/link";
-import { useRoundContext } from "../../RoundProvider";
-import { useGameContext } from "../../GameProvider";
+import { useGameContext } from "../GameProvider";
 import useUserTeam from "@/app/hooks/use_user_team";
 
 export function AnswerTimeLimitCard() {
@@ -35,14 +32,6 @@ export function RoleCard() {
       {userTeam.role}
     </InfoCard>
   );
-}
-
-export function TimeCard() {
-  const { round } = useRoundContext();
-  const isLoading = useServerLoading();
-  const time = useGameTime({ endTime: round.end_time, startTime: round.start_time });
-
-  return <InfoCard label="time">{isLoading ? "--:--:--" : getTime(time)}</InfoCard>;
 }
 
 export function MapCard() {

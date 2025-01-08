@@ -1,0 +1,31 @@
+.nav {
+  background-color: #0f202e;
+  color: #b1bad3;
+  padding: 6px;
+  display: flex;
+  height: calc(1rem + 17.5px + 12px);
+  justify-content: flex-end;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-grow: 100;
+}
+
+.timer p {
+  padding-block-start: 2px;
+  font-size: 20px;
+}
+
+.button {
+  position: absolute;
+}
+
+@media (max-width: 670px) {
+  .button {
+    position: relative;
+  }
+}

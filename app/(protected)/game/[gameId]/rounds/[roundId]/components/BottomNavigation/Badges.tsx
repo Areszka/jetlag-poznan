@@ -1,7 +1,7 @@
 "use client";
 
+import styles from "./BottomNavigation.module.css";
 import useSWR from "swr";
-import { Badge } from "./Navbar";
 import { GetPendingQuestionsResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/numberOfPendingQuestions/route";
 import { GetActiveCursesResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/numberOfActiveCurses/route";
 
@@ -41,4 +41,8 @@ async function fetcher(url: string) {
       throw new Error(res.statusText);
     }
   });
+}
+
+function Badge({ children }: { children: string }) {
+  return <div className={styles.badge}>{children}</div>;
 }

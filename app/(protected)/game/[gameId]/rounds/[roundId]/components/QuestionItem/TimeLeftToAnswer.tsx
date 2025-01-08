@@ -3,8 +3,8 @@
 import { timeToMinutesAndSeconds } from "@/app/helpers";
 import styles from "./QuestionItem.module.css";
 import useCountdown from "@/app/hooks/use-countdown";
-import { useGameContext } from "../../GameProvider";
-import { useRoundContext } from "../../RoundProvider";
+import { useGameContext } from "../GameProvider";
+import { useRoundContext } from "../RoundProvider";
 
 export default function TimeLeftToAnswer({ askedAt }: { askedAt: Date }) {
   const { game } = useGameContext();

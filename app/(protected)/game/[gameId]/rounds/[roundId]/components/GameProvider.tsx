@@ -5,6 +5,8 @@ import useSWR from "swr";
 import { GetGameResponse } from "@/app/api/games/[gameId]/route";
 import { useParams } from "next/navigation";
 import { fetcher } from "@/app/helpers";
+import Spinner from "@/app/ui/components/spinner/spinner";
+import Center from "@/app/ui/components/Center/Center";
 
 const GameContext = React.createContext<GetGameResponse | null>(null);
 
@@ -27,15 +29,19 @@ export default function GameProvider({ children }: { children: ReactNode }) {
   );
 
   if (error) {
-    return <p>Error when fetching game</p>;
+    return <Center>Error when fetching game</Center>;
   }
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <Center>
+        <Spinner size="24px" />
+      </Center>
+    );
   }
 
   if (!data) {
-    return <p>No game data</p>;
+    return <Center>No game data</Center>;
   }
 
   return <GameContext.Provider value={{ game: data.game }}>{children}</GameContext.Provider>;

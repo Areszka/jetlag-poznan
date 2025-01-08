@@ -18,10 +18,14 @@ export async function Questions(): Promise<JSX.Element> {
             <Link href={`/questions/${question.id}`}>
               <Text
                 type="title"
-                tags={[
-                  { children: question.cost },
-                  { children: question.type, hue: HUES[question.type] },
-                ]}
+                tags={
+                  question.type
+                    ? [
+                        { children: question.cost },
+                        { children: question.type, hue: HUES[question.type] ?? 200 },
+                      ]
+                    : [{ children: question.cost }]
+                }
               >
                 {question.content}
               </Text>

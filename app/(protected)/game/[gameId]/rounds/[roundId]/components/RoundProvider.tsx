@@ -2,6 +2,7 @@
 
 import { GetRoundResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/route";
 import { fetcher } from "@/app/helpers";
+import Center from "@/app/ui/components/Center/Center";
 import { useParams } from "next/navigation";
 import React, { ReactNode } from "react";
 import useSWR from "swr";
@@ -18,15 +19,15 @@ export default function RoundProvider({ children }: { children: ReactNode }) {
   );
 
   if (error) {
-    return <p>Error when fetching rounds</p>;
+    return <Center>Error when fetching rounds</Center>;
   }
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <Center>Loading...</Center>;
   }
 
   if (!data) {
-    return <p>No round context data</p>;
+    return <Center>No round context data</Center>;
   }
 
   return <RoundContext.Provider value={{ round: data.round }}>{children}</RoundContext.Provider>;

@@ -1,0 +1,15 @@
+.pageContentWrapper {
+  max-width: 800px;
+  margin-inline: auto;
+  padding: 16px 12px;
+  overflow: scroll;
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  height: 100%;
+  grid-template-rows: min-content min-content 1fr min-content;
+  position: fixed;
+  width: 100%;
+}

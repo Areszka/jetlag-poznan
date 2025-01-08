@@ -1,7 +1,8 @@
 .button {
   background-color: #d9a76e;
   font-size: 1rem;
-  padding: 8px 12px;
+  height: calc(1rem + 17.5px);
+  padding: 8px 12px 7px;
   border-radius: 4px;
   border: none;
   color: #0f202e;

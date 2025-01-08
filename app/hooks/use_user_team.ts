@@ -1,6 +1,6 @@
 "use client";
 
-import { useRoundContext } from "../(protected)/game/[gameId]/rounds/[roundId]/RoundProvider";
+import { useRoundContext } from "../(protected)/game/[gameId]/rounds/[roundId]/components/RoundProvider";
 import { useUserContext } from "../(protected)/UserProvider";
 
 export default function useUserTeam() {

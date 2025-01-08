@@ -9,7 +9,7 @@ import DiceControls from "./dice-controls";
 import { useParams } from "next/navigation";
 import { Button } from "../components/button/button";
 import { ThrowCurseResponse } from "@/app/api/curses/throw/[targetTeamId]/[numberOfDice]/route";
-import { useGameContext } from "@/app/(protected)/game/[gameId]/rounds/[roundId]/GameProvider";
+import { useGameContext } from "@/app/(protected)/game/[gameId]/rounds/[roundId]/components/GameProvider";
 import useSWRMutation from "swr/mutation";
 import Spinner from "../components/spinner/spinner";
 import { useSWRConfig } from "swr";

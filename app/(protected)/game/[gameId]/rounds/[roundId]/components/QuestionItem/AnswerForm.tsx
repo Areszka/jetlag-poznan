@@ -7,8 +7,8 @@ import useCountdown from "@/app/hooks/use-countdown";
 import useSWRMutation from "swr/mutation";
 import Spinner from "@/app/ui/components/spinner/spinner";
 import { sendNotification } from "@/app/utils/actions";
-import { useGameContext } from "../../GameProvider";
-import { useRoundContext } from "../../RoundProvider";
+import { useGameContext } from "../GameProvider";
+import { useRoundContext } from "../RoundProvider";
 import { useSWRConfig } from "swr";
 
 export default function AnswerForm({

@@ -3,7 +3,7 @@
 import Item from "@/app/ui/components/Item/Item";
 import { Text } from "@/app/ui/components/text/text";
 import React from "react";
-import { useGameContext } from "./GameProvider";
+import { useGameContext } from "../components/GameProvider";
 
 export default function GameCursesCard() {
   const { game } = useGameContext();

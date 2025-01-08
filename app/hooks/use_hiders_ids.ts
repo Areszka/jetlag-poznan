@@ -1,4 +1,4 @@
-import { useRoundContext } from "../(protected)/game/[gameId]/rounds/[roundId]/RoundProvider";
+import { useRoundContext } from "../(protected)/game/[gameId]/rounds/[roundId]/components/RoundProvider";
 
 export default function useHidersIds() {
   const { round } = useRoundContext();

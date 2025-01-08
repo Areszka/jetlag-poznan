@@ -1,0 +1,25 @@
+.nav {
+  display: flex;
+  list-style: none;
+  gap: 16px;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  background-color: #0f202e;
+  scroll-padding: 12px;
+  color: #b1bad3;
+  padding: 6px 12px;
+  border-block-start: #2d3c67 1px solid;
+  font-weight: 200;
+}
+.nav > * {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+.nav > *:first-child {
+  margin-inline-start: auto;
+}
+
+.nav > *:last-child {
+  margin-inline-end: auto;
+}

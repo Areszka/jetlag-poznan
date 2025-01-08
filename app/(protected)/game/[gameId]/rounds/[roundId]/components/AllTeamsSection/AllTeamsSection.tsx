@@ -4,7 +4,7 @@ import Header from "@/app/ui/components/header/header";
 import Item from "@/app/ui/components/Item/Item";
 import styles from "./AllTeamsSection.module.css";
 import Tag from "@/app/ui/components/tag/tag";
-import { useRoundContext } from "../../RoundProvider";
+import { useRoundContext } from "../RoundProvider";
 
 export default function AllTeamsSection() {
   const { round } = useRoundContext();
