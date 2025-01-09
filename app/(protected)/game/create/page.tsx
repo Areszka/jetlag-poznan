@@ -232,7 +232,7 @@ export default function CreateGamePage() {
             </ul>
           </fieldset>
           <button className={styles.createButton} disabled={isMutating}>
-            {isMutating ? <Spinner /> : "Create"}
+            {isMutating ? <Spinner color="gray" /> : "Create"}
           </button>
         </Form>
         {errorMessage && <CardError>{errorMessage}</CardError>}

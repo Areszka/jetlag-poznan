@@ -83,6 +83,8 @@
   border: rgb(226, 226, 226) 1px solid;
   border-radius: 4px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
 }
 
 .createButton:hover {
