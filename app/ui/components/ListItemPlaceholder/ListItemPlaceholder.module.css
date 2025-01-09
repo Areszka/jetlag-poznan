@@ -1,0 +1,23 @@
+.placeholder {
+  background: linear-gradient(
+    132deg,
+    rgba(228, 228, 228, 1) 36%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(228, 228, 228, 1) 64%
+  );
+
+  border: 1px solid rgb(213, 213, 213);
+  background-size: 600% 400%;
+  animation: gradient 3s linear infinite;
+  height: 2.5rem;
+  border-radius: 4px;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}

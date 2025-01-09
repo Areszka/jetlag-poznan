@@ -1,95 +1,59 @@
 "use client";
 
-import Card from "@/app/ui/components/card/card";
-import { Question, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, Reducer } from "react";
 import styles from "./page.module.css";
 import reducer, { GameAction, GameState } from "./reducer";
-import Teams, { InputWithAddButton, NameInput } from "./components";
 import { PostGamesRequest, PostGamesResponse } from "@/app/api/games/route";
-import { GetQuestionsResponse } from "@/app/api/questions/route";
-import { Text } from "@/app/ui/components/text/text";
-import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import Form from "@/app/ui/components/Form/Form";
-import { motion } from "framer-motion";
 import CardError from "@/app/ui/components/card/CardError";
 import useSWRMutation from "swr/mutation";
 import Spinner from "@/app/ui/components/spinner/spinner";
+import QuestionsInput from "./components/QuestionsInput";
+import { fetcherPost } from "@/app/helpers";
+import InputWithAddButton from "./components/InputWithAddButton";
+import Teams from "./components/Teams";
+import CursesInput from "./components/CursesInput";
 
 const INITIAL_SETTINGS: GameState = {
-  name: "",
   teams: [],
   questionIds: [],
-  curses: [],
+  curseIds: [],
 };
 
 export default function CreateGamePage() {
+  const router = useRouter();
+
   const [errorMessage, setErrorMessage] = React.useState<string>("");
   const [game, dispatch] = React.useReducer<Reducer<GameState, GameAction>>(
     reducer,
     INITIAL_SETTINGS
   );
-  const [questions, setQuestions] = React.useState<Question[] | null>(null);
+
   React.useEffect(() => {
     setErrorMessage("");
   }, [game]);
 
-  const { trigger, isMutating, error } = useSWRMutation(`/api/games`, fetcher);
+  const { trigger, isMutating, error } = useSWRMutation(
+    `/api/games`,
+    fetcherPost<PostGamesRequest>
+  );
 
-  React.useEffect(() => {
-    const getData = async () => {
-      const questionsResponse = await fetch(`/api/questions`);
-      const cursesResponse = await fetch(`/api/curses`);
+  function toggleQuestion(questionId: string) {
+    if (game.questionIds.includes(questionId)) {
+      dispatch({ type: "question_removed", questionId });
+    } else {
+      dispatch({ type: "question_added", questionId });
+    }
+  }
 
-      if (questionsResponse.ok) {
-        const data: GetQuestionsResponse = await questionsResponse.json();
-        dispatch({
-          type: "all_questions_added",
-          questionsIds: data.questions.map((question) => question.id),
-        });
-        setQuestions(data.questions);
-      }
+  function initializeQuestions(questionIds: string[]) {
+    dispatch({ type: "all_questions_added", questionIds });
+  }
 
-      if (cursesResponse.ok) {
-        const data = await cursesResponse.json();
-        dispatch({ type: "curses_initialized", curses: data.curses });
-      }
-    };
-    getData();
-  }, []);
-
-  const router = useRouter();
-
-  async function handleSubmitForm(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const inputJailDuration: string = event.currentTarget.jailDuration.value;
-    const jailHours = Number(inputJailDuration.split(":")[0]);
-    const jailMinutes = Number(inputJailDuration.split(":")[1]);
-
-    const jailDuration = 1000 * 60 * jailMinutes + 1000 * 60 * 60 * jailHours;
-
-    const inputAnswerTimeLimit: string = event.currentTarget.answerTimeLimit.value;
-    const answerLimitHours = Number(inputAnswerTimeLimit.split(":")[0]);
-    const answerLimitMinutes = Number(inputAnswerTimeLimit.split(":")[1]);
-
-    const answerTimeLimit = 1000 * 60 * answerLimitMinutes + 1000 * 60 * 60 * answerLimitHours;
-
-    const requestData: PostGamesRequest = {
-      name: game.name,
-      questionIds: game.questionIds,
-      teams: game.teams,
-      curseIds: game.curses.map((curse) => curse.id),
-      diceCost: Number(event.currentTarget.diceCost.value),
-      answerTimeLimit,
-      jailDuration,
-    };
-
-    trigger(requestData).then(({ game }: PostGamesResponse) =>
-      router.push(`/game/${game.id}/rounds/${game.rounds[0].id}`)
-    );
+  function initializeCurses(curseIds: string[]) {
+    dispatch({ type: "curses_initialized", curseIds });
   }
 
   function handleAddTeam(teamName: string) {
@@ -135,123 +99,90 @@ export default function CreateGamePage() {
     dispatch({ type: "curse_difficulty_increased", curseId });
   }
 
+  function handleSubmitForm(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const inputJailDuration: string = event.currentTarget.jailDuration.value;
+    const jailHours = Number(inputJailDuration.split(":")[0]);
+    const jailMinutes = Number(inputJailDuration.split(":")[1]);
+
+    const jailDuration = 1000 * 60 * jailMinutes + 1000 * 60 * 60 * jailHours;
+
+    const inputAnswerTimeLimit: string = event.currentTarget.answerTimeLimit.value;
+    const answerLimitHours = Number(inputAnswerTimeLimit.split(":")[0]);
+    const answerLimitMinutes = Number(inputAnswerTimeLimit.split(":")[1]);
+
+    const answerTimeLimit = 1000 * 60 * answerLimitMinutes + 1000 * 60 * 60 * answerLimitHours;
+
+    const requestData: PostGamesRequest = {
+      name: event.currentTarget.gameName.value,
+      questionIds: game.questionIds,
+      teams: game.teams,
+      curseIds: game.curseIds,
+      diceCost: Number(event.currentTarget.diceCost.value),
+      answerTimeLimit,
+      jailDuration,
+    };
+
+    trigger(requestData).then(({ game }: PostGamesResponse) =>
+      router.push(`/game/${game.id}/rounds/${game.rounds[0].id}`)
+    );
+  }
+
   return (
-    <div className={styles.layout}>
-      <Card title="Create New Game">
-        <Form onSubmit={handleSubmitForm}>
-          <NameInput
-            value={game.name}
-            onChange={(name) => dispatch({ type: "name_changed", name })}
+    <>
+      <Form onSubmit={handleSubmitForm}>
+        <label>
+          Game Name
+          <input type="text" name="gameName" required />
+        </label>
+
+        <label>
+          Dice Cost
+          <input type="number" name="diceCost" defaultValue="50" required />
+        </label>
+
+        <label>
+          Answer Time Limit
+          <input type="time" name="answerTimeLimit" min="00:01" defaultValue="00:15" required />
+        </label>
+
+        <label>
+          Seekers&apos; Jail Period
+          <input type="time" name="jailDuration" min="00:01" defaultValue="00:30" required />
+        </label>
+
+        <InputWithAddButton label="Teams" onClick={handleAddTeam} />
+        <Teams
+          teams={game.teams}
+          removeTeam={handleRemoveTeam}
+          changeRole={handleChangeRole}
+          addMember={handleAddMember}
+          removeMember={handleRemoveMember}
+        ></Teams>
+        <fieldset>
+          <legend>Questions</legend>
+          <QuestionsInput
+            questionIds={game.questionIds}
+            toggleQuestion={toggleQuestion}
+            initializeQuestions={initializeQuestions}
           />
-          <label>
-            Dice Cost
-            <input type="number" name="diceCost" defaultValue="50" required />
-          </label>
-
-          <label>
-            Answer Time Limit
-            <input type="time" name="answerTimeLimit" min="00:01" defaultValue="00:15" required />
-          </label>
-
-          <label>
-            Seekers&apos; Jail Period
-            <input type="time" name="jailDuration" min="00:01" defaultValue="00:30" required />
-          </label>
-
-          <InputWithAddButton label="Teams" onClick={handleAddTeam} />
-          <Teams
-            teams={game.teams}
-            removeTeam={handleRemoveTeam}
-            changeRole={handleChangeRole}
-            addMember={handleAddMember}
-            removeMember={handleRemoveMember}
-          ></Teams>
-          <fieldset>
-            <legend>Questions</legend>
-            {questions &&
-              questions.map((question) => {
-                return (
-                  <label
-                    key={question.id}
-                    className={styles.checkbox}
-                    style={{ flexDirection: "row" }}
-                  >
-                    <input
-                      type="checkbox"
-                      name="question"
-                      checked={game.questionIds.includes(question.id)}
-                      onChange={() => {
-                        if (game.questionIds.includes(question.id)) {
-                          dispatch({
-                            type: "question_removed",
-                            questionId: question.id,
-                          });
-                        } else {
-                          dispatch({
-                            type: "question_added",
-                            questionId: question.id,
-                          });
-                        }
-                      }}
-                    />
-                    <FlexWithGap gap={4}>
-                      <Text type="title" tags={[{ children: question.cost.toString() }]}>
-                        {question.content}
-                      </Text>
-                      {question.details && <Text type="description">{question.details}</Text>}
-                    </FlexWithGap>
-                  </label>
-                );
-              })}
-          </fieldset>
-          <fieldset>
-            <legend>Curses</legend>
-            <ul>
-              {game.curses.map((curse, index) => {
-                return (
-                  <motion.li key={curse.id} className={styles.curse} layout={true}>
-                    <div className={styles.curseButtons}>
-                      {index > 0 && (
-                        <button type="button" onClick={() => moveCurseUp(curse.id)}>
-                          <IoIosArrowUp />
-                        </button>
-                      )}
-                      {index !== game.curses.length - 1 && (
-                        <button type="button" onClick={() => moveCurseDown(curse.id)}>
-                          <IoIosArrowDown />
-                        </button>
-                      )}
-                    </div>
-                    <FlexWithGap gap={0}>
-                      <Text type="title">{curse.name}</Text>
-                      <Text type="description">{curse.effect}</Text>
-                    </FlexWithGap>
-                  </motion.li>
-                );
-              })}
-            </ul>
-          </fieldset>
-          <button className={styles.createButton} disabled={isMutating}>
-            {isMutating ? <Spinner color="gray" /> : "Create"}
-          </button>
-        </Form>
-        {errorMessage && <CardError>{errorMessage}</CardError>}
-        {error && <CardError>{error.message}</CardError>}
-      </Card>
-    </div>
+        </fieldset>
+        <fieldset>
+          <legend>Curses</legend>
+          <CursesInput
+            curseIds={game.curseIds}
+            moveCurseDown={moveCurseDown}
+            moveCurseUp={moveCurseUp}
+            initializeCurses={initializeCurses}
+          />
+        </fieldset>
+        <button className={styles.createButton} disabled={isMutating}>
+          {isMutating ? <Spinner color="gray" /> : "Create"}
+        </button>
+      </Form>
+      {errorMessage && <CardError>{errorMessage}</CardError>}
+      {error && <CardError>{error.message}</CardError>}
+    </>
   );
-}
-
-async function fetcher(url: string, { arg }: { arg: PostGamesRequest }) {
-  return fetch(url, { method: "POST", body: JSON.stringify(arg) }).then(async (res) => {
-    if (!res.ok) {
-      const { error } = await res.json();
-      if (error) {
-        throw new Error(error);
-      }
-      throw new Error(res.statusText);
-    }
-
-    return res.json();
-  });
 }

@@ -10,6 +10,8 @@ import { sendNotification } from "@/app/utils/actions";
 import { useGameContext } from "../GameProvider";
 import { useRoundContext } from "../RoundProvider";
 import { useSWRConfig } from "swr";
+import { fetcherPost } from "@/app/helpers";
+import { AnswerQuestionRequest } from "@/app/api/questions/answer/[teamId]/[questionId]/route";
 
 export default function AnswerForm({
   askedAt,
@@ -43,9 +45,9 @@ export default function AnswerForm({
 function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: string }) {
   const { mutate } = useSWRConfig();
   const params = useParams();
-  const { trigger, isMutating } = useSWRMutation<any, Error, any, string>(
+  const { trigger, isMutating } = useSWRMutation<any, Error, any, AnswerQuestionRequest>(
     `/api/questions/answer/${ownerTeamId}/${questionId}`,
-    fetcher
+    fetcherPost
   );
   const { round } = useRoundContext();
   const ownerTeamMembersIds = round.teams
@@ -56,8 +58,8 @@ function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: st
     <form
       onSubmit={async (event) => {
         event.preventDefault();
-        const answer = event.currentTarget.answer.value;
-        trigger(answer).then(async () => {
+        const answer: string = event.currentTarget.answer.value;
+        trigger({ answer }).then(async () => {
           await sendNotification({
             title: `New answer`,
             message: answer,
@@ -76,7 +78,7 @@ function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: st
         <button
           type="button"
           onClick={() => {
-            trigger("Hiders were unable to answer this question").then(async () => {
+            trigger({ answer: "Hiders were unable to answer this question" }).then(async () => {
               await sendNotification({
                 title: `New answer`,
                 message: "Hiders were unable to answer this question",
@@ -94,17 +96,4 @@ function Form({ ownerTeamId, questionId }: { ownerTeamId: string; questionId: st
       {isMutating && <Spinner />}
     </form>
   );
-}
-
-async function fetcher(url: string, { arg }: { arg: string }) {
-  return fetch(url, {
-    body: JSON.stringify({ answer: arg }),
-    method: "POST",
-  }).then(async (res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      throw new Error(res.statusText);
-    }
-  });
 }

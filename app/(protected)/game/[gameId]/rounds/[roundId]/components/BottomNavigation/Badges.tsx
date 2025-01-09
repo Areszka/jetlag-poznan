@@ -4,6 +4,7 @@ import styles from "./BottomNavigation.module.css";
 import useSWR from "swr";
 import { GetPendingQuestionsResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/numberOfPendingQuestions/route";
 import { GetActiveCursesResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/numberOfActiveCurses/route";
+import { fetcher } from "@/app/helpers";
 
 export function PendingQuestionsBadge({ params }: { params: { gameId: string; roundId: string } }) {
   const { data } = useSWR<GetPendingQuestionsResponse, any, any, any>(
@@ -31,16 +32,6 @@ export function ActiveCursesBadge({ params }: { params: { gameId: string; roundI
   }
 
   return <Badge>{data.activeCurses.toString()}</Badge>;
-}
-
-async function fetcher(url: string) {
-  return fetch(url).then(async (res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
-      throw new Error(res.statusText);
-    }
-  });
 }
 
 function Badge({ children }: { children: string }) {

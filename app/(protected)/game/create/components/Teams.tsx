@@ -1,24 +1,9 @@
+import styles from "../page.module.css";
 import { MdDeleteOutline } from "react-icons/md";
-import styles from "./page.module.css";
-import { Team, User } from "./reducer";
+import { Team, User } from "../reducer";
 import { Role } from "@prisma/client";
 import React, { ReactNode } from "react";
-import Spinner from "@/app/ui/components/spinner/spinner";
-
-export function NameInput({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (name: string) => void;
-}) {
-  return (
-    <label>
-      Game Name
-      <input required value={value} onChange={(event) => onChange(event.target.value)} />
-    </label>
-  );
-}
+import InputWithAddButton from "./InputWithAddButton";
 
 export default function Teams({
   teams,
@@ -94,39 +79,6 @@ function DeleteButton({ onClick }: { onClick: () => void }) {
     <button className={styles.removeButton} type="button" onClick={onClick}>
       <MdDeleteOutline />
     </button>
-  );
-}
-
-export function InputWithAddButton({
-  label,
-  onClick,
-}: {
-  onClick: (value: string) => boolean | Promise<boolean>;
-  label: string;
-}) {
-  const [input, setInput] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  return (
-    <label>
-      {label}
-      <div className={styles.addInputWrapper}>
-        <input value={input} onChange={(event) => setInput(event.target.value)} />
-        <button
-          type="button"
-          onClick={async () => {
-            if (input) {
-              setIsLoading(true);
-              const success = await onClick(input);
-              if (success) setInput("");
-              setIsLoading(false);
-            }
-          }}
-        >
-          {isLoading ? <Spinner /> : "Add"}
-        </button>
-      </div>
-    </label>
   );
 }
 

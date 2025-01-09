@@ -23,13 +23,16 @@ export async function fetcher(url: string) {
   });
 }
 
-export async function fetcherPost(url: string) {
-  return fetch(url, { method: "POST" }).then(async (res) => {
-    if (res.ok) {
-      return res.json();
-    } else {
+export async function fetcherPost<T>(url: string, options?: { arg: T }) {
+  return fetch(url, { method: "POST", body: JSON.stringify(options?.arg) }).then(async (res) => {
+    if (!res.ok) {
+      const { error } = await res.json();
+      if (error) {
+        throw new Error(error);
+      }
       throw new Error(res.statusText);
     }
+    return res.json();
   });
 }
 

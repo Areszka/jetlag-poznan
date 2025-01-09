@@ -1,9 +1,4 @@
-import { Curse, Role } from "@prisma/client";
-
-type ChangeNameAction = {
-  type: "name_changed";
-  name: string;
-};
+import { Role } from "@prisma/client";
 
 type AddTeamAction = {
   type: "team_added";
@@ -45,7 +40,7 @@ type AddQuestionAction = {
 
 type InitializeCursesAction = {
   type: "curses_initialized";
-  curses: Curse[];
+  curseIds: string[];
 };
 
 type IncreaseDifficultyAction = {
@@ -60,11 +55,10 @@ type DecreaseDifficultyAction = {
 
 type AddAllQuestionsAction = {
   type: "all_questions_added";
-  questionsIds: string[];
+  questionIds: string[];
 };
 
 export type GameAction =
-  | ChangeNameAction
   | AddTeamAction
   | RemoveTeamAction
   | AddMemberAction
@@ -78,13 +72,12 @@ export type GameAction =
   | AddAllQuestionsAction;
 
 export interface GameState {
-  name: string;
   teams: Team[];
   questionIds: string[];
   /**
    * Order of the throw-curse matters as difficulty increases from 1 to n
    */
-  curses: Curse[];
+  curseIds: string[];
 }
 
 export type Team = {
@@ -94,11 +87,9 @@ export type Team = {
 };
 
 export type User = { id: string; username: string };
+
 export default function reducer(game: GameState, action: GameAction) {
   switch (action.type) {
-    case "name_changed": {
-      return { ...game, name: action.name };
-    }
     case "member_added": {
       const nextTeams = [...game.teams].map((team) => {
         if (team.name === action.teamName) {
@@ -145,7 +136,7 @@ export default function reducer(game: GameState, action: GameAction) {
       return { ...game, teams: nextTeams };
     }
     case "all_questions_added": {
-      return { ...game, questionIds: action.questionsIds };
+      return { ...game, questionIds: action.questionIds };
     }
     case "question_added": {
       return { ...game, questionIds: [...game.questionIds, action.questionId] };
@@ -158,33 +149,33 @@ export default function reducer(game: GameState, action: GameAction) {
       return { ...game, questionIds: nextQuestionIds };
     }
     case "curses_initialized": {
-      return { ...game, curses: action.curses };
+      return { ...game, curseIds: action.curseIds };
     }
     case "curse_difficulty_decreased": {
-      let nextCurses = [...game.curses];
-      const curseIndex = nextCurses.findIndex((curse) => curse.id === action.curseId);
+      let nextCurseIds = [...game.curseIds];
+      const curseIndex = nextCurseIds.findIndex((curseId) => curseId === action.curseId);
 
       if (curseIndex < 1) {
         return game;
       }
 
-      nextCurses[curseIndex] = game.curses[curseIndex - 1];
-      nextCurses[curseIndex - 1] = game.curses[curseIndex];
+      nextCurseIds[curseIndex] = game.curseIds[curseIndex - 1];
+      nextCurseIds[curseIndex - 1] = game.curseIds[curseIndex];
 
-      return { ...game, curses: nextCurses };
+      return { ...game, curseIds: nextCurseIds };
     }
     case "curse_difficulty_increased": {
-      let nextCurses = [...game.curses];
-      const curseIndex = nextCurses.findIndex((curse) => curse.id === action.curseId);
+      let nextCurseIds = [...game.curseIds];
+      const curseIndex = nextCurseIds.findIndex((curseId) => curseId === action.curseId);
 
-      if (curseIndex === game.curses.length - 1) {
+      if (curseIndex === game.curseIds.length - 1) {
         return game;
       }
 
-      nextCurses[curseIndex] = game.curses[curseIndex + 1];
-      nextCurses[curseIndex + 1] = game.curses[curseIndex];
+      nextCurseIds[curseIndex] = game.curseIds[curseIndex + 1];
+      nextCurseIds[curseIndex + 1] = game.curseIds[curseIndex];
 
-      return { ...game, curses: nextCurses };
+      return { ...game, curseIds: nextCurseIds };
     }
   }
 }
