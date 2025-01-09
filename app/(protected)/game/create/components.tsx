@@ -14,7 +14,7 @@ export function NameInput({
 }) {
   return (
     <label>
-      Game name
+      Game Name
       <input required value={value} onChange={(event) => onChange(event.target.value)} />
     </label>
   );

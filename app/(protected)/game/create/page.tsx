@@ -144,17 +144,17 @@ export default function CreateGamePage() {
             onChange={(name) => dispatch({ type: "name_changed", name })}
           />
           <label>
-            Number of coins needed to roll one dice
+            Dice Cost
             <input type="number" name="diceCost" defaultValue="50" required />
           </label>
 
           <label>
-            Time limit for hiders to answer questions
+            Answer Time Limit
             <input type="time" name="answerTimeLimit" min="00:01" defaultValue="00:15" required />
           </label>
 
           <label>
-            Jail period (time seekers need to wait before starting their expedition)
+            Seekers&apos; Jail Period
             <input type="time" name="jailDuration" min="00:01" defaultValue="00:30" required />
           </label>
 
