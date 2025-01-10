@@ -6,6 +6,7 @@ import { fetcherPost } from "@/app/helpers";
 import useSWRMutation from "swr/mutation";
 import Spinner from "@/app/ui/components/spinner/spinner";
 import { useSWRConfig } from "swr";
+import Center from "@/app/ui/components/Center/Center";
 
 export default function LiftCurseButton({ curseId, teamId }: { curseId: string; teamId: string }) {
   const { mutate } = useSWRConfig();
@@ -22,7 +23,7 @@ export default function LiftCurseButton({ curseId, teamId }: { curseId: string; 
 
   return (
     <button className={styles.liftCurseButton} onClick={liftCurse} disabled={isMutating}>
-      {isMutating ? <Spinner /> : "Mark as DONE!"}
+      <Center> {isMutating ? <Spinner /> : "Mark as DONE!"}</Center>
     </button>
   );
 }

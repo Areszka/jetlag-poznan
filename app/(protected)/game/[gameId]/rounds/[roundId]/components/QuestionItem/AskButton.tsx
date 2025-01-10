@@ -9,6 +9,7 @@ import { fetcherPost } from "@/app/helpers";
 import { useParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 import Spinner from "@/app/ui/components/spinner/spinner";
+import Center from "@/app/ui/components/Center/Center";
 
 export default function AskButton({ questionId }: { questionId: string }) {
   const { userTeam } = useUserTeam();
@@ -43,7 +44,7 @@ function Button({ questionId }: { questionId: string }) {
       }}
       disabled={(jailTimeLeft ?? 1) > 0 || isMutating}
     >
-      {isMutating ? <Spinner /> : "Ask"}
+      <Center>{isMutating ? <Spinner /> : "Ask"} </Center>
     </button>
   );
 }

@@ -6,6 +6,7 @@ import { QuestionItem } from "../components/QuestionItem/QuestionItem";
 import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
 import { fetcher } from "@/app/helpers";
 import Loader from "./loading";
+import Center from "@/app/ui/components/Center/Center";
 
 export default function Page({ params }: { params: { gameId: string; roundId: string } }) {
   const { data, isLoading, error } = useSWR<GetGameQuestionsResponse, Error, string, any>(
@@ -19,15 +20,15 @@ export default function Page({ params }: { params: { gameId: string; roundId: st
   }
 
   if (error) {
-    return <p> Something went wrong!</p>;
+    return <Center>Something went wrong!</Center>;
   }
 
   if (!data) {
-    return <p>No Data!</p>;
+    return <Center>No Data!</Center>;
   }
 
   if (data.questions.length === 0) {
-    return <p>No questions yet!</p>;
+    return <Center>No questions yet!</Center>;
   }
 
   return (

@@ -6,6 +6,7 @@ import { fetcherPost } from "@/app/helpers";
 import { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 import Spinner from "@/app/ui/components/spinner/spinner";
+import Center from "@/app/ui/components/Center/Center";
 
 export default function VetoCurseButton({ curseId }: { curseId: string }) {
   const { mutate } = useSWRConfig();
@@ -19,7 +20,7 @@ export default function VetoCurseButton({ curseId }: { curseId: string }) {
 
   return (
     <button className={styles.vetoCurseButton} onClick={vetoCurse} disabled={isMutating}>
-      {isMutating ? <Spinner /> : "Veto"}
+      <Center>{isMutating ? <Spinner /> : "Veto"}</Center>
     </button>
   );
 }

@@ -1,9 +1,12 @@
 .pageContentWrapper {
-  max-width: 800px;
-  margin-inline: auto;
   padding: 16px 12px;
   overflow: scroll;
   width: 100%;
+}
+
+.pageContentWrapper > * {
+  max-width: 650px;
+  margin-inline: auto;
 }
 
 .grid {

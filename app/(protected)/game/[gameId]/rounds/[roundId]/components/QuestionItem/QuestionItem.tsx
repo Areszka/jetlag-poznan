@@ -13,7 +13,7 @@ export function QuestionItem({ question }: { question: FlatQuestion }) {
   return (
     <Item style={answerIsPending ? "orange" : undefined}>
       <div className={`${styles.wrapper}`}>
-        <div>
+        <div style={{ width: "100%" }}>
           {question.askedBy && <p className={styles.askedBy}>{question.askedBy.name}</p>}
           <Text type="title" tags={[{ children: question.cost.toString() }]}>
             {question.content}
