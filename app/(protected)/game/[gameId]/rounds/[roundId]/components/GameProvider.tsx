@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { fetcher } from "@/app/helpers";
 import Spinner from "@/app/ui/components/spinner/spinner";
 import Center from "@/app/ui/components/Center/Center";
+import GridSkeleton from "./GridSkeleton";
 
 const GameContext = React.createContext<GetGameResponse | null>(null);
 
@@ -29,19 +30,29 @@ export default function GameProvider({ children }: { children: ReactNode }) {
   );
 
   if (error) {
-    return <Center>Error when fetching game</Center>;
+    return (
+      <GridSkeleton>
+        <Center>Error when fetching game</Center>
+      </GridSkeleton>
+    );
   }
 
   if (isLoading) {
     return (
-      <Center>
-        <Spinner size="24px" />
-      </Center>
+      <GridSkeleton>
+        <Center>
+          <Spinner size="24px" />
+        </Center>
+      </GridSkeleton>
     );
   }
 
   if (!data) {
-    return <Center>No game data</Center>;
+    return (
+      <GridSkeleton>
+        <Center>No game data</Center>
+      </GridSkeleton>
+    );
   }
 
   return <GameContext.Provider value={{ game: data.game }}>{children}</GameContext.Provider>;

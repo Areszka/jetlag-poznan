@@ -13,15 +13,15 @@ export default function Layout({
   params: { gameId: string; roundId: string };
 }) {
   return (
-    <GameProvider>
-      <RoundProvider>
-        <div className={styles.grid}>
+    <div className={styles.grid}>
+      <GameProvider>
+        <RoundProvider>
           <TopNavigation />
           <RoundsNavigation params={params} />
           <main className={styles.pageContentWrapper}>{children}</main>
-          <BottomNavigation params={params} />
-        </div>
-      </RoundProvider>
-    </GameProvider>
+        </RoundProvider>
+      </GameProvider>
+      <BottomNavigation params={params} />
+    </div>
   );
 }

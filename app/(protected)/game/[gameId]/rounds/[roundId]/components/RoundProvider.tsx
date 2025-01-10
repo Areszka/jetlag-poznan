@@ -3,9 +3,11 @@
 import { GetRoundResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/route";
 import { fetcher } from "@/app/helpers";
 import Center from "@/app/ui/components/Center/Center";
+import Spinner from "@/app/ui/components/spinner/spinner";
 import { useParams } from "next/navigation";
 import React, { ReactNode } from "react";
 import useSWR from "swr";
+import GridSkeleton from "./GridSkeleton";
 
 const RoundContext = React.createContext<GetRoundResponse | null>(null);
 
@@ -19,15 +21,29 @@ export default function RoundProvider({ children }: { children: ReactNode }) {
   );
 
   if (error) {
-    return <Center>Error when fetching rounds</Center>;
+    return (
+      <GridSkeleton>
+        <Center>Error when fetching rounds</Center>
+      </GridSkeleton>
+    );
   }
 
   if (isLoading) {
-    return <Center>Loading...</Center>;
+    return (
+      <GridSkeleton>
+        <Center>
+          <Spinner size="24px" />
+        </Center>
+      </GridSkeleton>
+    );
   }
 
   if (!data) {
-    return <Center>No round context data</Center>;
+    return (
+      <GridSkeleton>
+        <Center>No round context data</Center>
+      </GridSkeleton>
+    );
   }
 
   return <RoundContext.Provider value={{ round: data.round }}>{children}</RoundContext.Provider>;
