@@ -1,6 +1,9 @@
 "use client";
 
+import Header from "@/app/ui/components/header/header";
 import { useRoundContext } from "./RoundProvider";
+import Item from "@/app/ui/components/Item/Item";
+import { Text } from "@/app/ui/components/text/text";
 
 export default function Winner() {
   const { round } = useRoundContext();
@@ -16,8 +19,12 @@ export default function Winner() {
   }
 
   return (
-    <p>
-      Winner: {winnerTeam.name} ({winnerTeam.members.map((m) => m.username).join(", ")})
-    </p>
+    <div>
+      <Header>Winner 🎊 🎉</Header>
+      <Item>
+        <Text type="title">{winnerTeam.name}</Text>
+        <Text type="description">{winnerTeam.members.map((m) => m.username).join(", ")}</Text>
+      </Item>
+    </div>
   );
 }

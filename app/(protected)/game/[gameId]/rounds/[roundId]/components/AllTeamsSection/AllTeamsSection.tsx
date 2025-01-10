@@ -17,7 +17,9 @@ export default function AllTeamsSection() {
             return (
               <Item key={team.id}>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <p>{`${team.name} (${team.members.map((m) => m.username).join(", ")})`}</p>
+                  <p
+                    style={{ paddingBlockStart: " 4px" }}
+                  >{`${team.name} (${team.members.map((m) => m.username).join(", ")})`}</p>
                   <Tag hue={team.role === "SEEKER" ? 90 : 30}>{team.role}</Tag>
                 </div>
               </Item>
