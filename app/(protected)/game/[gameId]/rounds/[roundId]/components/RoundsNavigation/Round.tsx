@@ -3,11 +3,12 @@
 import { Round as RoundType } from "@prisma/client";
 import Link from "next/link";
 import TimeSpan from "./TimeSpan";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import React from "react";
 
 export default function Round({ round, index }: { round: RoundType; index: number }) {
   const params = useParams<{ gameId: string; roundId: string }>();
+  const pathname = usePathname().split("/").at(-1);
 
   return (
     <li
@@ -16,7 +17,7 @@ export default function Round({ round, index }: { round: RoundType; index: numbe
       }}
     >
       <Link
-        href={`/game/${params.gameId}/rounds/${round.id}`}
+        href={`/game/${params.gameId}/rounds/${round.id}/${pathname}`}
         style={{ fontWeight: `${round.id === params.roundId ? "900" : "200"}` }}
       >
         Round {index + 1}{" "}

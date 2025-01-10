@@ -25,7 +25,15 @@ const diceComponents = {
 
 type Dots = 1 | 2 | 3 | 4 | 5 | 6;
 
-export default function ThrowCurse({ teamId, coins }: { teamId: string; coins: number }) {
+export default function ThrowCurse({
+  teamId,
+  coins,
+  placeholder,
+}: {
+  teamId: string;
+  coins: number;
+  placeholder?: boolean;
+}) {
   const [dice, setDice] = React.useState<Array<Dots>>([3]);
   const { game } = useGameContext();
   const { mutate } = useSWRConfig();
@@ -68,7 +76,7 @@ export default function ThrowCurse({ teamId, coins }: { teamId: string; coins: n
         <DiceControls addDice={increaseNumberOfDice} removeDice={decreaseNumberOfDice} />
 
         <Button
-          disabled={dice.length <= 0 || isMutating}
+          disabled={dice.length <= 0 || isMutating || placeholder}
           onClick={async () => {
             if (dice.length < 1) {
               alert("You need to roll at least one dice");

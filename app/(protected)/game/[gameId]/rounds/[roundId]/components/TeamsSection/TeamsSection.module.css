@@ -7,7 +7,6 @@
   display: flex;
   gap: 16px;
   align-items: flex-start;
-  margin: 16px 0;
   flex-wrap: wrap;
 }
 .teamWrapper {

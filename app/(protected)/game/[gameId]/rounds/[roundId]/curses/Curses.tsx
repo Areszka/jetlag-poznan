@@ -6,6 +6,7 @@ import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
 import { GetGameCursesResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/curses/route";
 import { useParams } from "next/navigation";
 import { fetcher } from "@/app/helpers";
+import ListItemPlaceholder from "@/app/ui/components/ListItemPlaceholder/ListItemPlaceholder";
 
 export default function Curses({ teamId }: { teamId?: string }) {
   const params: { gameId: string; roundId: string } = useParams();
@@ -16,11 +17,11 @@ export default function Curses({ teamId }: { teamId?: string }) {
   );
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <ListItemPlaceholder />;
   }
 
   if (error) {
-    return <p> Error!</p>;
+    return <p> Something went wrong!</p>;
   }
 
   if (!data) {

@@ -9,17 +9,17 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { fetcher } from "@/app/helpers";
 import { GetTeamResponse } from "@/app/api/games/[gameId]/rounds/[roundId]/teams/[teamId]/route";
+import TeamCardLoader from "./TeamCardLoader";
 
 export default function TeamsSection() {
   const { round } = useRoundContext();
+  const seekerTeams = round.teams.filter((team) => team.role === "SEEKER");
 
   return (
     <div className={styles.teamsWrapper}>
-      {round.teams.map((team) => {
-        if (team.role === "HIDER") return;
-
-        return <TeamCard key={team.id} teamId={team.id}></TeamCard>;
-      })}
+      {seekerTeams.map((team) => (
+        <TeamCard key={team.id} teamId={team.id}></TeamCard>
+      ))}
     </div>
   );
 }
@@ -33,11 +33,11 @@ function TeamCard({ teamId }: { teamId: string }) {
   );
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <TeamCardLoader />;
   }
 
   if (error) {
-    return <p> Error!</p>;
+    return <p> Something went wrong...</p>;
   }
 
   if (!data) {

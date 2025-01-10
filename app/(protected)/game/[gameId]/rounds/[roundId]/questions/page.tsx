@@ -5,6 +5,7 @@ import { GetGameQuestionsResponse } from "@/app/api/games/[gameId]/rounds/[round
 import { QuestionItem } from "../components/QuestionItem/QuestionItem";
 import FlexWithGap from "@/app/ui/components/FlexWithGap/FlexWithGap";
 import { fetcher } from "@/app/helpers";
+import Loader from "./loading";
 
 export default function Page({ params }: { params: { gameId: string; roundId: string } }) {
   const { data, isLoading, error } = useSWR<GetGameQuestionsResponse, Error, string, any>(
@@ -14,11 +15,11 @@ export default function Page({ params }: { params: { gameId: string; roundId: st
   );
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
 
   if (error) {
-    return <p> Error!</p>;
+    return <p> Something went wrong!</p>;
   }
 
   if (!data) {

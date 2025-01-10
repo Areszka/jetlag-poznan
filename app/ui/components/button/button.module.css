@@ -10,7 +10,12 @@
   transition: background-color 0.2s;
   text-align: center;
 
-  &:hover {
+  &:not(:disabled):hover {
     background-color: #e5e5e5;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: #d5d5d5;
   }
 }
