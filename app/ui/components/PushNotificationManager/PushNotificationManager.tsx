@@ -18,7 +18,7 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 export default function PushNotificationManager() {
-  const [isSupported, setIsSupported] = useState<boolean>();
+  const [isSupported, setIsSupported] = useState<boolean>(false);
   const [subscription, setSubscription] = useState<PushSubscription | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -59,7 +59,7 @@ export default function PushNotificationManager() {
     await unsubscribeUser();
   }
 
-  if (isSupported === false) {
+  if (!isSupported) {
     return <p>Push notifications are not supported in this browser.</p>;
   }
 
