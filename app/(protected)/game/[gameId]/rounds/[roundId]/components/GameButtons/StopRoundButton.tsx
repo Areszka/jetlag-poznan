@@ -1,5 +1,5 @@
 "use client";
-import { timeToMinutesAndSeconds } from "@/app/helpers";
+import { formatTime } from "@/app/helpers";
 import GameButton from "./GameButton";
 import React from "react";
 import useCountdown from "@/app/hooks/use-countdown";
@@ -38,7 +38,7 @@ export default function StopRoundButton() {
   if (jailTimeLeft === null) {
     buttonText = `Jail period: ...`;
   } else if (jailTimeLeft > 0) {
-    buttonText = `Jail period: ${timeToMinutesAndSeconds(jailTimeLeft)}`;
+    buttonText = `Jail period: ${formatTime(jailTimeLeft)}`;
   } else {
     buttonText = "Stop Game";
   }

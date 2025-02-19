@@ -1,16 +1,17 @@
-export function getTime(diff: number) {
-  let ss = Math.floor(diff / 1000) % 60;
-  let mm = Math.floor(diff / 1000 / 60) % 60;
-  let hh = Math.floor(diff / 1000 / 60 / 60);
+export function formatTime(ms: number, options: { showHours: boolean } = { showHours: false }) {
+  const ss = Math.floor(ms / 1000) % 60;
+  const mm = Math.floor(ms / 1000 / 60) % 60;
+  const hh = Math.floor(ms / 1000 / 60 / 60);
 
-  return `${hh < 10 ? "0" : ""}${hh}:${mm < 10 ? "0" : ""}${mm}:${ss < 10 ? "0" : ""}${ss}`;
-}
+  const formatedSeconds = ss.toString().padStart(2, "0");
+  const formatedMinutes = mm.toString().padStart(2, "0");
+  const formatedHours = hh.toString().padStart(2, "0");
 
-export function timeToMinutesAndSeconds(diff: number) {
-  let ss = Math.floor(diff / 1000) % 60;
-  let mm = Math.floor(diff / 1000 / 60) % 60;
+  if (hh || options.showHours) {
+    return `${formatedHours}:${formatedMinutes}:${formatedSeconds}`;
+  }
 
-  return `${mm < 10 ? "0" : ""}${mm}:${ss < 10 ? "0" : ""}${ss}`;
+  return `${formatedMinutes}:${formatedSeconds}`;
 }
 
 export async function fetcher(url: string) {

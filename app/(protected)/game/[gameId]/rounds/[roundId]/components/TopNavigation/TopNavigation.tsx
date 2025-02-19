@@ -4,7 +4,7 @@ import styles from "./TopNavigation.module.css";
 import { FaRegClock } from "react-icons/fa6";
 import useGameTime from "@/app/hooks/use-game-time";
 import { useRoundContext } from "../RoundProvider";
-import { getTime } from "@/app/helpers";
+import { formatTime } from "@/app/helpers";
 import GameControlButton from "../GameButtons/GameControlButton";
 
 export function TopNavigation() {
@@ -15,7 +15,7 @@ export function TopNavigation() {
     <nav className={styles.nav}>
       <div className={styles.timer}>
         <FaRegClock size="24px" />
-        <p>{getTime(time)}</p>
+        <p>{formatTime(time, { showHours: true })}</p>
       </div>
       <div className={styles.button}>
         <GameControlButton />

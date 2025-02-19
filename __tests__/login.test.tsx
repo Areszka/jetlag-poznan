@@ -19,6 +19,7 @@ vi.mock("next/navigation", async () => {
 
 test("Render Login Page", () => {
   render(<Page />);
+
   expect(screen.getByRole("heading", { level: 2, name: "Login" })).toBeDefined();
   expect(screen.getByRole("button", { name: "Login" })).toBeDefined();
 });

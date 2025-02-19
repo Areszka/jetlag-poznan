@@ -1,6 +1,6 @@
 "use client";
 
-import { timeToMinutesAndSeconds } from "@/app/helpers";
+import { formatTime } from "@/app/helpers";
 import InfoCard from "./InfoCard";
 import Link from "next/link";
 import { useGameContext } from "../GameProvider";
@@ -9,9 +9,7 @@ import useUserTeam from "@/app/hooks/use_user_team";
 export function AnswerTimeLimitCard() {
   const { game } = useGameContext();
 
-  return (
-    <InfoCard label="answer Time Limit">{timeToMinutesAndSeconds(game.answer_time_limit)}</InfoCard>
-  );
+  return <InfoCard label="answer Time Limit">{formatTime(game.answer_time_limit)}</InfoCard>;
 }
 
 export function JailPeriodCard() {
@@ -19,7 +17,7 @@ export function JailPeriodCard() {
 
   return (
     <InfoCard label="jail period" color="#d33333">
-      {timeToMinutesAndSeconds(game.jail_duration)}
+      {formatTime(game.jail_duration)}
     </InfoCard>
   );
 }
