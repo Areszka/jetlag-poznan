@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest"
   },
   "dependencies": {
     "@prisma/client": "^5.19.0",
@@ -22,14 +23,20 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.2.0",
     "@types/node": "^20",
     "@types/react": "^18.3.4",
     "@types/react-dom": "^18",
     "@types/web-push": "^3.6.4",
+    "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^8",
     "eslint-config-next": "14.2.6",
+    "jsdom": "^26.0.0",
     "prettier": "^3.3.3",
     "prisma": "^5.19.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.0.5"
   }
 }
