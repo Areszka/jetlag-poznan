@@ -33,6 +33,16 @@ export default function TeamCurseItem({ curse }: { curse: FlatCurse }) {
             <Text type="title">{curse.name}</Text>
             {!curseIsActive && <p>{curse.lifted_at ? "✅" : "❌"}</p>}
           </div>
+          <p className={styles.createdAt}>
+            {new Date(curse.created_at).toLocaleTimeString([], {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            })}
+          </p>
           {curseIsActive && (
             <>
               <Text type="description">{curse.effect}</Text>
