@@ -37,9 +37,15 @@ export default function TeamCurseItem({ curse }: { curse: FlatCurse }) {
             <>
               <Text type="description">{curse.effect}</Text>
               {userIsHider && !round.end_time && (
-                <LiftCurseButton curseId={curse.id} teamId={curse.teamId} />
+                <LiftCurseButton
+                  curseId={curse.id}
+                  teamId={curse.teamId}
+                  createdAt={curse.created_at}
+                />
               )}
-              {isTarget && !round.end_time && <VetoCurseButton curseId={curse.id} />}
+              {isTarget && !round.end_time && (
+                <VetoCurseButton curseId={curse.id} createdAt={curse.created_at} />
+              )}
             </>
           )}
         </div>

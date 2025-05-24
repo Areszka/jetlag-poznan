@@ -43,7 +43,9 @@ export default function Curses({ teamId }: { teamId?: string }) {
   return (
     <FlexWithGap>
       {curses.map((curse) => {
-        return <TeamCurseItem key={`${curse.id}_${curse.teamId}`} curse={curse} />;
+        return (
+          <TeamCurseItem key={`${curse.id}_${curse.teamId}_${curse.created_at}`} curse={curse} />
+        );
       })}
     </FlexWithGap>
   );

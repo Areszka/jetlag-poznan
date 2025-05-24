@@ -97,7 +97,7 @@
   border-radius: 4px;
   padding: 8px;
   display: grid;
-  grid-template-columns: 60px 1fr;
+  grid-template-columns: 80px 1fr;
   gap: 6px;
 }
 

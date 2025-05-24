@@ -19,7 +19,8 @@ import CursesInput from "./components/CursesInput";
 const INITIAL_SETTINGS: GameState = {
   teams: [],
   questionIds: [],
-  curseIds: [],
+  curses: [],
+  cursesCosts: [10, 30, 50],
 };
 
 export default function CreateGamePage() {
@@ -52,8 +53,8 @@ export default function CreateGamePage() {
     dispatch({ type: "all_questions_added", questionIds });
   }
 
-  function initializeCurses(curseIds: string[]) {
-    dispatch({ type: "curses_initialized", curseIds });
+  function initializeCurses(curses: { id: string; difficulty: number }[]) {
+    dispatch({ type: "curses_initialized", curses });
   }
 
   function handleAddTeam(teamName: string) {
@@ -91,12 +92,8 @@ export default function CreateGamePage() {
     dispatch({ type: "member_removed", teamName, userId });
   }
 
-  function moveCurseUp(curseId: string) {
-    dispatch({ type: "curse_difficulty_decreased", curseId });
-  }
-
-  function moveCurseDown(curseId: string) {
-    dispatch({ type: "curse_difficulty_increased", curseId });
+  function changeCurseDifficulty(curseId: string, difficulty: number) {
+    dispatch({ type: "curse_difficulty_changed", curseId, difficulty });
   }
 
   function handleSubmitForm(event: FormEvent<HTMLFormElement>) {
@@ -118,10 +115,10 @@ export default function CreateGamePage() {
       name: event.currentTarget.gameName.value,
       questionIds: game.questionIds,
       teams: game.teams,
-      curseIds: game.curseIds,
-      diceCost: Number(event.currentTarget.diceCost.value),
+      curses: game.curses,
       answerTimeLimit,
       jailDuration,
+      curse_costs: game.cursesCosts,
     };
 
     trigger(requestData).then(({ game }: PostGamesResponse) =>
@@ -135,11 +132,6 @@ export default function CreateGamePage() {
         <label>
           Game Name
           <input type="text" name="gameName" required />
-        </label>
-
-        <label>
-          Dice Cost
-          <input type="number" name="diceCost" defaultValue="50" required />
         </label>
 
         <label>
@@ -168,12 +160,61 @@ export default function CreateGamePage() {
             initializeQuestions={initializeQuestions}
           />
         </fieldset>
+
+        <fieldset>
+          <legend>Curse Costs</legend>
+          <label>
+            Curses of difficulty 1
+            <input
+              type="number"
+              name="curseCost1"
+              defaultValue={game.cursesCosts[0]}
+              onChange={(e) => {
+                dispatch({
+                  type: "curse_costs_updated",
+                  curseDifficulty: 1,
+                  curseCost: Number(e.target.value),
+                });
+              }}
+            />
+          </label>
+          <label>
+            Curses of difficulty 2
+            <input
+              type="number"
+              name="curseCost2"
+              defaultValue={game.cursesCosts[1]}
+              onChange={(e) => {
+                dispatch({
+                  type: "curse_costs_updated",
+                  curseDifficulty: 2,
+                  curseCost: Number(e.target.value),
+                });
+              }}
+            />
+          </label>
+          <label>
+            Curses of difficulty 3
+            <input
+              type="number"
+              name="curseCost3"
+              defaultValue={game.cursesCosts[2]}
+              onChange={(e) => {
+                dispatch({
+                  type: "curse_costs_updated",
+                  curseDifficulty: 3,
+                  curseCost: Number(e.target.value),
+                });
+              }}
+            />
+          </label>
+        </fieldset>
+
         <fieldset>
           <legend>Curses</legend>
           <CursesInput
-            curseIds={game.curseIds}
-            moveCurseDown={moveCurseDown}
-            moveCurseUp={moveCurseUp}
+            curses={game.curses}
+            changeCurseDifficulty={changeCurseDifficulty}
             initializeCurses={initializeCurses}
           />
         </fieldset>

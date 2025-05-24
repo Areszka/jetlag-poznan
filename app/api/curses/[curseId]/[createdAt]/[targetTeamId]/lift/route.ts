@@ -8,7 +8,7 @@ export type LiftCurseResponse = {
 };
 export async function POST(
   _request: Request,
-  { params }: { params: { curseId: string; targetTeamId: string } }
+  { params }: { params: { curseId: string; createdAt: Date; targetTeamId: string } }
 ) {
   const userId = await validateSession();
 
@@ -31,10 +31,11 @@ export async function POST(
 
   const curse = await db.teamRoundCurse.update({
     where: {
-      roundId_curseId_teamId: {
+      roundId_curseId_teamId_created_at: {
         curseId: params.curseId,
         teamId: params.targetTeamId,
         roundId: lastRound.roundId,
+        created_at: params.createdAt,
       },
     },
     data: {

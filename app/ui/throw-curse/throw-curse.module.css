@@ -10,9 +10,18 @@
 .buttonsWrapper {
   padding: 16px;
   flex: 1 0 230px;
-  display: flex;
   align-items: center;
-  flex-direction: column;
+}
+
+.buttonsWrapper form {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 16px;
+}
+
+.buttonsWrapper form select {
+  padding: 8px;
 }
 
 .wrapper {
