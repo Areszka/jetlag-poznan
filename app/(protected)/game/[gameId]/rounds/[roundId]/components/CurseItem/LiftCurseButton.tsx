@@ -8,12 +8,20 @@ import Spinner from "@/app/ui/components/spinner/spinner";
 import { useSWRConfig } from "swr";
 import Center from "@/app/ui/components/Center/Center";
 
-export default function LiftCurseButton({ curseId, teamId }: { curseId: string; teamId: string }) {
+export default function LiftCurseButton({
+  curseId,
+  teamId,
+  createdAt,
+}: {
+  curseId: string;
+  teamId: string;
+  createdAt: Date;
+}) {
   const { mutate } = useSWRConfig();
   const params = useParams();
 
   const { trigger, isMutating } = useSWRMutation(
-    `/api/curses/${curseId}/${teamId}/lift`,
+    `/api/curses/${curseId}/${createdAt}/${teamId}/lift`,
     fetcherPost
   );
 

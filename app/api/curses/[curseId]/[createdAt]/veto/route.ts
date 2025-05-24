@@ -8,7 +8,7 @@ export type VetoCurseResponse = {
 };
 export async function POST(
   _request: Request,
-  { params }: { params: { curseId: string } },
+  { params }: { params: { curseId: string; createdAt: Date } }
 ) {
   const userId = await validateSession();
 
@@ -31,10 +31,11 @@ export async function POST(
 
   const curse = await db.teamRoundCurse.update({
     where: {
-      roundId_curseId_teamId: {
+      roundId_curseId_teamId_created_at: {
         curseId: params.curseId,
         teamId: lastRound.teamId,
         roundId: lastRound.roundId,
+        created_at: params.createdAt,
       },
     },
     data: {
@@ -47,7 +48,7 @@ export async function POST(
       {
         error: `No curse with id ${params.curseId} on team ${lastRound.teamId} found for active round`,
       },
-      { status: 400 },
+      { status: 400 }
     );
   }
 

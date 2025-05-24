@@ -40,22 +40,24 @@ type AddQuestionAction = {
 
 type InitializeCursesAction = {
   type: "curses_initialized";
-  curseIds: string[];
+  curses: { id: string; difficulty: number }[];
 };
 
-type IncreaseDifficultyAction = {
-  type: "curse_difficulty_increased";
+type ChangeDifficultyAction = {
+  type: "curse_difficulty_changed";
   curseId: string;
-};
-
-type DecreaseDifficultyAction = {
-  type: "curse_difficulty_decreased";
-  curseId: string;
+  difficulty: number;
 };
 
 type AddAllQuestionsAction = {
   type: "all_questions_added";
   questionIds: string[];
+};
+
+type UpdateCurseCostAction = {
+  type: "curse_costs_updated";
+  curseDifficulty: number;
+  curseCost: number;
 };
 
 export type GameAction =
@@ -67,17 +69,15 @@ export type GameAction =
   | AddQuestionAction
   | RemoveQuestionAction
   | InitializeCursesAction
-  | IncreaseDifficultyAction
-  | DecreaseDifficultyAction
-  | AddAllQuestionsAction;
+  | ChangeDifficultyAction
+  | AddAllQuestionsAction
+  | UpdateCurseCostAction;
 
 export interface GameState {
   teams: Team[];
   questionIds: string[];
-  /**
-   * Order of the throw-curse matters as difficulty increases from 1 to n
-   */
-  curseIds: string[];
+  curses: { id: string; difficulty: number }[];
+  cursesCosts: number[];
 }
 
 export type Team = {
@@ -149,33 +149,21 @@ export default function reducer(game: GameState, action: GameAction) {
       return { ...game, questionIds: nextQuestionIds };
     }
     case "curses_initialized": {
-      return { ...game, curseIds: action.curseIds };
+      return { ...game, curses: action.curses };
     }
-    case "curse_difficulty_decreased": {
-      let nextCurseIds = [...game.curseIds];
-      const curseIndex = nextCurseIds.findIndex((curseId) => curseId === action.curseId);
 
-      if (curseIndex < 1) {
-        return game;
-      }
+    case "curse_difficulty_changed": {
+      let nextCurses = [...game.curses];
+      const curseIndex = nextCurses.findIndex((curse) => curse.id === action.curseId);
 
-      nextCurseIds[curseIndex] = game.curseIds[curseIndex - 1];
-      nextCurseIds[curseIndex - 1] = game.curseIds[curseIndex];
+      nextCurses[curseIndex] = { ...nextCurses[curseIndex], difficulty: action.difficulty };
 
-      return { ...game, curseIds: nextCurseIds };
+      return { ...game, curses: nextCurses };
     }
-    case "curse_difficulty_increased": {
-      let nextCurseIds = [...game.curseIds];
-      const curseIndex = nextCurseIds.findIndex((curseId) => curseId === action.curseId);
-
-      if (curseIndex === game.curseIds.length - 1) {
-        return game;
-      }
-
-      nextCurseIds[curseIndex] = game.curseIds[curseIndex + 1];
-      nextCurseIds[curseIndex + 1] = game.curseIds[curseIndex];
-
-      return { ...game, curseIds: nextCurseIds };
+    case "curse_costs_updated": {
+      const nextCursesCosts = [...game.cursesCosts];
+      nextCursesCosts[action.curseDifficulty - 1] = action.curseCost;
+      return { ...game, cursesCosts: nextCursesCosts };
     }
   }
 }

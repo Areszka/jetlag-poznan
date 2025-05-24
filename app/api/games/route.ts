@@ -48,10 +48,10 @@ export type PostGamesRequest = {
   /**
    * Order of the throw-curse matters as difficulty increases from 1 to n
    */
-  curseIds: Array<string>;
+  curses: Array<{ id: string; difficulty: number }>;
   answerTimeLimit: number;
   jailDuration: number;
-  diceCost: number;
+  curse_costs: Array<number>;
 };
 export type PostGamesResponse = {
   game: Game & {
@@ -138,12 +138,12 @@ export async function POST(request: Request) {
         }),
       },
       game_curses: {
-        create: body.curseIds.map((id, index) => {
-          return { difficulty: index + 1, curse: { connect: { id } } };
+        create: body.curses.map(({ id, difficulty }) => {
+          return { difficulty, curse: { connect: { id } } };
         }),
       },
+      curse_costs: body.curse_costs,
       answer_time_limit: body.answerTimeLimit,
-      dice_cost: body.diceCost,
       jail_duration: body.jailDuration,
       rounds: {
         create: [

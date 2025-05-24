@@ -45,6 +45,11 @@ export function MapCard() {
 
 export function DiceCostCard() {
   const { game } = useGameContext();
+
+  if (!game.dice_cost) {
+    return null; // If dice cost is not set, do not render the card
+  }
+
   return (
     <InfoCard label="dice cost" color="#e6d30b">
       {game.dice_cost.toString()}

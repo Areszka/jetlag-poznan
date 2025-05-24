@@ -10,20 +10,22 @@ import { GetCursesResponse } from "@/app/api/curses/route";
 import ListItemPlaceholder from "@/app/ui/components/ListItemPlaceholder/ListItemPlaceholder";
 
 export default function CursesInput({
-  curseIds,
+  curses,
   initializeCurses,
-  moveCurseUp,
-  moveCurseDown,
+  changeCurseDifficulty,
 }: {
-  curseIds: string[];
-  moveCurseUp: (id: string) => void;
-  moveCurseDown: (id: string) => void;
-  initializeCurses: (curseIds: string[]) => void;
+  curses: { id: string; difficulty: number }[];
+  changeCurseDifficulty: (id: string, difficulty: number) => void;
+  initializeCurses: (curses: { id: string; difficulty: number }[]) => void;
 }) {
   const { data, error, isLoading } = useSWR<GetCursesResponse>("/api/curses", fetcher, {
     onSuccess: (data) => {
-      if (curseIds.length === 0) {
-        initializeCurses(data.curses.map((curse) => curse.id));
+      if (curses.length === 0) {
+        initializeCurses(
+          data.curses.map((curse) => {
+            return { id: curse.id, difficulty: Math.min(curse.defaultDifficulty ?? 1, 3) };
+          })
+        );
       }
     },
   });
@@ -44,27 +46,31 @@ export default function CursesInput({
 
   return (
     <ul>
-      {curseIds.map((curseId, index) => {
-        const curse = data!.curses.find((curse) => curse.id === curseId)!;
+      {curses.map(({ id }, index) => {
+        const curse = data!.curses.find((curse) => curse.id === id)!;
         return (
-          <motion.li key={curseId} className={styles.curse} layout={true}>
-            <div className={styles.curseButtons}>
-              {index > 0 && (
-                <button type="button" onClick={() => moveCurseUp(curseId)}>
-                  <IoIosArrowUp />
-                </button>
-              )}
-              {index !== curseIds.length - 1 && (
-                <button type="button" onClick={() => moveCurseDown(curseId)}>
-                  <IoIosArrowDown />
-                </button>
-              )}
+          <li key={id} className={styles.curse}>
+            <div className={styles.curseDifficulty}>
+              <Text type="description">Difficulty</Text>
+              <input
+                type="number"
+                min={1}
+                max={3}
+                value={curses[index].difficulty}
+                onChange={(e) => {
+                  const number = Number.isNaN(parseInt(e.target.value))
+                    ? 1
+                    : parseInt(e.target.value);
+                  const difficulty = Math.max(1, Math.min(3, number));
+                  changeCurseDifficulty(id, difficulty);
+                }}
+              />
             </div>
             <FlexWithGap gap={0}>
               <Text type="title">{curse.name}</Text>
               <Text type="description">{curse.effect}</Text>
             </FlexWithGap>
-          </motion.li>
+          </li>
         );
       })}
     </ul>

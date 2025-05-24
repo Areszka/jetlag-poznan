@@ -28,7 +28,8 @@ model Subscription {
 model Game {
   id        String      @id @default(uuid())
   name      String
-  dice_cost Int
+  dice_cost Int?
+  curse_costs Int[]
   jail_duration Int
   answer_time_limit Int
   game_questions Question[]
@@ -121,7 +122,7 @@ model TeamRoundCurse {
   lifted_at  DateTime?
   created_at DateTime  @default(now())
 
-  @@id([roundId, curseId, teamId])
+  @@id([roundId, curseId, teamId, created_at])
 }
 
 model TeamRoundQuestion {
